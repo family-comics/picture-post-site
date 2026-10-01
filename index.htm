@@ -1,3584 +1,673 @@
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * {
+    box-sizing: border-box;
+  }
 
-  <title>Picture Post</title>
+  html {
+    background: #0b0b0d;
+  }
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background:
+      radial-gradient(circle at top, #211b0d 0%, #0d0d0f 38%, #080809 100%);
+    color: #f5f5f5;
+    min-height: 100vh;
+  }
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  button {
+    border: 1px solid #3d3218;
+    border-radius: 7px;
+    padding: 7px 9px;
+    font-size: 11px;
+    cursor: pointer;
+    background: #171719;
+    color: #f1d477;
+    transition: .15s;
+  }
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f5f7;
-      color: #222;
-    }
+  button:active {
+    transform: scale(.97);
+  }
 
-    header {
-      background: #111;
-      color: white;
-      text-align: center;
-      padding: 12px 10px;
-      position: sticky;
-      top: 0;
-      z-index: 20;
-    }
+  button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+  }
 
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
 
-    header p {
-      margin: 5px 0 7px;
-      color: #ccc;
-      font-size: 13px;
-    }
+  /* =========================
+     HEADER
+  ========================= */
 
-    .auth-area {
-      display: flex;
-      justify-content: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
+  header {
+    background:
+      linear-gradient(135deg, #111113, #19150c);
+    color: white;
+    text-align: center;
+    padding: 9px 8px 10px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    border-bottom: 1px solid #8b6b1f;
+    box-shadow: 0 3px 18px rgba(0,0,0,.45);
+  }
 
-    .auth-button {
-      background: #333;
-      color: white;
-      padding: 7px 12px;
-      border-radius: 8px;
-      font-size: 11px;
-    }
+  header h1 {
+    margin: 0;
+    font-size: 20px;
+    color: #f0cc58;
+    letter-spacing: .2px;
+  }
 
-    .admin-status {
-      display: none;
-      color: #9cff9c;
-      font-size: 11px;
-      margin-top: 5px;
-    }
+  header p {
+    margin: 3px 0 6px;
+    color: #aaa;
+    font-size: 10px;
+  }
+
+  .auth-area {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+
+  .auth-button {
+    background: #181818;
+    color: #e7c85c;
+    border: 1px solid #5b4617;
+    padding: 5px 9px;
+    border-radius: 6px;
+    font-size: 10px;
+  }
+
+  .admin-status {
+    display: none;
+    color: #d9bd55;
+    font-size: 9px;
+    margin-top: 4px;
+  }
+
+
+  /* =========================
+     MAIN
+  ========================= */
+
+  .container {
+    max-width: 700px;
+    margin: auto;
+    padding: 7px;
+  }
+
+
+  /* =========================
+     HOME / BACK
+  ========================= */
+
+  .top-buttons {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 6px;
+  }
+
+  .top-buttons button {
+    flex: 1;
+    background: #171719;
+    color: #e6c653;
+    border: 1px solid #514016;
+    padding: 6px 7px;
+    font-size: 10px;
+    border-radius: 7px;
+  }
+
+
+  /* =========================
+     BOX
+  ========================= */
+
+  .box {
+    background:
+      linear-gradient(145deg, #151517, #101012);
+    padding: 8px;
+    border-radius: 10px;
+    margin-bottom: 7px;
+    border: 1px solid #29240f;
+    box-shadow:
+      0 3px 14px rgba(0,0,0,.32),
+      inset 0 0 0 1px rgba(255,210,70,.025);
+  }
+
+  .box h2 {
+    margin: 0 0 6px;
+    font-size: 13px;
+    color: #e5c557;
+    font-weight: bold;
+  }
+
+  #currentFolder {
+    color: #999;
+    font-size: 9px;
+    margin-bottom: 6px;
+    word-break: break-word;
+  }
+
+
+  /* =========================
+     FOLDER ACTIONS
+  ========================= */
+
+  .folder-actions {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 6px;
+  }
+
+  .folder-actions button {
+    flex: 1;
+    background: #171719;
+    color: #e4c453;
+    border: 1px solid #4a3a13;
+    padding: 5px 4px;
+    font-size: 9px;
+    border-radius: 6px;
+  }
+
+
+  /* =========================
+     FOLDER GRID
+  ========================= */
+
+  .folders {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+
+  .folder {
+    background:
+      linear-gradient(145deg, #1c1c1e, #131315);
+    padding: 3px 2px;
+    border-radius: 7px;
+    border: 1px solid #393016;
+    min-width: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,.22);
+  }
+
+  .folder-open {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    padding: 3px 1px;
+    text-align: center;
+    color: #eee;
+  }
+
+  .folder-icon {
+    display: block;
+    font-size: 17px;
+    line-height: 18px;
+    margin-bottom: 1px;
+  }
+
+  .folder-name {
+    display: block;
+    font-size: 9px;
+    line-height: 11px;
+    font-weight: bold;
+    word-break: break-word;
+    color: #ddd;
+  }
+
+  .folder-manage {
+    display: flex;
+    gap: 2px;
+    margin-top: 3px;
+  }
+
+  .folder-manage button {
+    flex: 1;
+    padding: 3px 1px;
+    font-size: 7px;
+    border-radius: 5px;
+    white-space: nowrap;
+  }
+
+  .rename-button {
+    background: #211f17;
+    color: #d9bd55;
+    border: 1px solid #55471e;
+  }
+
+  .delete-button {
+    background: #241719;
+    color: #e47b7b;
+    border: 1px solid #552628;
+  }
+
+
+  /* =========================
+     FILE INPUT
+  ========================= */
+
+  input[type="file"] {
+    width: 100%;
+    margin: 5px 0;
+    font-size: 10px;
+    color: #bbb;
+    background: #111113;
+    border: 1px solid #393016;
+    border-radius: 6px;
+    padding: 4px;
+  }
+
+
+  /* =========================
+     PREVIEW
+  ========================= */
+
+  #previewArea {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin: 5px 0;
+  }
+
+  .preview-item {
+    position: relative;
+    background: #191919;
+    border-radius: 6px;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    border: 1px solid #332b15;
+  }
+
+  .preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .preview-number {
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    background: rgba(0,0,0,.78);
+    color: #e5c557;
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-size: 7px;
+  }
+
+
+  /* =========================
+     UPLOAD
+  ========================= */
+
+  #uploadButton {
+    width: 100%;
+    background:
+      linear-gradient(135deg, #8d6a19, #c49a2d);
+    color: #111;
+    border: 0;
+    padding: 7px;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 7px;
+  }
+
+  #message {
+    text-align: center;
+    margin-top: 5px;
+    font-size: 9px;
+    font-weight: bold;
+    word-break: break-word;
+    color: #d9bd55;
+  }
+
+
+  /* =========================
+     GALLERY
+  ========================= */
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5px;
+  }
+
+  .photo-card {
+    background: #141416;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #302815;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+    position: relative;
+  }
+
+  .photo-number {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    z-index: 5;
+    background: rgba(0,0,0,.78);
+    color: #e5c557;
+    padding: 2px 5px;
+    border-radius: 5px;
+    font-size: 8px;
+    font-weight: bold;
+  }
+
+  .photo-card img {
+    width: 100%;
+    height: 155px;
+    object-fit: cover;
+    display: block;
+    cursor: pointer;
+  }
+
+  .photo-info {
+    padding: 4px;
+  }
+
+  .like-button {
+    width: 100%;
+    background: #1c1c1e;
+    color: #bbb;
+    border: 1px solid #383838;
+    margin-bottom: 3px;
+    padding: 5px;
+    font-size: 9px;
+    border-radius: 6px;
+  }
+
+  .like-button.liked {
+    background: #2a171b;
+    color: #ff7d8d;
+    border-color: #643039;
+  }
+
+  .photo-delete-button {
+    width: 100%;
+    background: #241719;
+    color: #e47b7b;
+    border: 1px solid #552628;
+    padding: 5px;
+    font-size: 9px;
+    border-radius: 6px;
+  }
+
+
+  /* =========================
+     EMPTY
+  ========================= */
+
+  .empty {
+    text-align: center;
+    color: #777;
+    padding: 14px 6px;
+    grid-column: 1 / -1;
+    font-size: 10px;
+  }
+
+
+  /* =========================
+     ADMIN LOGIN
+  ========================= */
+
+  #loginModal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.86);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .login-box {
+    width: 100%;
+    max-width: 340px;
+    background:
+      linear-gradient(145deg, #1b1b1d, #101012);
+    border: 1px solid #6a5219;
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 5px 30px rgba(0,0,0,.55);
+  }
+
+  .login-box h2 {
+    margin: 0 0 10px;
+    text-align: center;
+    color: #e5c557;
+    font-size: 16px;
+  }
+
+  .login-box input {
+    width: 100%;
+    padding: 9px;
+    margin-bottom: 6px;
+    background: #0f0f11;
+    color: white;
+    border: 1px solid #393016;
+    border-radius: 7px;
+    font-size: 12px;
+    outline: none;
+  }
+
+  .login-submit {
+    width: 100%;
+    background: linear-gradient(135deg,#8d6a19,#c49a2d);
+    color: #111;
+    border: 0;
+    margin-top: 3px;
+    padding: 7px;
+    font-size: 11px;
+    font-weight: bold;
+  }
+
+  .login-close {
+    width: 100%;
+    background: #1d1d1f;
+    color: #aaa;
+    border: 1px solid #333;
+    margin-top: 5px;
+    padding: 6px;
+    font-size: 10px;
+  }
+
+  #loginMessage {
+    text-align: center;
+    font-size: 10px;
+    margin-top: 6px;
+    word-break: break-word;
+    color: #d9bd55;
+  }
+
+
+  /* =========================
+     VIEWER
+  ========================= */
+
+  #viewer {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.96);
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+  }
+
+  .viewer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px;
+    flex-shrink: 0;
+  }
+
+  .viewer-top button {
+    background: #191919;
+    color: #e5c557;
+    border: 1px solid #4d3c15;
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+
+  .viewer-stage {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #viewerImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    min-height: 0;
+    padding: 5px 42px;
+  }
+
+  .viewer-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    width: 34px;
+    height: 50px;
+    border-radius: 9px;
+    background: rgba(255,255,255,.13);
+    color: #e5c557;
+    border: 1px solid rgba(220,180,60,.25);
+    font-size: 22px;
+    line-height: 50px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .viewer-arrow:active {
+    background: rgba(255,255,255,.25);
+  }
+
+  .viewer-prev {
+    left: 5px;
+  }
+
+  .viewer-next {
+    right: 5px;
+  }
+
+  .viewer-bottom {
+    display: flex;
+    justify-content: center;
+    padding: 7px;
+    flex-shrink: 0;
+  }
+
+  #viewerLike {
+    background: #7d1d2b;
+    color: white;
+    border: 1px solid #a83a4a;
+    min-width: 100px;
+    padding: 7px 10px;
+    font-size: 10px;
+  }
+
+
+  /* =========================
+     MOBILE
+  ========================= */
+
+  @media (max-width: 420px) {
 
     .container {
-      max-width: 700px;
-      margin: auto;
-      padding: 8px;
-    }
-
-    button {
-      border: 0;
-      border-radius: 9px;
-      padding: 9px 11px;
-      font-size: 13px;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      opacity: .6;
-      cursor: not-allowed;
-    }
-
-    .top-buttons {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-
-    .top-buttons button {
-      flex: 1;
-      background: #111;
-      color: white;
-    }
-
-    .box {
-      background: white;
-      padding: 11px;
-      border-radius: 13px;
-      margin-bottom: 9px;
-      box-shadow: 0 2px 9px rgba(0,0,0,.07);
-    }
-
-    .box h2 {
-      margin: 0 0 8px;
-      font-size: 16px;
-    }
-
-    #currentFolder {
-      color: #666;
-      font-size: 11px;
-      margin-bottom: 8px;
-      word-break: break-word;
-    }
-
-    .folder-actions {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-
-    .folder-actions button {
-      flex: 1;
-      background: #111;
-      color: white;
-      padding: 7px 5px;
-      font-size: 11px;
-    }
-
-    .folders {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 5px;
-    }
-
-    .folder {
-      background: #f1f1f1;
-      padding: 5px 3px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      min-width: 0;
-    }
-
-    .folder-open {
-      width: 100%;
-      background: transparent;
-      padding: 4px 2px;
-      text-align: center;
-    }
-
-    .folder-icon {
-      display: block;
-      font-size: 20px;
-      line-height: 22px;
-      margin-bottom: 2px;
-    }
-
-    .folder-name {
-      display: block;
-      font-size: 10px;
-      line-height: 13px;
-      font-weight: bold;
-      word-break: break-word;
-    }
-
-    .folder-manage {
-      display: flex;
-      gap: 3px;
-      margin-top: 4px;
-    }
-
-    .folder-manage button {
-      flex: 1;
-      padding: 5px 2px;
-      font-size: 9px;
-      border-radius: 6px;
-    }
-
-    .rename-button {
-      background: #e8eefc;
-      color: #174ea6;
-    }
-
-    .delete-button {
-      background: #ffe4e4;
-      color: #b00020;
-    }
-
-    input[type="file"] {
-      width: 100%;
-      margin: 7px 0;
-      font-size: 12px;
-    }
-
-    #previewArea {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin: 7px 0;
-    }
-
-    .preview-item {
-      position: relative;
-      background: #eee;
-      border-radius: 8px;
-      overflow: hidden;
-      aspect-ratio: 1 / 1;
-    }
-
-    .preview-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .preview-number {
-      position: absolute;
-      left: 4px;
-      top: 4px;
-      background: rgba(0,0,0,.75);
-      color: white;
-      padding: 2px 5px;
-      border-radius: 5px;
-      font-size: 9px;
-    }
-
-    #uploadButton {
-      width: 100%;
-      background: #111;
-      color: white;
-    }
-
-    #message {
-      text-align: center;
-      margin-top: 7px;
-      font-size: 12px;
-      font-weight: bold;
-      word-break: break-word;
-    }
-
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 7px;
-    }
-
-    .photo-card {
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
-      position: relative;
-    }
-
-    .photo-number {
-      position: absolute;
-      top: 5px;
-      left: 5px;
-      z-index: 5;
-      background: rgba(0,0,0,.78);
-      color: white;
-      padding: 3px 6px;
-      border-radius: 6px;
-      font-size: 10px;
-      font-weight: bold;
-    }
-
-    .photo-card img {
-      width: 100%;
-      height: 165px;
-      object-fit: cover;
-      display: block;
-      cursor: pointer;
-    }
-
-    .photo-info {
       padding: 5px;
     }
 
-    .like-button {
-      width: 100%;
-      background: #f1f1f1;
-      color: #222;
+    .box {
+      padding: 7px;
+      margin-bottom: 6px;
+    }
+
+    .box h2 {
+      font-size: 12px;
       margin-bottom: 5px;
-      padding: 7px;
-      font-size: 12px;
     }
 
-    .like-button.liked {
-      background: #ffe1e5;
-      color: #d60025;
+    .folders {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
     }
 
+    .folder {
+      padding: 3px 1px;
+    }
+
+    .folder-icon {
+      font-size: 16px;
+      line-height: 17px;
+    }
+
+    .folder-name {
+      font-size: 8px;
+      line-height: 10px;
+    }
+
+    .folder-manage {
+      gap: 1px;
+      margin-top: 2px;
+    }
+
+    .folder-manage button {
+      font-size: 6.5px;
+      padding: 3px 0;
+    }
+
+    .folder-actions button {
+      padding: 5px 3px;
+      font-size: 8px;
+    }
+
+    #previewArea {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3px;
+    }
+
+    .gallery {
+      gap: 4px;
+    }
+
+    .photo-card img {
+      height: 140px;
+    }
+
+    .photo-info {
+      padding: 3px;
+    }
+
+    .like-button,
     .photo-delete-button {
-      width: 100%;
-      background: #ffe4e4;
-      color: #b00020;
-      padding: 7px;
-      font-size: 12px;
-    }
-
-    .empty {
-      text-align: center;
-      color: #777;
-      padding: 18px 8px;
-      grid-column: 1 / -1;
-      font-size: 12px;
-    }
-
-    /* =========================
-       ADMIN LOGIN
-    ========================= */
-
-    #loginModal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.75);
-      z-index: 200;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 15px;
-    }
-
-    .login-box {
-      width: 100%;
-      max-width: 360px;
-      background: white;
-      border-radius: 15px;
-      padding: 18px;
-      box-shadow: 0 5px 25px rgba(0,0,0,.3);
-    }
-
-    .login-box h2 {
-      margin: 0 0 12px;
-      text-align: center;
-    }
-
-    .login-box input {
-      width: 100%;
-      padding: 11px;
-      margin-bottom: 8px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-
-    .login-submit {
-      width: 100%;
-      background: #111;
-      color: white;
-      margin-top: 4px;
-    }
-
-    .login-close {
-      width: 100%;
-      background: #eee;
-      color: #222;
-      margin-top: 7px;
-    }
-
-    #loginMessage {
-      text-align: center;
-      font-size: 12px;
-      margin-top: 8px;
-      word-break: break-word;
-    }
-
-    /* =========================
-       VIEWER
-    ========================= */
-
-    #viewer {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.94);
-      z-index: 100;
-      display: none;
-      flex-direction: column;
-    }
-
-    .viewer-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 9px;
-      flex-shrink: 0;
-    }
-
-    .viewer-top button {
-      background: #333;
-      color: white;
-      padding: 8px 10px;
-    }
-
-    .viewer-stage {
-      position: relative;
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 4px;
+      font-size: 8px;
     }
 
     #viewerImage {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      min-height: 0;
-      padding: 5px 45px;
+      padding-left: 38px;
+      padding-right: 38px;
     }
 
     .viewer-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 5;
-      width: 38px;
-      height: 55px;
-      border-radius: 12px;
-      background: rgba(255,255,255,.18);
-      color: white;
-      font-size: 24px;
-      line-height: 55px;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 31px;
+      height: 45px;
+      font-size: 19px;
     }
-
-    .viewer-arrow:active {
-      background: rgba(255,255,255,.35);
-    }
-
-    .viewer-prev {
-      left: 6px;
-    }
-
-    .viewer-next {
-      right: 6px;
-    }
-
-    .viewer-bottom {
-      display: flex;
-      justify-content: center;
-      padding: 8px;
-      flex-shrink: 0;
-    }
-
-    #viewerLike {
-      background: #b00020;
-      color: white;
-      min-width: 110px;
-    }
-
-    @media (max-width: 420px) {
-
-      .container {
-        padding: 6px;
-      }
-
-      .box {
-        padding: 9px;
-      }
-
-      .folders {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 4px;
-      }
-
-      .folder {
-        padding: 4px 2px;
-      }
-
-      .folder-icon {
-        font-size: 18px;
-        line-height: 20px;
-      }
-
-      .folder-name {
-        font-size: 9px;
-        line-height: 12px;
-      }
-
-      .folder-manage button {
-        font-size: 8px;
-        padding: 4px 1px;
-      }
-
-      .gallery {
-        gap: 6px;
-      }
-
-      .photo-card img {
-        height: 145px;
-      }
-
-      #viewerImage {
-        padding-left: 40px;
-        padding-right: 40px;
-      }
-
-      .viewer-arrow {
-        width: 34px;
-        height: 48px;
-        font-size: 20px;
-      }
-    }
-  </style>
-</head>
-
-<body>
-
-<header>
-
-  <h1>📸 Picture Post</h1>
-
-  <p>ছবি শেয়ার করার সহজ জায়গা</p>
-
-  <div class="auth-area">
-
-    <button
-      id="loginButton"
-      class="auth-button"
-      onclick="openLogin()"
-    >
-      🔐 Admin Login
-    </button>
-
-    <button
-      id="logoutButton"
-      class="auth-button"
-      onclick="logoutAdmin()"
-      style="display:none;"
-    >
-      🚪 Logout
-    </button>
-
-  </div>
-
-  <div
-    id="adminStatus"
-    class="admin-status"
-  >
-    👑 Admin Mode চালু
-  </div>
-
-</header>
-
-
-<div class="container">
-
-  <div class="top-buttons">
-
-    <button onclick="goHome()">
-      🏠 Home
-    </button>
-
-    <button onclick="goBack()">
-      ⬅️ Back
-    </button>
-
-  </div>
-
-
-  <!-- FOLDER -->
-
-  <div class="box">
-
-    <h2>📁 Picture Folder</h2>
-
-    <div id="currentFolder">
-      📁 Home
-    </div>
-
-
-    <div
-      id="adminFolderActions"
-      class="folder-actions"
-      style="display:none;"
-    >
-
-      <button onclick="createFolder()">
-        ➕ নতুন Folder
-      </button>
-
-      <button onclick="refreshFolders()">
-        🔄 Refresh
-      </button>
-
-    </div>
-
-
-    <div
-      id="publicRefreshArea"
-      class="folder-actions"
-    >
-
-      <button onclick="refreshFolders()">
-        🔄 Refresh
-      </button>
-
-    </div>
-
-
-    <div
-      id="folders"
-      class="folders"
-    >
-
-      <div class="empty">
-        ⏳ Folder লোড হচ্ছে...
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- ADMIN UPLOAD -->
-
-  <div
-    id="adminUploadBox"
-    class="box"
-    style="display:none;"
-  >
-
-    <h2>📤 ছবি পোস্ট করুন</h2>
-
-    <input
-      type="file"
-      id="photoInput"
-      accept="image/*"
-      multiple
-    >
-
-    <div id="previewArea"></div>
-
-    <button id="uploadButton">
-      📤 ছবি পোস্ট করুন
-    </button>
-
-    <div id="message"></div>
-
-  </div>
-
-
-  <!-- GALLERY -->
-
-  <div class="box">
-
-    <h2>🖼️ পোস্ট করা ছবি</h2>
-
-    <div
-      id="gallery"
-      class="gallery"
-    >
-
-      <div class="empty">
-        ছবি লোড হচ্ছে...
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-<!-- ADMIN LOGIN MODAL -->
-
-<div id="loginModal">
-
-  <div class="login-box">
-
-    <h2>🔐 Admin Login</h2>
-
-    <input
-      type="email"
-      id="loginEmail"
-      placeholder="Admin Email"
-      autocomplete="off"
-    >
-
-    <input
-      type="password"
-      id="loginPassword"
-      placeholder="Password"
-      autocomplete="current-password"
-    >
-
-    <button
-      id="loginSubmit"
-      class="login-submit"
-      onclick="loginAdmin()"
-    >
-      🔐 Login
-    </button>
-
-    <button
-      class="login-close"
-      onclick="closeLogin()"
-    >
-      ✕ বন্ধ
-    </button>
-
-    <div id="loginMessage"></div>
-
-  </div>
-
-</div>
-
-
-<!-- IMAGE VIEWER -->
-
-<div id="viewer">
-
-  <div class="viewer-top">
-
-    <button onclick="closeViewer()">
-      ✕ বন্ধ
-    </button>
-
-    <button
-      onclick="goHome(); closeViewer();"
-    >
-      🏠 Home
-    </button>
-
-  </div>
-
-
-  <div class="viewer-stage">
-
-    <button
-      class="viewer-arrow viewer-prev"
-      onclick="previousImage()"
-      aria-label="Previous"
-    >
-      ‹
-    </button>
-
-    <img
-      id="viewerImage"
-      alt="Picture"
-    >
-
-    <button
-      class="viewer-arrow viewer-next"
-      onclick="nextImage()"
-      aria-label="Next"
-    >
-      ›
-    </button>
-
-  </div>
-
-
-  <div class="viewer-bottom">
-
-    <button
-      id="viewerLike"
-      onclick="likeCurrentImage()"
-    >
-      ❤️ 0
-    </button>
-
-  </div>
-
-</div>
-
-
-<script>
-
-/* =========================
-   SUPABASE
-========================= */
-
-const SUPABASE_URL =
-  "https://vhqiqbapbxwmvycxrsvc.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_CIj1SRMGjbByiTkx-Yx8Eg_g7jHkTh9";
-
-const ADMIN_EMAIL =
-  "prince.masud.ak46@gmail.com";
-
-
-const supabaseClient =
-  supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-
-/* =========================
-   ELEMENTS
-========================= */
-
-const photoInput =
-  document.getElementById(
-    "photoInput"
-  );
-
-const previewArea =
-  document.getElementById(
-    "previewArea"
-  );
-
-const uploadButton =
-  document.getElementById(
-    "uploadButton"
-  );
-
-const message =
-  document.getElementById(
-    "message"
-  );
-
-const gallery =
-  document.getElementById(
-    "gallery"
-  );
-
-const folders =
-  document.getElementById(
-    "folders"
-  );
-
-const currentFolder =
-  document.getElementById(
-    "currentFolder"
-  );
-
-const viewer =
-  document.getElementById(
-    "viewer"
-  );
-
-const viewerImage =
-  document.getElementById(
-    "viewerImage"
-  );
-
-const viewerLike =
-  document.getElementById(
-    "viewerLike"
-  );
-
-const loginModal =
-  document.getElementById(
-    "loginModal"
-  );
-
-const loginEmail =
-  document.getElementById(
-    "loginEmail"
-  );
-
-const loginPassword =
-  document.getElementById(
-    "loginPassword"
-  );
-
-const loginSubmit =
-  document.getElementById(
-    "loginSubmit"
-  );
-
-const loginMessage =
-  document.getElementById(
-    "loginMessage"
-  );
-
-const loginButton =
-  document.getElementById(
-    "loginButton"
-  );
-
-const logoutButton =
-  document.getElementById(
-    "logoutButton"
-  );
-
-const adminStatus =
-  document.getElementById(
-    "adminStatus"
-  );
-
-const adminFolderActions =
-  document.getElementById(
-    "adminFolderActions"
-  );
-
-const publicRefreshArea =
-  document.getElementById(
-    "publicRefreshArea"
-  );
-
-const adminUploadBox =
-  document.getElementById(
-    "adminUploadBox"
-  );
-
-
-/* =========================
-   ADMIN STATE
-========================= */
-
-let currentUser =
-  null;
-
-let isAdmin =
-  false;
-
-
-/* =========================
-   CHECK ADMIN
-========================= */
-
-function checkAdmin(
-  user
-) {
-
-  if (!user) {
-
-    return false;
-
   }
-
-  return (
-    String(user.email || "")
-      .toLowerCase()
-      .trim()
-    ===
-    ADMIN_EMAIL
-      .toLowerCase()
-      .trim()
-  );
-
-}
-
-
-/* =========================
-   UPDATE UI
-========================= */
-
-function updateAdminUI() {
-
-  if (isAdmin) {
-
-    loginButton.style.display =
-      "none";
-
-    logoutButton.style.display =
-      "inline-block";
-
-    adminStatus.style.display =
-      "block";
-
-    adminFolderActions.style.display =
-      "flex";
-
-    publicRefreshArea.style.display =
-      "none";
-
-    adminUploadBox.style.display =
-      "block";
-
-  } else {
-
-    loginButton.style.display =
-      "inline-block";
-
-    logoutButton.style.display =
-      "none";
-
-    adminStatus.style.display =
-      "none";
-
-    adminFolderActions.style.display =
-      "none";
-
-    publicRefreshArea.style.display =
-      "flex";
-
-    adminUploadBox.style.display =
-      "none";
-
-  }
-
-}
-
-
-/* =========================
-   AUTH STATE
-========================= */
-
-supabaseClient.auth.onAuthStateChange(
-  function(
-    event,
-    session
-  ) {
-
-    currentUser =
-      session
-        ? session.user
-        : null;
-
-    isAdmin =
-      checkAdmin(
-        currentUser
-      );
-
-    updateAdminUI();
-
-    if (
-      currentUser &&
-      !isAdmin
-    ) {
-
-      supabaseClient.auth
-        .signOut();
-
-      currentUser =
-        null;
-
-      isAdmin =
-        false;
-
-      updateAdminUI();
-
-      alert(
-        "❌ এই account-এর Admin permission নেই।"
-      );
-
-    }
-
-  }
-);
-
-
-/* =========================
-   LOGIN MODAL
-========================= */
-
-function openLogin() {
-
-  loginModal.style.display =
-    "flex";
-
-  loginMessage.textContent =
-    "";
-
-  /*
-    Guest-এর সামনে Admin Gmail
-    আর দেখানো হবে না।
-  */
-
-  loginEmail.value =
-    "";
-
-  loginPassword.value =
-    "";
-
-  setTimeout(
-    function() {
-
-      loginEmail.focus();
-
-    },
-    100
-  );
-
-}
-
-
-function closeLogin() {
-
-  loginModal.style.display =
-    "none";
-
-  loginMessage.textContent =
-    "";
-
-}
-
-
-async function loginAdmin() {
-
-  const email =
-    loginEmail.value.trim();
-
-  const password =
-    loginPassword.value;
-
-
-  if (!email) {
-
-    loginMessage.textContent =
-      "❌ Email দিন।";
-
-    return;
-
-  }
-
-
-  if (!password) {
-
-    loginMessage.textContent =
-      "❌ Password দিন।";
-
-    return;
-
-  }
-
-
-  if (
-    email.toLowerCase() !==
-    ADMIN_EMAIL.toLowerCase()
-  ) {
-
-    loginMessage.textContent =
-      "❌ এই Email Admin নয়।";
-
-    return;
-
-  }
-
-
-  loginSubmit.disabled =
-    true;
-
-  loginMessage.textContent =
-    "⏳ Login হচ্ছে...";
-
-
-  const { data, error } =
-    await supabaseClient.auth
-      .signInWithPassword({
-        email:
-          email,
-
-        password:
-          password
-      });
-
-
-  if (error) {
-
-    console.error(
-      "Login error:",
-      error
-    );
-
-    loginMessage.textContent =
-      "❌ Login হয়নি: " +
-      error.message;
-
-    loginSubmit.disabled =
-      false;
-
-    return;
-
-  }
-
-
-  currentUser =
-    data.user;
-
-  isAdmin =
-    checkAdmin(
-      currentUser
-    );
-
-
-  if (!isAdmin) {
-
-    await supabaseClient.auth
-      .signOut();
-
-    currentUser =
-      null;
-
-    isAdmin =
-      false;
-
-    updateAdminUI();
-
-    loginMessage.textContent =
-      "❌ এই account Admin নয়।";
-
-    loginSubmit.disabled =
-      false;
-
-    return;
-
-  }
-
-
-  updateAdminUI();
-
-  loginMessage.textContent =
-    "✅ Admin Login সফল হয়েছে!";
-
-
-  setTimeout(
-    function() {
-
-      closeLogin();
-
-      message.textContent =
-        "👑 Admin Mode চালু হয়েছে।";
-
-    },
-    700
-  );
-
-
-  loginSubmit.disabled =
-    false;
-
-}
-
-
-/* =========================
-   LOGOUT
-========================= */
-
-async function logoutAdmin() {
-
-  const answer =
-    confirm(
-      "🚪 Admin Logout করবেন?"
-    );
-
-
-  if (!answer) {
-    return;
-  }
-
-
-  await supabaseClient.auth
-    .signOut();
-
-
-  currentUser =
-    null;
-
-  isAdmin =
-    false;
-
-  updateAdminUI();
-
-  message.textContent =
-    "✅ Admin Logout হয়েছে।";
-
-}
-
-
-/* =========================
-   ADMIN SECURITY CHECK
-========================= */
-
-function requireAdmin() {
-
-  if (!isAdmin) {
-
-    alert(
-      "🔒 এই কাজটি শুধু Admin করতে পারবেন।"
-    );
-
-    return false;
-
-  }
-
-  return true;
-
-}
-
-
-/* =========================
-   FOLDER STATE
-========================= */
-
-let allFolders = [];
-
-let currentFolderId =
-  null;
-
-let currentPath = [];
-
-let currentImages = [];
-
-let currentViewerIndex =
-  0;
-
-
-/* =========================
-   SAVE / RESTORE FOLDER
-========================= */
-
-const FOLDER_STORAGE_KEY =
-  "picture_post_current_folder";
-
-
-function saveCurrentFolder() {
-
-  if (currentFolderId) {
-
-    localStorage.setItem(
-      FOLDER_STORAGE_KEY,
-      String(
-        currentFolderId
-      )
-    );
-
-  } else {
-
-    localStorage.removeItem(
-      FOLDER_STORAGE_KEY
-    );
-
-  }
-
-}
-
-
-function restoreCurrentFolder() {
-
-  const saved =
-    localStorage.getItem(
-      FOLDER_STORAGE_KEY
-    );
-
-
-  if (!saved) {
-
-    currentFolderId =
-      null;
-
-    return;
-
-  }
-
-
-  const id =
-    Number(saved);
-
-
-  const exists =
-    allFolders.some(
-      folder =>
-        folder.id === id
-    );
-
-
-  if (exists) {
-
-    currentFolderId =
-      id;
-
-  } else {
-
-    currentFolderId =
-      null;
-
-    localStorage.removeItem(
-      FOLDER_STORAGE_KEY
-    );
-
-  }
-
-}
-
-
-/* =========================
-   LOAD FOLDERS
-========================= */
-
-async function loadFolders() {
-
-  folders.innerHTML =
-    '<div class="empty">⏳ Folder লোড হচ্ছে...</div>';
-
-
-  const { data, error } =
-    await supabaseClient
-      .from("folders")
-      .select(
-        "id,name,parent_id"
-      )
-      .order(
-        "id",
-        {
-          ascending: true
-        }
-      );
-
-
-  if (error) {
-
-    console.error(error);
-
-    folders.innerHTML =
-      '<div class="empty">❌ Folder লোড করা যায়নি।</div>';
-
-    return false;
-
-  }
-
-
-  allFolders =
-    data || [];
-
-
-  restoreCurrentFolder();
-
-  renderFolders();
-
-  return true;
-
-}
-
-
-/* =========================
-   CURRENT PATH
-========================= */
-
-function getCurrentPath() {
-
-  if (!currentFolderId) {
-
-    return [];
-
-  }
-
-
-  const result = [];
-
-  let id =
-    currentFolderId;
-
-
-  while (id) {
-
-    const folder =
-      allFolders.find(
-        item =>
-          item.id === id
-      );
-
-
-    if (!folder) {
-      break;
-    }
-
-
-    result.unshift(
-      folder.name
-    );
-
-
-    id =
-      folder.parent_id;
-
-  }
-
-
-  return result;
-
-}
-
-
-/* =========================
-   SAFE STORAGE PATH
-========================= */
-
-function getStoragePath() {
-
-  if (!currentFolderId) {
-
-    return "";
-
-  }
-
-
-  return getFolderStoragePath(
-    currentFolderId
-  );
-
-}
-
-
-function getFolderStoragePath(
-  folderId
-) {
-
-  const parts = [];
-
-  let id =
-    folderId;
-
-
-  while (id) {
-
-    const folder =
-      allFolders.find(
-        item =>
-          item.id === id
-      );
-
-
-    if (!folder) {
-      break;
-    }
-
-
-    parts.unshift(
-      "folder_" +
-      folder.id
-    );
-
-
-    id =
-      folder.parent_id;
-
-  }
-
-
-  return parts.join("/");
-
-}
-
-
-/* =========================
-   RENDER FOLDERS
-========================= */
-
-function renderFolders() {
-
-  folders.innerHTML =
-    "";
-
-
-  const path =
-    getCurrentPath();
-
-
-  currentPath =
-    path;
-
-
-  currentFolder.textContent =
-    path.length === 0
-      ? "📁 Home"
-      : "📁 " +
-        path.join(" / ");
-
-
-  const children =
-    allFolders.filter(
-      folder =>
-        folder.parent_id ===
-        currentFolderId
-    );
-
-
-  if (
-    children.length === 0
-  ) {
-
-    folders.innerHTML =
-      '<div class="empty">এই Folder-এ এখনো কোনো Sub-folder নেই।</div>';
-
-    return;
-
-  }
-
-
-  children.forEach(
-    function(folder) {
-
-      const div =
-        document.createElement(
-          "div"
-        );
-
-      div.className =
-        "folder";
-
-
-      const openButton =
-        document.createElement(
-          "button"
-        );
-
-      openButton.className =
-        "folder-open";
-
-      openButton.innerHTML =
-        '<span class="folder-icon">📁</span>' +
-        '<span class="folder-name">' +
-        escapeHtml(
-          folder.name
-        ) +
-        '</span>';
-
-
-      openButton.onclick =
-        function() {
-
-          openFolder(
-            folder.id
-          );
-
-        };
-
-
-      div.appendChild(
-        openButton
-      );
-
-
-      if (isAdmin) {
-
-        const manage =
-          document.createElement(
-            "div"
-          );
-
-        manage.className =
-          "folder-manage";
-
-
-        const renameButton =
-          document.createElement(
-            "button"
-          );
-
-        renameButton.className =
-          "rename-button";
-
-        renameButton.textContent =
-          "✏️ Rename";
-
-
-        renameButton.onclick =
-          function(event) {
-
-            event.stopPropagation();
-
-            renameFolder(
-              folder
-            );
-
-          };
-
-
-        const deleteButton =
-          document.createElement(
-            "button"
-          );
-
-        deleteButton.className =
-          "delete-button";
-
-        deleteButton.textContent =
-          "🗑️ Delete";
-
-
-        deleteButton.onclick =
-          function(event) {
-
-            event.stopPropagation();
-
-            deleteFolder(
-              folder
-            );
-
-          };
-
-
-        manage.appendChild(
-          renameButton
-        );
-
-        manage.appendChild(
-          deleteButton
-        );
-
-
-        div.appendChild(
-          manage
-        );
-
-      }
-
-
-      folders.appendChild(
-        div
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================
-   OPEN FOLDER
-========================= */
-
-function openFolder(id) {
-
-  currentFolderId =
-    id;
-
-
-  saveCurrentFolder();
-
-  renderFolders();
-
-  loadPhotos();
-
-}
-
-
-/* =========================
-   HOME
-========================= */
-
-function goHome() {
-
-  currentFolderId =
-    null;
-
-
-  saveCurrentFolder();
-
-  renderFolders();
-
-  loadPhotos();
-
-}
-
-
-/* =========================
-   BACK
-========================= */
-
-function goBack() {
-
-  if (!currentFolderId) {
-
-    return;
-
-  }
-
-
-  const current =
-    allFolders.find(
-      folder =>
-        folder.id ===
-        currentFolderId
-    );
-
-
-  currentFolderId =
-    current
-      ? current.parent_id
-      : null;
-
-
-  saveCurrentFolder();
-
-  renderFolders();
-
-  loadPhotos();
-
-}
-
-
-/* =========================
-   CREATE FOLDER
-========================= */
-
-async function createFolder() {
-
-  if (!requireAdmin()) {
-    return;
-  }
-
-
-  const folderName =
-    prompt(
-      currentFolderId
-        ? "Sub-folder-এর নাম লিখুন:"
-        : "নতুন Folder-এর নাম লিখুন:"
-    );
-
-
-  if (!folderName) {
-    return;
-  }
-
-
-  const cleanName =
-    folderName.trim();
-
-
-  if (!cleanName) {
-    return;
-  }
-
-
-  const exists =
-    allFolders.some(
-      folder =>
-        folder.parent_id ===
-          currentFolderId &&
-        folder.name.toLowerCase() ===
-          cleanName.toLowerCase()
-    );
-
-
-  if (exists) {
-
-    alert(
-      "এই নামে Folder আগে থেকেই আছে।"
-    );
-
-    return;
-
-  }
-
-
-  const { error } =
-    await supabaseClient
-      .from("folders")
-      .insert({
-        name:
-          cleanName,
-
-        parent_id:
-          currentFolderId
-      });
-
-
-  if (error) {
-
-    alert(
-      "❌ Folder তৈরি হয়নি: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  await loadFolders();
-
-}
-
-
-/* =========================
-   RENAME FOLDER
-========================= */
-
-async function renameFolder(
-  folder
-) {
-
-  if (!requireAdmin()) {
-    return;
-  }
-
-
-  const newName =
-    prompt(
-      "নতুন Folder নাম লিখুন:",
-      folder.name
-    );
-
-
-  if (!newName) {
-    return;
-  }
-
-
-  const cleanName =
-    newName.trim();
-
-
-  if (!cleanName) {
-    return;
-  }
-
-
-  if (
-    cleanName ===
-    folder.name
-  ) {
-
-    return;
-
-  }
-
-
-  const exists =
-    allFolders.some(
-      item =>
-        item.id !==
-          folder.id &&
-        item.parent_id ===
-          folder.parent_id &&
-        item.name.toLowerCase() ===
-          cleanName.toLowerCase()
-    );
-
-
-  if (exists) {
-
-    alert(
-      "এই নামে Folder আগে থেকেই আছে।"
-    );
-
-    return;
-
-  }
-
-
-  const { error } =
-    await supabaseClient
-      .from("folders")
-      .update({
-        name:
-          cleanName
-      })
-      .eq(
-        "id",
-        folder.id
-      );
-
-
-  if (error) {
-
-    alert(
-      "❌ Rename হয়নি: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  message.textContent =
-    "✅ Folder Rename হয়েছে।";
-
-
-  await loadFolders();
-
-  loadPhotos();
-
-}
-
-
-/* =========================
-   GET DESCENDANT IDS
-========================= */
-
-function getDescendantIds(
-  parentId
-) {
-
-  const result = [];
-
-
-  const children =
-    allFolders.filter(
-      folder =>
-        folder.parent_id ===
-        parentId
-    );
-
-
-  for (
-    const child of children
-  ) {
-
-    result.push(
-      child.id
-    );
-
-
-    result.push(
-      ...getDescendantIds(
-        child.id
-      )
-    );
-
-  }
-
-
-  return result;
-
-}
-
-
-/* =========================
-   DELETE FOLDER
-========================= */
-
-async function deleteFolder(
-  folder
-) {
-
-  if (!requireAdmin()) {
-    return;
-  }
-
-
-  const answer =
-    confirm(
-      '🗑️ "' +
-      folder.name +
-      '" Folder Delete করবেন?\n\nএই Folder-এর ভিতরের ছবি ও Sub-folder-ও মুছে যাবে।'
-    );
-
-
-  if (!answer) {
-    return;
-  }
-
-
-  message.textContent =
-    "⏳ Folder Delete হচ্ছে...";
-
-
-  const ids =
-    getDescendantIds(
-      folder.id
-    );
-
-
-  ids.push(
-    folder.id
-  );
-
-
-  for (
-    const id of ids
-  ) {
-
-    const storagePath =
-      getFolderStoragePath(
-        id
-      );
-
-
-    const removed =
-      await deleteStorageTree(
-        storagePath
-      );
-
-
-    if (!removed) {
-
-      message.textContent =
-        "❌ Folder-এর ছবি Delete করা যায়নি।";
-
-      return;
-
-    }
-
-  }
-
-
-  const { error } =
-    await supabaseClient
-      .from("folders")
-      .delete()
-      .in(
-        "id",
-        ids
-      );
-
-
-  if (error) {
-
-    alert(
-      "❌ Folder Delete হয়নি: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  message.textContent =
-    "✅ Folder Delete হয়েছে।";
-
-
-  if (
-    ids.includes(
-      currentFolderId
-    )
-  ) {
-
-    currentFolderId =
-      folder.parent_id;
-
-    saveCurrentFolder();
-
-  }
-
-
-  await loadFolders();
-
-  loadPhotos();
-
-}
-
-
-/* =========================
-   STORAGE LIST
-========================= */
-
-async function listStorageFiles(
-  path
-) {
-
-  const { data, error } =
-    await supabaseClient
-      .storage
-      .from("photos")
-      .list(
-        path,
-        {
-          limit: 1000
-        }
-      );
-
-
-  if (error) {
-
-    console.error(error);
-
-    return null;
-
-  }
-
-
-  const files = [];
-
-
-  for (
-    const item of data || []
-  ) {
-
-    const fullPath =
-      path
-        ? path +
-          "/" +
-          item.name
-        : item.name;
-
-
-    if (
-      item.metadata
-    ) {
-
-      files.push(
-        fullPath
-      );
-
-    } else {
-
-      const childFiles =
-        await listStorageFiles(
-          fullPath
-        );
-
-
-      if (
-        childFiles === null
-      ) {
-
-        return null;
-
-      }
-
-
-      files.push(
-        ...childFiles
-      );
-
-    }
-
-  }
-
-
-  return files;
-
-}
-
-
-/* =========================
-   DELETE STORAGE TREE
-========================= */
-
-async function deleteStorageTree(
-  path
-) {
-
-  if (!isAdmin) {
-    return false;
-  }
-
-
-  const files =
-    await listStorageFiles(
-      path
-    );
-
-
-  if (files === null) {
-    return false;
-  }
-
-
-  if (
-    files.length === 0
-  ) {
-
-    return true;
-
-  }
-
-
-  const { error } =
-    await supabaseClient
-      .storage
-      .from("photos")
-      .remove(
-        files
-      );
-
-
-  if (error) {
-
-    console.error(error);
-
-    return false;
-
-  }
-
-
-  return true;
-
-}
-
-
-/* =========================
-   DELETE ONE PHOTO
-========================= */
-
-async function deletePhoto(
-  fullPath,
-  card
-) {
-
-  if (!requireAdmin()) {
-    return;
-  }
-
-
-  const answer =
-    confirm(
-      "🗑️ এই ছবিটি Delete করবেন?"
-    );
-
-
-  if (!answer) {
-    return;
-  }
-
-
-  const deleteButton =
-    card.querySelector(
-      ".photo-delete-button"
-    );
-
-
-  if (deleteButton) {
-
-    deleteButton.disabled =
-      true;
-
-    deleteButton.textContent =
-      "⏳ Delete হচ্ছে...";
-
-  }
-
-
-  const { error } =
-    await supabaseClient
-      .storage
-      .from("photos")
-      .remove([
-        fullPath
-      ]);
-
-
-  if (error) {
-
-    console.error(error);
-
-    alert(
-      "❌ ছবি Delete হয়নি: " +
-      error.message
-    );
-
-
-    if (deleteButton) {
-
-      deleteButton.disabled =
-        false;
-
-      deleteButton.textContent =
-        "🗑️ Delete";
-
-    }
-
-    return;
-
-  }
-
-
-  await supabaseClient
-    .from("photo_likes")
-    .delete()
-    .eq(
-      "photo_name",
-      fullPath
-    );
-
-
-  message.textContent =
-    "✅ ছবি Delete হয়েছে।";
-
-
-  if (
-    viewer.style.display ===
-    "flex"
-  ) {
-
-    closeViewer();
-
-  }
-
-
-  await loadPhotos();
-
-}
-
-
-/* =========================
-   REFRESH
-========================= */
-
-async function refreshFolders() {
-
-  await loadFolders();
-
-  await loadPhotos();
-
-}
-
-
-/* =========================
-   ESCAPE HTML
-========================= */
-
-function escapeHtml(
-  text
-) {
-
-  const div =
-    document.createElement(
-      "div"
-    );
-
-
-  div.textContent =
-    text;
-
-
-  return div.innerHTML;
-
-}
-
-
-/* =========================
-   FILE EXTENSION
-========================= */
-
-function getFileExtension(
-  file
-) {
-
-  const originalName =
-    file.name || "";
-
-
-  const dot =
-    originalName.lastIndexOf(".");
-
-
-  if (
-    dot !== -1 &&
-    dot <
-      originalName.length - 1
-  ) {
-
-    const ext =
-      originalName
-        .substring(
-          dot + 1
-        )
-        .toLowerCase()
-        .replace(
-          /[^a-z0-9]/g,
-          ""
-        );
-
-
-    if (ext) {
-
-      return ext;
-
-    }
-
-  }
-
-
-  if (
-    file.type ===
-    "image/png"
-  ) {
-
-    return "png";
-
-  }
-
-
-  if (
-    file.type ===
-    "image/webp"
-  ) {
-
-    return "webp";
-
-  }
-
-
-  if (
-    file.type ===
-    "image/gif"
-  ) {
-
-    return "gif";
-
-  }
-
-
-  return "jpg";
-
-}
-
-
-/* =========================
-   IMAGE PREVIEW
-========================= */
-
-photoInput.addEventListener(
-  "change",
-  function() {
-
-    if (!isAdmin) {
-
-      this.value =
-        "";
-
-      return;
-
-    }
-
-
-    previewArea.innerHTML =
-      "";
-
-
-    const files =
-      Array.from(
-        this.files || []
-      );
-
-
-    if (
-      files.length === 0
-    ) {
-
-      return;
-
-    }
-
-
-    files.forEach(
-      function(
-        file,
-        index
-      ) {
-
-        const item =
-          document.createElement(
-            "div"
-          );
-
-        item.className =
-          "preview-item";
-
-
-        const img =
-          document.createElement(
-            "img"
-          );
-
-
-        img.src =
-          URL.createObjectURL(
-            file
-          );
-
-
-        const number =
-          document.createElement(
-            "div"
-          );
-
-
-        number.className =
-          "preview-number";
-
-
-        number.textContent =
-          "#" +
-          (index + 1);
-
-
-        item.appendChild(
-          img
-        );
-
-        item.appendChild(
-          number
-        );
-
-
-        previewArea.appendChild(
-          item
-        );
-
-      }
-    );
-
-
-    message.textContent =
-      "📸 " +
-      files.length +
-      "টি ছবি নির্বাচিত হয়েছে।";
-
-  }
-);
-
-
-/* =========================
-   UPLOAD MULTIPLE PHOTOS
-========================= */
-
-uploadButton.addEventListener(
-  "click",
-  async function() {
-
-    if (!requireAdmin()) {
-      return;
-    }
-
-
-    const files =
-      Array.from(
-        photoInput.files || []
-      );
-
-
-    if (
-      files.length === 0
-    ) {
-
-      message.textContent =
-        "❌ আগে ছবি নির্বাচন করুন।";
-
-      return;
-
-    }
-
-
-    uploadButton.disabled =
-      true;
-
-    photoInput.disabled =
-      true;
-
-
-    let successCount =
-      0;
-
-    let failedCount =
-      0;
-
-
-    try {
-
-      const folderPath =
-        getStoragePath();
-
-
-      for (
-        let i = 0;
-        i < files.length;
-        i++
-      ) {
-
-        const file =
-          files[i];
-
-
-        message.textContent =
-          "⏳ ছবি " +
-          (i + 1) +
-          " / " +
-          files.length +
-          " আপলোড হচ্ছে...";
-
-
-        const extension =
-          getFileExtension(
-            file
-          );
-
-
-        const fileName =
-          Date.now() +
-          "-" +
-          String(
-            i + 1
-          ).padStart(
-            3,
-            "0"
-          ) +
-          "-" +
-          Math.random()
-            .toString(36)
-            .substring(
-              2,
-              8
-            ) +
-          "." +
-          extension;
-
-
-        const storagePath =
-          folderPath
-            ? folderPath +
-              "/" +
-              fileName
-            : fileName;
-
-
-        const { error } =
-          await supabaseClient
-            .storage
-            .from("photos")
-            .upload(
-              storagePath,
-              file,
-              {
-                upsert:
-                  false,
-
-                contentType:
-                  file.type ||
-                  "image/jpeg"
-              }
-            );
-
-
-        if (error) {
-
-          console.error(
-            "Upload error:",
-            error
-          );
-
-          failedCount++;
-
-        } else {
-
-          successCount++;
-
-        }
-
-      }
-
-
-      if (
-        successCount > 0 &&
-        failedCount === 0
-      ) {
-
-        message.textContent =
-          "✅ " +
-          successCount +
-          "টি ছবি সফলভাবে পোস্ট হয়েছে!";
-
-      } else if (
-        successCount > 0 &&
-        failedCount > 0
-      ) {
-
-        message.textContent =
-          "⚠️ " +
-          successCount +
-          "টি ছবি পোস্ট হয়েছে, " +
-          failedCount +
-          "টি হয়নি।";
-
-      } else {
-
-        message.textContent =
-          "❌ কোনো ছবি পোস্ট হয়নি।";
-
-      }
-
-
-      photoInput.value =
-        "";
-
-      previewArea.innerHTML =
-        "";
-
-
-      await loadPhotos();
-
-
-    } catch (error) {
-
-      console.error(error);
-
-      message.textContent =
-        "❌ ছবি পোস্ট হয়নি: " +
-        error.message;
-
-    }
-
-
-    uploadButton.disabled =
-      false;
-
-    photoInput.disabled =
-      false;
-
-  }
-);
-
-
-/* =========================
-   LOAD PHOTOS
-========================= */
-
-async function loadPhotos() {
-
-  gallery.innerHTML =
-    '<div class="empty">⏳ ছবি লোড হচ্ছে...</div>';
-
-
-  const folderPath =
-    getStoragePath();
-
-
-  const { data, error } =
-    await supabaseClient
-      .storage
-      .from("photos")
-      .list(
-        folderPath,
-        {
-          limit: 1000,
-
-          sortBy: {
-            column:
-              "name",
-
-            order:
-              "asc"
-          }
-        }
-      );
-
-
-  if (error) {
-
-    console.error(error);
-
-    gallery.innerHTML =
-      '<div class="empty">❌ ছবি লোড করা যায়নি।</div>';
-
-    return;
-
-  }
-
-
-  const files =
-    (data || [])
-      .filter(
-        file =>
-          file.name &&
-          file.metadata
-      );
-
-
-  currentImages =
-    files;
-
-
-  if (
-    files.length === 0
-  ) {
-
-    gallery.innerHTML =
-      '<div class="empty">এই Folder-এ এখনো কোনো ছবি নেই।</div>';
-
-    return;
-
-  }
-
-
-  gallery.innerHTML =
-    "";
-
-
-  for (
-    let i = 0;
-    i < files.length;
-    i++
-  ) {
-
-    const file =
-      files[i];
-
-
-    const fullPath =
-      folderPath
-        ? folderPath +
-          "/" +
-          file.name
-        : file.name;
-
-
-    const { data: publicData } =
-      supabaseClient
-        .storage
-        .from("photos")
-        .getPublicUrl(
-          fullPath
-        );
-
-
-    const card =
-      document.createElement(
-        "div"
-      );
-
-    card.className =
-      "photo-card";
-
-
-    const number =
-      document.createElement(
-        "div"
-      );
-
-    number.className =
-      "photo-number";
-
-    number.textContent =
-      "#" +
-      (i + 1);
-
-
-    const img =
-      document.createElement(
-        "img"
-      );
-
-    img.src =
-      publicData.publicUrl;
-
-    img.alt =
-      "Posted picture " +
-      (i + 1);
-
-
-    img.onclick =
-      function() {
-
-        openViewer(i);
-
-      };
-
-
-    const info =
-      document.createElement(
-        "div"
-      );
-
-    info.className =
-      "photo-info";
-
-
-    const likeButton =
-      document.createElement(
-        "button"
-      );
-
-    likeButton.className =
-      "like-button";
-
-    likeButton.textContent =
-      "❤️ লোড হচ্ছে...";
-
-
-    likeButton.onclick =
-      async function(event) {
-
-        event.stopPropagation();
-
-        await addLike(
-          fullPath,
-          likeButton
-        );
-
-      };
-
-
-    info.appendChild(
-      likeButton
-    );
-
-
-    if (isAdmin) {
-
-      const deleteButton =
-        document.createElement(
-          "button"
-        );
-
-      deleteButton.className =
-        "photo-delete-button";
-
-      deleteButton.textContent =
-        "🗑️ Delete";
-
-
-      deleteButton.onclick =
-        async function(event) {
-
-          event.stopPropagation();
-
-          await deletePhoto(
-            fullPath,
-            card
-          );
-
-        };
-
-
-      info.appendChild(
-        deleteButton
-      );
-
-    }
-
-
-    card.appendChild(
-      number
-    );
-
-    card.appendChild(
-      img
-    );
-
-    card.appendChild(
-      info
-    );
-
-
-    gallery.appendChild(
-      card
-    );
-
-
-    loadLikeCount(
-      fullPath,
-      likeButton
-    );
-
-  }
-
-}
-
-
-/* =========================
-   LIKE COUNT
-========================= */
-
-async function loadLikeCount(
-  photoName,
-  button
-) {
-
-  const { data, error } =
-    await supabaseClient
-      .from("photo_likes")
-      .select(
-        "like_count"
-      )
-      .eq(
-        "photo_name",
-        photoName
-      )
-      .maybeSingle();
-
-
-  if (error) {
-
-    console.error(
-      "Like load error:",
-      error
-    );
-
-    button.textContent =
-      "❤️ 0";
-
-    return;
-
-  }
-
-
-  const count =
-    data
-      ? Number(
-          data.like_count || 0
-        )
-      : 0;
-
-
-  button.textContent =
-    "❤️ " +
-    count;
-
-}
-
-
-/* =========================
-   ADD LIKE
-========================= */
-
-async function addLike(
-  photoName,
-  button
-) {
-
-  if (
-    button.disabled
-  ) {
-
-    return;
-
-  }
-
-
-  button.disabled =
-    true;
-
-
-  try {
-
-    const {
-      data: oldData,
-      error: readError
-    } =
-      await supabaseClient
-        .from("photo_likes")
-        .select(
-          "like_count"
-        )
-        .eq(
-          "photo_name",
-          photoName
-        )
-        .maybeSingle();
-
-
-    if (readError) {
-
-      console.error(
-        "Like read error:",
-        readError
-      );
-
-      button.textContent =
-        "❌ Like হয়নি";
-
-      return;
-
-    }
-
-
-    if (!oldData) {
-
-      const { error } =
-        await supabaseClient
-          .from("photo_likes")
-          .insert({
-            photo_name:
-              photoName,
-
-            like_count:
-              1
-          });
-
-
-      if (error) {
-
-        console.error(
-          "Like insert error:",
-          error
-        );
-
-        button.textContent =
-          "❌ Like হয়নি";
-
-        return;
-
-      }
-
-
-      button.textContent =
-        "❤️ 1";
-
-
-      button.classList.add(
-        "liked"
-      );
-
-
-    } else {
-
-      const newCount =
-        Number(
-          oldData.like_count || 0
-        ) + 1;
-
-
-      const { error } =
-        await supabaseClient
-          .from("photo_likes")
-          .update({
-            like_count:
-              newCount
-          })
-          .eq(
-            "photo_name",
-            photoName
-          );
-
-
-      if (error) {
-
-        console.error(
-          "Like update error:",
-          error
-        );
-
-        button.textContent =
-          "❌ Like হয়নি";
-
-        return;
-
-      }
-
-
-      button.textContent =
-        "❤️ " +
-        newCount;
-
-
-      button.classList.add(
-        "liked"
-      );
-
-    }
-
-
-  } finally {
-
-    button.disabled =
-      false;
-
-  }
-
-}
-
-
-/* =========================
-   IMAGE VIEWER
-========================= */
-
-function openViewer(
-  index
-) {
-
-  if (
-    !currentImages.length
-  ) {
-
-    return;
-
-  }
-
-
-  currentViewerIndex =
-    index;
-
-
-  showViewerImage();
-
-
-  viewer.style.display =
-    "flex";
-
-}
-
-
-function closeViewer() {
-
-  viewer.style.display =
-    "none";
-
-}
-
-
-async function showViewerImage() {
-
-  const file =
-    currentImages[
-      currentViewerIndex
-    ];
-
-
-  if (!file) {
-
-    return;
-
-  }
-
-
-  const folderPath =
-    getStoragePath();
-
-
-  const fullPath =
-    folderPath
-      ? folderPath +
-        "/" +
-        file.name
-      : file.name;
-
-
-  const { data } =
-    supabaseClient
-      .storage
-      .from("photos")
-      .getPublicUrl(
-        fullPath
-      );
-
-
-  viewerImage.src =
-    data.publicUrl;
-
-
-  loadViewerLike(
-    fullPath
-  );
-
-}
-
-
-async function loadViewerLike(
-  photoName
-) {
-
-  const { data } =
-    await supabaseClient
-      .from("photo_likes")
-      .select(
-        "like_count"
-      )
-      .eq(
-        "photo_name",
-        photoName
-      )
-      .maybeSingle();
-
-
-  const count =
-    data
-      ? Number(
-          data.like_count || 0
-        )
-      : 0;
-
-
-  viewerLike.textContent =
-    "❤️ " +
-    count;
-
-}
-
-
-async function likeCurrentImage() {
-
-  const file =
-    currentImages[
-      currentViewerIndex
-    ];
-
-
-  if (!file) {
-
-    return;
-
-  }
-
-
-  const folderPath =
-    getStoragePath();
-
-
-  const fullPath =
-    folderPath
-      ? folderPath +
-        "/" +
-        file.name
-      : file.name;
-
-
-  await addLike(
-    fullPath,
-    viewerLike
-  );
-
-}
-
-
-function previousImage() {
-
-  if (
-    !currentImages.length
-  ) {
-
-    return;
-
-  }
-
-
-  currentViewerIndex--;
-
-
-  if (
-    currentViewerIndex < 0
-  ) {
-
-    currentViewerIndex =
-      currentImages.length - 1;
-
-  }
-
-
-  showViewerImage();
-
-}
-
-
-function nextImage() {
-
-  if (
-    !currentImages.length
-  ) {
-
-    return;
-
-  }
-
-
-  currentViewerIndex++;
-
-
-  if (
-    currentViewerIndex >=
-    currentImages.length
-  ) {
-
-    currentViewerIndex =
-      0;
-
-  }
-
-
-  showViewerImage();
-
-}
-
-
-/* =========================
-   SWIPE
-========================= */
-
-let touchStartX =
-  0;
-
-let touchEndX =
-  0;
-
-
-viewerImage.addEventListener(
-  "touchstart",
-  function(event) {
-
-    touchStartX =
-      event.changedTouches[0]
-        .screenX;
-
-  },
-  {
-    passive: true
-  }
-);
-
-
-viewerImage.addEventListener(
-  "touchend",
-  function(event) {
-
-    touchEndX =
-      event.changedTouches[0]
-        .screenX;
-
-
-    const difference =
-      touchEndX -
-      touchStartX;
-
-
-    if (
-      Math.abs(difference) < 50
-    ) {
-
-      return;
-
-    }
-
-
-    if (
-      difference > 0
-    ) {
-
-      previousImage();
-
-    } else {
-
-      nextImage();
-
-    }
-
-  },
-  {
-    passive: true
-  }
-);
-
-
-/* =========================
-   START APP
-========================= */
-
-async function startApp() {
-
-  const {
-    data: sessionData
-  } =
-    await supabaseClient
-      .auth
-      .getSession();
-
-
-  currentUser =
-    sessionData.session
-      ? sessionData.session.user
-      : null;
-
-
-  isAdmin =
-    checkAdmin(
-      currentUser
-    );
-
-
-  if (
-    currentUser &&
-    !isAdmin
-  ) {
-
-    await supabaseClient.auth
-      .signOut();
-
-    currentUser =
-      null;
-
-    isAdmin =
-      false;
-
-  }
-
-
-  updateAdminUI();
-
-
-  const foldersLoaded =
-    await loadFolders();
-
-
-  if (foldersLoaded) {
-
-    await loadPhotos();
-
-  }
-
-}
-
-
-startApp();
-
-</script>
-
-</body>
-</html>
+</style>
