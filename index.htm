@@ -576,8 +576,6 @@
     </div>
 
 
-    <!-- শুধু Admin দেখতে পাবে -->
-
     <div
       id="adminFolderActions"
       class="folder-actions"
@@ -594,8 +592,6 @@
 
     </div>
 
-
-    <!-- Public-ও Refresh করতে পারবে -->
 
     <div
       id="publicRefreshArea"
@@ -685,7 +681,7 @@
       type="email"
       id="loginEmail"
       placeholder="Admin Email"
-      autocomplete="email"
+      autocomplete="off"
     >
 
     <input
@@ -1020,11 +1016,6 @@ supabaseClient.auth.onAuthStateChange(
 
     updateAdminUI();
 
-    /*
-      অন্য কোনো account দিয়ে login করলে
-      Admin mode চালু হবে না।
-    */
-
     if (
       currentUser &&
       !isAdmin
@@ -1063,8 +1054,13 @@ function openLogin() {
   loginMessage.textContent =
     "";
 
+  /*
+    Guest-এর সামনে Admin Gmail
+    আর দেখানো হবে না।
+  */
+
   loginEmail.value =
-    ADMIN_EMAIL;
+    "";
 
   loginPassword.value =
     "";
@@ -1072,7 +1068,7 @@ function openLogin() {
   setTimeout(
     function() {
 
-      loginPassword.focus();
+      loginEmail.focus();
 
     },
     100
@@ -1627,10 +1623,6 @@ function renderFolders() {
         openButton
       );
 
-
-      /*
-        Rename/Delete শুধু Admin-এর জন্য।
-      */
 
       if (isAdmin) {
 
@@ -2981,10 +2973,6 @@ async function loadPhotos() {
     );
 
 
-    /*
-      Photo Delete শুধু Admin-এর জন্য।
-    */
-
     if (isAdmin) {
 
       const deleteButton =
@@ -3535,10 +3523,6 @@ viewerImage.addEventListener(
 
 async function startApp() {
 
-  /*
-    আগে Auth session দেখি।
-  */
-
   const {
     data: sessionData
   } =
@@ -3558,11 +3542,6 @@ async function startApp() {
       currentUser
     );
 
-
-  /*
-    কোনো ভুল account session থাকলে
-    Admin access দেওয়া হবে না।
-  */
 
   if (
     currentUser &&
