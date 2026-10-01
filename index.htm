@@ -1,585 +1,3061 @@
-<style>
-*{
-  box-sizing:border-box;
-}
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-html,body{
-  margin:0;
-  padding:0;
-  min-height:100%;
-}
+  <title>Picture Post</title>
 
-body{
-  font-family:Arial,sans-serif;
-  background:#f4f4f4;
-  color:#222;
-}
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-button{
-  border:1px solid #d0d0d0;
-  border-radius:7px;
-  padding:7px 10px;
-  font-size:11px;
-  cursor:pointer;
-  background:#fff;
-  color:#222;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-button:active{
-  transform:scale(.97);
-}
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+    }
 
-button:disabled{
-  opacity:.55;
-}
+    body {
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, #fffdf5 0%, #f5f3ed 42%, #eeeeeb 100%);
+      color: #222;
+    }
 
-/* HEADER */
-header{
-  background:#111;
-  color:#fff;
-  text-align:center;
-  padding:10px 8px;
-  position:sticky;
-  top:0;
-  z-index:20;
-  border-bottom:2px solid #d4af37;
-}
+    button {
+      border: 1px solid #d8c27a;
+      border-radius: 7px;
+      padding: 7px 9px;
+      font-size: 11px;
+      cursor: pointer;
+      background: #fff;
+      color: #5b4810;
+      transition: .15s;
+    }
 
-header h1{
-  margin:0;
-  font-size:20px;
-  color:#d4af37;
-}
+    button:active {
+      transform: scale(.97);
+    }
 
-header p{
-  margin:3px 0 7px;
-  color:#ccc;
-  font-size:10px;
-}
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
 
-.auth-area{
-  display:flex;
-  justify-content:center;
-  gap:5px;
-  flex-wrap:wrap;
-}
+    /* =========================
+       HEADER
+    ========================= */
 
-.auth-button{
-  background:#222;
-  color:#f0cc58;
-  border:1px solid #6d571b;
-  padding:6px 9px;
-  border-radius:6px;
-  font-size:10px;
-}
+    header {
+      background:
+        linear-gradient(135deg, #151515, #29230f);
+      color: white;
+      text-align: center;
+      padding: 10px 8px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 2px solid #d4af37;
+      box-shadow: 0 3px 18px rgba(0,0,0,.18);
+    }
 
-.admin-status{
-  display:none;
-  color:#d4af37;
-  font-size:9px;
-  margin-top:4px;
-}
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+      color: #e5c557;
+    }
 
-/* MAIN */
-.container{
-  width:100%;
-  max-width:700px;
-  margin:auto;
-  padding:7px;
-}
+    header p {
+      margin: 3px 0 7px;
+      color: #ccc;
+      font-size: 10px;
+    }
 
-/* HOME / BACK */
-.top-buttons{
-  display:flex;
-  gap:5px;
-  margin-bottom:7px;
-}
+    .auth-area {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
 
-.top-buttons button{
-  flex:1;
-  background:#fff;
-  color:#333;
-  border:1px solid #ccc;
-  padding:7px;
-  font-size:10px;
-}
+    .auth-button {
+      background: #202020;
+      color: #f0cc58;
+      border: 1px solid #6d571b;
+      padding: 6px 9px;
+      border-radius: 6px;
+      font-size: 10px;
+    }
 
-/* BOX */
-.box{
-  background:#fff;
-  padding:9px;
-  border-radius:10px;
-  margin-bottom:7px;
-  border:1px solid #ddd;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
-}
+    .admin-status {
+      display: none;
+      color: #d4af37;
+      font-size: 9px;
+      margin-top: 4px;
+    }
 
-.box h2{
-  margin:0 0 6px;
-  font-size:13px;
-  color:#222;
-}
+    /* =========================
+       MAIN
+    ========================= */
 
-#currentFolder{
-  color:#777;
-  font-size:9px;
-  margin-bottom:6px;
-  word-break:break-word;
-}
+    .container {
+      width: 100%;
+      max-width: 700px;
+      margin: auto;
+      padding: 6px;
+    }
 
-/* FOLDER ACTIONS */
-.folder-actions{
-  display:flex;
-  gap:5px;
-  margin-bottom:6px;
-}
+    /* =========================
+       HOME / BACK
+    ========================= */
 
-.folder-actions button{
-  flex:1;
-  background:#f7f7f7;
-  color:#333;
-  border:1px solid #ccc;
-  padding:6px 4px;
-  font-size:9px;
-}
+    .top-buttons {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 6px;
+    }
 
-/* FOLDERS */
-.folders{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:5px;
-}
+    .top-buttons button {
+      flex: 1;
+      background: #fff;
+      color: #594710;
+      border: 1px solid #d8c27a;
+      padding: 6px 7px;
+      font-size: 10px;
+      border-radius: 7px;
+      box-shadow: 0 2px 7px rgba(0,0,0,.06);
+    }
 
-.folder{
-  background:#fafafa;
-  padding:4px 2px;
-  border-radius:8px;
-  border:1px solid #ddd;
-  min-width:0;
-}
+    /* =========================
+       BOX
+    ========================= */
 
-.folder-open{
-  width:100%;
-  background:transparent;
-  border:0;
-  padding:4px 1px;
-  text-align:center;
-  color:#222;
-}
+    .box {
+      background: rgba(255,255,255,.96);
+      padding: 8px;
+      border-radius: 10px;
+      margin-bottom: 7px;
+      border: 1px solid #e1d8b8;
+      box-shadow: 0 2px 10px rgba(80,60,0,.07);
+    }
 
-.folder-icon{
-  display:block;
-  font-size:18px;
-  line-height:19px;
-  margin-bottom:1px;
-}
+    .box h2 {
+      margin: 0 0 6px;
+      font-size: 13px;
+      color: #3d3213;
+    }
 
-.folder-name{
-  display:block;
-  font-size:9px;
-  line-height:11px;
-  font-weight:bold;
-  word-break:break-word;
-  color:#333;
-}
+    #currentFolder {
+      color: #777;
+      font-size: 9px;
+      margin-bottom: 6px;
+      word-break: break-word;
+    }
 
-.folder-manage{
-  display:flex;
-  gap:2px;
-  margin-top:3px;
-}
+    /* =========================
+       FOLDER ACTIONS
+    ========================= */
 
-.folder-manage button{
-  flex:1;
-  padding:3px 1px;
-  font-size:7px;
-  border-radius:5px;
-  white-space:nowrap;
-}
+    .folder-actions {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 6px;
+    }
 
-.rename-button{
-  background:#fff8df;
-  color:#725900;
-  border:1px solid #d9bd55;
-}
+    .folder-actions button {
+      flex: 1;
+      background: #fffdf5;
+      color: #624d10;
+      border: 1px solid #d8c27a;
+      padding: 5px 4px;
+      font-size: 9px;
+      border-radius: 6px;
+    }
 
-.delete-button{
-  background:#fff0f0;
-  color:#b22;
-  border:1px solid #e0aaaa;
-}
+    /* =========================
+       FOLDERS
+    ========================= */
 
-/* FILE INPUT */
-input[type="file"]{
-  width:100%;
-  margin:5px 0;
-  font-size:10px;
-  color:#555;
-  background:#fff;
-  border:1px solid #ccc;
-  border-radius:6px;
-  padding:5px;
-}
+    .folders {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+    }
 
-/* PREVIEW */
-#previewArea{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:4px;
-  margin:5px 0;
-}
+    .folder {
+      background:
+        linear-gradient(145deg, #fffef9, #f7f4e8);
+      padding: 3px 2px;
+      border-radius: 8px;
+      border: 1px solid #ded3ad;
+      min-width: 0;
+      box-shadow: 0 2px 6px rgba(80,60,0,.06);
+    }
 
-.preview-item{
-  position:relative;
-  background:#eee;
-  border-radius:6px;
-  overflow:hidden;
-  aspect-ratio:1/1;
-  border:1px solid #ddd;
-}
+    .folder-open {
+      width: 100%;
+      background: transparent;
+      border: 0;
+      padding: 3px 1px;
+      text-align: center;
+      color: #333;
+    }
 
-.preview-item img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
+    .folder-icon {
+      display: block;
+      font-size: 17px;
+      line-height: 18px;
+      margin-bottom: 1px;
+    }
 
-.preview-number{
-  position:absolute;
-  left:3px;
-  top:3px;
-  background:rgba(0,0,0,.75);
-  color:#fff;
-  padding:1px 4px;
-  border-radius:4px;
-  font-size:7px;
-}
+    .folder-name {
+      display: block;
+      font-size: 9px;
+      line-height: 11px;
+      font-weight: bold;
+      word-break: break-word;
+      color: #403715;
+    }
 
-/* UPLOAD */
-#uploadButton{
-  width:100%;
-  background:#d4af37;
-  color:#111;
-  border:0;
-  padding:8px;
-  font-size:10px;
-  font-weight:bold;
-  border-radius:7px;
-}
+    .folder-manage {
+      display: flex;
+      gap: 2px;
+      margin-top: 3px;
+    }
 
-#message{
-  text-align:center;
-  margin-top:5px;
-  font-size:9px;
-  font-weight:bold;
-  word-break:break-word;
-  color:#8a6d00;
-}
+    .folder-manage button {
+      flex: 1;
+      padding: 3px 1px;
+      font-size: 7px;
+      border-radius: 5px;
+      white-space: nowrap;
+    }
 
-/* GALLERY */
-.gallery{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:5px;
-}
+    .rename-button {
+      background: #fff9df;
+      color: #705900;
+      border: 1px solid #d9bd55;
+    }
 
-.photo-card{
-  background:#fff;
-  border-radius:8px;
-  overflow:hidden;
-  border:1px solid #ddd;
-  box-shadow:0 2px 7px rgba(0,0,0,.08);
-  position:relative;
-}
+    .delete-button {
+      background: #fff1f1;
+      color: #a52323;
+      border: 1px solid #e0aaaa;
+    }
 
-.photo-number{
-  position:absolute;
-  top:4px;
-  left:4px;
-  z-index:5;
-  background:rgba(0,0,0,.75);
-  color:#fff;
-  padding:2px 5px;
-  border-radius:5px;
-  font-size:8px;
-  font-weight:bold;
-}
+    /* =========================
+       FILE INPUT
+    ========================= */
 
-.photo-card img{
-  width:100%;
-  height:155px;
-  object-fit:cover;
-  display:block;
-  cursor:pointer;
-}
+    input[type="file"] {
+      width: 100%;
+      margin: 5px 0;
+      font-size: 10px;
+      color: #555;
+      background: #fff;
+      border: 1px solid #d8d0b8;
+      border-radius: 6px;
+      padding: 5px;
+    }
 
-.photo-info{
-  padding:4px;
-}
+    /* =========================
+       PREVIEW
+    ========================= */
 
-.like-button{
-  width:100%;
-  background:#f7f7f7;
-  color:#555;
-  border:1px solid #ddd;
-  margin-bottom:3px;
-  padding:5px;
-  font-size:9px;
-}
+    #previewArea {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      margin: 5px 0;
+    }
 
-.like-button.liked{
-  background:#fff0f3;
-  color:#d22;
-  border-color:#e5a5ad;
-}
+    .preview-item {
+      position: relative;
+      background: #eee;
+      border-radius: 6px;
+      overflow: hidden;
+      aspect-ratio: 1 / 1;
+      border: 1px solid #ddd4b9;
+    }
 
-.photo-delete-button{
-  width:100%;
-  background:#fff0f0;
-  color:#b22;
-  border:1px solid #e0aaaa;
-  padding:5px;
-  font-size:9px;
-}
+    .preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
 
-/* EMPTY */
-.empty{
-  text-align:center;
-  color:#777;
-  padding:14px 6px;
-  grid-column:1/-1;
-  font-size:10px;
-}
+    .preview-number {
+      position: absolute;
+      left: 3px;
+      top: 3px;
+      background: rgba(0,0,0,.75);
+      color: #f0cc58;
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-size: 7px;
+    }
 
-/* LOGIN */
-#loginModal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.75);
-  z-index:200;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:12px;
-}
+    /* =========================
+       UPLOAD
+    ========================= */
 
-.login-box{
-  width:100%;
-  max-width:340px;
-  background:#fff;
-  border:1px solid #d4af37;
-  border-radius:12px;
-  padding:14px;
-  box-shadow:0 5px 30px rgba(0,0,0,.4);
-}
+    #uploadButton {
+      width: 100%;
+      background:
+        linear-gradient(135deg, #b28b20, #e0bd4f);
+      color: #17130a;
+      border: 0;
+      padding: 8px;
+      font-size: 10px;
+      font-weight: bold;
+      border-radius: 7px;
+    }
 
-.login-box h2{
-  margin:0 0 10px;
-  text-align:center;
-  color:#222;
-  font-size:16px;
-}
+    #message {
+      text-align: center;
+      margin-top: 5px;
+      font-size: 9px;
+      font-weight: bold;
+      word-break: break-word;
+      color: #806719;
+    }
 
-.login-box input{
-  width:100%;
-  padding:9px;
-  margin-bottom:6px;
-  background:#fff;
-  color:#222;
-  border:1px solid #ccc;
-  border-radius:7px;
-  font-size:12px;
-  outline:none;
-}
+    /* =========================
+       GALLERY
+    ========================= */
 
-.login-submit{
-  width:100%;
-  background:#d4af37;
-  color:#111;
-  border:0;
-  margin-top:3px;
-  padding:8px;
-  font-size:11px;
-  font-weight:bold;
-}
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 5px;
+    }
 
-.login-close{
-  width:100%;
-  background:#f3f3f3;
-  color:#555;
-  border:1px solid #ddd;
-  margin-top:5px;
-  padding:7px;
-  font-size:10px;
-}
+    .photo-card {
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #ddd5bd;
+      box-shadow: 0 2px 8px rgba(0,0,0,.07);
+      position: relative;
+    }
 
-#loginMessage{
-  text-align:center;
-  font-size:10px;
-  margin-top:6px;
-  word-break:break-word;
-  color:#9a7900;
-}
+    .photo-number {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      z-index: 5;
+      background: rgba(0,0,0,.75);
+      color: #f0cc58;
+      padding: 2px 5px;
+      border-radius: 5px;
+      font-size: 8px;
+      font-weight: bold;
+    }
 
-/* VIEWER */
-#viewer{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.96);
-  z-index:100;
-  display:none;
-  flex-direction:column;
-}
+    .photo-card img {
+      width: 100%;
+      height: 155px;
+      object-fit: cover;
+      display: block;
+      cursor: pointer;
+    }
 
-.viewer-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:7px;
-  flex-shrink:0;
-}
+    .photo-info {
+      padding: 4px;
+    }
 
-.viewer-top button{
-  background:#222;
-  color:#f0cc58;
-  border:1px solid #6d571b;
-  padding:6px 8px;
-  font-size:10px;
-}
+    .like-button {
+      width: 100%;
+      background: #faf9f4;
+      color: #666;
+      border: 1px solid #ddd8c8;
+      margin-bottom: 3px;
+      padding: 5px;
+      font-size: 9px;
+    }
 
-.viewer-stage{
-  position:relative;
-  flex:1;
-  min-height:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
+    .like-button.liked {
+      background: #fff0f3;
+      color: #d22;
+      border-color: #e5a5ad;
+    }
 
-#viewerImage{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  min-height:0;
-  padding:5px 42px;
-}
+    .photo-delete-button {
+      width: 100%;
+      background: #fff0f0;
+      color: #b22;
+      border: 1px solid #e0aaaa;
+      padding: 5px;
+      font-size: 9px;
+    }
 
-.viewer-arrow{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  z-index:5;
-  width:34px;
-  height:50px;
-  border-radius:9px;
-  background:rgba(255,255,255,.15);
-  color:#f0cc58;
-  border:1px solid rgba(220,180,60,.4);
-  font-size:22px;
-  padding:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
+    /* =========================
+       EMPTY
+    ========================= */
 
-.viewer-prev{
-  left:5px;
-}
+    .empty {
+      text-align: center;
+      color: #777;
+      padding: 14px 6px;
+      grid-column: 1 / -1;
+      font-size: 10px;
+    }
 
-.viewer-next{
-  right:5px;
-}
+    /* =========================
+       LOGIN
+    ========================= */
 
-.viewer-bottom{
-  display:flex;
-  justify-content:center;
-  padding:7px;
-  flex-shrink:0;
-}
+    #loginModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.75);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
 
-#viewerLike{
-  background:#8b1e2d;
-  color:#fff;
-  border:1px solid #b53b4d;
-  min-width:100px;
-  padding:7px 10px;
-  font-size:10px;
-}
+    .login-box {
+      width: 100%;
+      max-width: 340px;
+      background: #fff;
+      border: 1px solid #d4af37;
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 5px 30px rgba(0,0,0,.4);
+    }
 
-/* MOBILE */
-@media(max-width:420px){
+    .login-box h2 {
+      margin: 0 0 10px;
+      text-align: center;
+      color: #222;
+      font-size: 16px;
+    }
 
-  .container{
-    padding:5px;
+    .login-box input {
+      width: 100%;
+      padding: 9px;
+      margin-bottom: 6px;
+      background: #fff;
+      color: #222;
+      border: 1px solid #ccc;
+      border-radius: 7px;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .login-submit {
+      width: 100%;
+      background: #d4af37;
+      color: #111;
+      border: 0;
+      margin-top: 3px;
+      padding: 8px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .login-close {
+      width: 100%;
+      background: #f3f3f3;
+      color: #555;
+      border: 1px solid #ddd;
+      margin-top: 5px;
+      padding: 7px;
+      font-size: 10px;
+    }
+
+    #loginMessage {
+      text-align: center;
+      font-size: 10px;
+      margin-top: 6px;
+      word-break: break-word;
+      color: #9a7900;
+    }
+
+    /* =========================
+       VIEWER
+    ========================= */
+
+    #viewer {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.96);
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+    }
+
+    .viewer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px;
+      flex-shrink: 0;
+    }
+
+    .viewer-top button {
+      background: #222;
+      color: #f0cc58;
+      border: 1px solid #6d571b;
+      padding: 6px 8px;
+      font-size: 10px;
+    }
+
+    .viewer-stage {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #viewerImage {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      min-height: 0;
+      padding: 5px 42px;
+    }
+
+    .viewer-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 5;
+      width: 34px;
+      height: 50px;
+      border-radius: 9px;
+      background: rgba(255,255,255,.15);
+      color: #f0cc58;
+      border: 1px solid rgba(220,180,60,.4);
+      font-size: 22px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .viewer-prev {
+      left: 5px;
+    }
+
+    .viewer-next {
+      right: 5px;
+    }
+
+    .viewer-bottom {
+      display: flex;
+      justify-content: center;
+      padding: 7px;
+      flex-shrink: 0;
+    }
+
+    #viewerLike {
+      background: #8b1e2d;
+      color: #fff;
+      border: 1px solid #b53b4d;
+      min-width: 100px;
+      padding: 7px 10px;
+      font-size: 10px;
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width:420px) {
+
+      .container {
+        padding: 5px;
+      }
+
+      .box {
+        padding: 7px;
+        margin-bottom: 6px;
+      }
+
+      .box h2 {
+        font-size: 12px;
+        margin-bottom: 5px;
+      }
+
+      .folders {
+        grid-template-columns: repeat(3,1fr);
+        gap: 3px;
+      }
+
+      .folder {
+        padding: 3px 1px;
+      }
+
+      .folder-icon {
+        font-size: 16px;
+        line-height: 17px;
+      }
+
+      .folder-name {
+        font-size: 8px;
+        line-height: 10px;
+      }
+
+      .folder-manage {
+        gap: 1px;
+        margin-top: 2px;
+      }
+
+      .folder-manage button {
+        font-size: 6.5px;
+        padding: 3px 0;
+      }
+
+      .folder-actions button {
+        padding: 5px 3px;
+        font-size: 8px;
+      }
+
+      #previewArea {
+        grid-template-columns: repeat(4,1fr);
+        gap: 3px;
+      }
+
+      .gallery {
+        gap: 4px;
+      }
+
+      .photo-card img {
+        height: 140px;
+      }
+
+      .like-button,
+      .photo-delete-button {
+        padding: 4px;
+        font-size: 8px;
+      }
+
+      #viewerImage {
+        padding-left: 38px;
+        padding-right: 38px;
+      }
+
+      .viewer-arrow {
+        width: 31px;
+        height: 45px;
+        font-size: 19px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+
+  <h1>📸 Picture Post</h1>
+
+  <p>ছবি শেয়ার করার সহজ জায়গা</p>
+
+  <div class="auth-area">
+
+    <button
+      id="loginButton"
+      class="auth-button"
+      onclick="openLogin()"
+    >
+      🔐 Admin Login
+    </button>
+
+    <button
+      id="logoutButton"
+      class="auth-button"
+      onclick="logoutAdmin()"
+      style="display:none;"
+    >
+      🚪 Logout
+    </button>
+
+  </div>
+
+  <div
+    id="adminStatus"
+    class="admin-status"
+  >
+    👑 Admin Mode চালু
+  </div>
+
+</header>
+
+
+<div class="container">
+
+  <div class="top-buttons">
+
+    <button onclick="goHome()">
+      🏠 Home
+    </button>
+
+    <button onclick="goBack()">
+      ⬅️ Back
+    </button>
+
+  </div>
+
+
+  <div class="box">
+
+    <h2>📁 Picture Folder</h2>
+
+    <div id="currentFolder">
+      📁 Home
+    </div>
+
+
+    <div
+      id="adminFolderActions"
+      class="folder-actions"
+      style="display:none;"
+    >
+
+      <button onclick="createFolder()">
+        ➕ নতুন Folder
+      </button>
+
+      <button onclick="refreshFolders()">
+        🔄 Refresh
+      </button>
+
+    </div>
+
+
+    <div
+      id="publicRefreshArea"
+      class="folder-actions"
+    >
+
+      <button onclick="refreshFolders()">
+        🔄 Refresh
+      </button>
+
+    </div>
+
+
+    <div
+      id="folders"
+      class="folders"
+    >
+
+      <div class="empty">
+        ⏳ Folder লোড হচ্ছে...
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div
+    id="adminUploadBox"
+    class="box"
+    style="display:none;"
+  >
+
+    <h2>📤 ছবি পোস্ট করুন</h2>
+
+    <input
+      type="file"
+      id="photoInput"
+      accept="image/*"
+      multiple
+    >
+
+    <div id="previewArea"></div>
+
+    <button id="uploadButton">
+      📤 ছবি পোস্ট করুন
+    </button>
+
+    <div id="message"></div>
+
+  </div>
+
+
+  <div class="box">
+
+    <h2>🖼️ পোস্ট করা ছবি</h2>
+
+    <div
+      id="gallery"
+      class="gallery"
+    >
+
+      <div class="empty">
+        ছবি লোড হচ্ছে...
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div id="loginModal">
+
+  <div class="login-box">
+
+    <h2>🔐 Admin Login</h2>
+
+    <input
+      type="email"
+      id="loginEmail"
+      placeholder="Admin Email"
+      autocomplete="off"
+    >
+
+    <input
+      type="password"
+      id="loginPassword"
+      placeholder="Password"
+      autocomplete="current-password"
+    >
+
+    <button
+      id="loginSubmit"
+      class="login-submit"
+      onclick="loginAdmin()"
+    >
+      🔐 Login
+    </button>
+
+    <button
+      class="login-close"
+      onclick="closeLogin()"
+    >
+      ✕ বন্ধ
+    </button>
+
+    <div id="loginMessage"></div>
+
+  </div>
+
+</div>
+
+
+<div id="viewer">
+
+  <div class="viewer-top">
+
+    <button onclick="closeViewer()">
+      ✕ বন্ধ
+    </button>
+
+    <button
+      onclick="goHome(); closeViewer();"
+    >
+      🏠 Home
+    </button>
+
+  </div>
+
+
+  <div class="viewer-stage">
+
+    <button
+      class="viewer-arrow viewer-prev"
+      onclick="previousImage()"
+      aria-label="Previous"
+    >
+      ‹
+    </button>
+
+    <img
+      id="viewerImage"
+      alt="Picture"
+    >
+
+    <button
+      class="viewer-arrow viewer-next"
+      onclick="nextImage()"
+      aria-label="Next"
+    >
+      ›
+    </button>
+
+  </div>
+
+
+  <div class="viewer-bottom">
+
+    <button
+      id="viewerLike"
+      onclick="likeCurrentImage()"
+    >
+      ❤️ 0
+    </button>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+  "https://vhqiqbapbxwmvycxrsvc.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_CIj1SRMGjbByiTkx-Yx8Eg_g7jHkTh9";
+
+const ADMIN_EMAIL =
+  "prince.masud.ak46@gmail.com";
+
+
+const supabaseClient =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+const photoInput =
+  document.getElementById("photoInput");
+
+const previewArea =
+  document.getElementById("previewArea");
+
+const uploadButton =
+  document.getElementById("uploadButton");
+
+const message =
+  document.getElementById("message");
+
+const gallery =
+  document.getElementById("gallery");
+
+const folders =
+  document.getElementById("folders");
+
+const currentFolder =
+  document.getElementById("currentFolder");
+
+const viewer =
+  document.getElementById("viewer");
+
+const viewerImage =
+  document.getElementById("viewerImage");
+
+const viewerLike =
+  document.getElementById("viewerLike");
+
+const loginModal =
+  document.getElementById("loginModal");
+
+const loginEmail =
+  document.getElementById("loginEmail");
+
+const loginPassword =
+  document.getElementById("loginPassword");
+
+const loginSubmit =
+  document.getElementById("loginSubmit");
+
+const loginMessage =
+  document.getElementById("loginMessage");
+
+const loginButton =
+  document.getElementById("loginButton");
+
+const logoutButton =
+  document.getElementById("logoutButton");
+
+const adminStatus =
+  document.getElementById("adminStatus");
+
+const adminFolderActions =
+  document.getElementById("adminFolderActions");
+
+const publicRefreshArea =
+  document.getElementById("publicRefreshArea");
+
+const adminUploadBox =
+  document.getElementById("adminUploadBox");
+
+
+let currentUser = null;
+let isAdmin = false;
+
+function checkAdmin(user) {
+
+  if (!user) {
+    return false;
   }
 
-  .box{
-    padding:7px;
-    margin-bottom:6px;
-  }
+  return (
+    String(user.email || "")
+      .toLowerCase()
+      .trim()
+    ===
+    ADMIN_EMAIL
+      .toLowerCase()
+      .trim()
+  );
 
-  .box h2{
-    font-size:12px;
-  }
-
-  .folders{
-    grid-template-columns:repeat(3,1fr);
-    gap:3px;
-  }
-
-  .folder{
-    padding:3px 1px;
-  }
-
-  .folder-icon{
-    font-size:16px;
-    line-height:17px;
-  }
-
-  .folder-name{
-    font-size:8px;
-    line-height:10px;
-  }
-
-  .folder-manage button{
-    font-size:6.5px;
-    padding:3px 0;
-  }
-
-  .folder-actions button{
-    padding:5px 3px;
-    font-size:8px;
-  }
-
-  #previewArea{
-    grid-template-columns:repeat(4,1fr);
-    gap:3px;
-  }
-
-  .gallery{
-    gap:4px;
-  }
-
-  .photo-card img{
-    height:140px;
-  }
-
-  .like-button,
-  .photo-delete-button{
-    padding:4px;
-    font-size:8px;
-  }
-
-  #viewerImage{
-    padding-left:38px;
-    padding-right:38px;
-  }
-
-  .viewer-arrow{
-    width:31px;
-    height:45px;
-    font-size:19px;
-  }
 }
-</style>
+
+
+function updateAdminUI() {
+
+  if (isAdmin) {
+
+    loginButton.style.display =
+      "none";
+
+    logoutButton.style.display =
+      "inline-block";
+
+    adminStatus.style.display =
+      "block";
+
+    adminFolderActions.style.display =
+      "flex";
+
+    publicRefreshArea.style.display =
+      "none";
+
+    adminUploadBox.style.display =
+      "block";
+
+  } else {
+
+    loginButton.style.display =
+      "inline-block";
+
+    logoutButton.style.display =
+      "none";
+
+    adminStatus.style.display =
+      "none";
+
+    adminFolderActions.style.display =
+      "none";
+
+    publicRefreshArea.style.display =
+      "flex";
+
+    adminUploadBox.style.display =
+      "none";
+
+  }
+
+}
+
+
+supabaseClient.auth.onAuthStateChange(
+  function(event, session) {
+
+    currentUser =
+      session
+        ? session.user
+        : null;
+
+    isAdmin =
+      checkAdmin(currentUser);
+
+    updateAdminUI();
+
+    if (currentUser && !isAdmin) {
+
+      supabaseClient.auth
+        .signOut();
+
+      currentUser = null;
+      isAdmin = false;
+
+      updateAdminUI();
+
+      alert(
+        "❌ এই account-এর Admin permission নেই।"
+      );
+
+    }
+
+  }
+);
+
+
+function openLogin() {
+
+  loginModal.style.display =
+    "flex";
+
+  loginMessage.textContent =
+    "";
+
+  loginEmail.value = "";
+  loginPassword.value = "";
+
+  setTimeout(
+    function() {
+      loginEmail.focus();
+    },
+    100
+  );
+
+}
+
+
+function closeLogin() {
+
+  loginModal.style.display =
+    "none";
+
+  loginMessage.textContent =
+    "";
+
+}
+
+
+async function loginAdmin() {
+
+  const email =
+    loginEmail.value.trim();
+
+  const password =
+    loginPassword.value;
+
+  if (!email) {
+
+    loginMessage.textContent =
+      "❌ Email দিন।";
+
+    return;
+
+  }
+
+  if (!password) {
+
+    loginMessage.textContent =
+      "❌ Password দিন।";
+
+    return;
+
+  }
+
+  if (
+    email.toLowerCase() !==
+    ADMIN_EMAIL.toLowerCase()
+  ) {
+
+    loginMessage.textContent =
+      "❌ এই Email Admin নয়।";
+
+    return;
+
+  }
+
+  loginSubmit.disabled = true;
+
+  loginMessage.textContent =
+    "⏳ Login হচ্ছে...";
+
+
+  const { data, error } =
+    await supabaseClient.auth
+      .signInWithPassword({
+        email: email,
+        password: password
+      });
+
+
+  if (error) {
+
+    console.error(
+      "Login error:",
+      error
+    );
+
+    loginMessage.textContent =
+      "❌ Login হয়নি: " +
+      error.message;
+
+    loginSubmit.disabled = false;
+
+    return;
+
+  }
+
+
+  currentUser = data.user;
+
+  isAdmin =
+    checkAdmin(currentUser);
+
+
+  if (!isAdmin) {
+
+    await supabaseClient.auth
+      .signOut();
+
+    currentUser = null;
+    isAdmin = false;
+
+    updateAdminUI();
+
+    loginMessage.textContent =
+      "❌ এই account Admin নয়।";
+
+    loginSubmit.disabled = false;
+
+    return;
+
+  }
+
+
+  updateAdminUI();
+
+  loginMessage.textContent =
+    "✅ Admin Login সফল হয়েছে!";
+
+
+  setTimeout(
+    function() {
+
+      closeLogin();
+
+      message.textContent =
+        "👑 Admin Mode চালু হয়েছে।";
+
+    },
+    700
+  );
+
+
+  loginSubmit.disabled = false;
+
+}
+
+
+async function logoutAdmin() {
+
+  const answer =
+    confirm(
+      "🚪 Admin Logout করবেন?"
+    );
+
+  if (!answer) {
+    return;
+  }
+
+  await supabaseClient.auth
+    .signOut();
+
+  currentUser = null;
+  isAdmin = false;
+
+  updateAdminUI();
+
+  message.textContent =
+    "✅ Admin Logout হয়েছে।";
+
+}
+
+
+function requireAdmin() {
+
+  if (!isAdmin) {
+
+    alert(
+      "🔒 এই কাজটি শুধু Admin করতে পারবেন।"
+    );
+
+    return false;
+
+  }
+
+  return true;
+
+}
+
+
+let allFolders = [];
+let currentFolderId = null;
+let currentPath = [];
+let currentImages = [];
+let currentViewerIndex = 0;
+
+
+const FOLDER_STORAGE_KEY =
+  "picture_post_current_folder";
+
+
+function saveCurrentFolder() {
+
+  if (currentFolderId) {
+
+    localStorage.setItem(
+      FOLDER_STORAGE_KEY,
+      String(currentFolderId)
+    );
+
+  } else {
+
+    localStorage.removeItem(
+      FOLDER_STORAGE_KEY
+    );
+
+  }
+
+}
+
+
+function restoreCurrentFolder() {
+
+  const saved =
+    localStorage.getItem(
+      FOLDER_STORAGE_KEY
+    );
+
+  if (!saved) {
+
+    currentFolderId = null;
+
+    return;
+
+  }
+
+  const id =
+    Number(saved);
+
+  const exists =
+    allFolders.some(
+      folder =>
+        folder.id === id
+    );
+
+  if (exists) {
+
+    currentFolderId = id;
+
+  } else {
+
+    currentFolderId = null;
+
+    localStorage.removeItem(
+      FOLDER_STORAGE_KEY
+    );
+
+  }
+
+}
+
+
+async function loadFolders() {
+
+  folders.innerHTML =
+    '<div class="empty">⏳ Folder লোড হচ্ছে...</div>';
+
+
+  const { data, error } =
+    await supabaseClient
+      .from("folders")
+      .select("id,name,parent_id")
+      .order(
+        "id",
+        {
+          ascending: true
+        }
+      );
+
+
+  if (error) {
+
+    console.error(error);
+
+    folders.innerHTML =
+      '<div class="empty">❌ Folder লোড করা যায়নি।</div>';
+
+    return false;
+
+  }
+
+
+  allFolders =
+    data || [];
+
+
+  restoreCurrentFolder();
+
+  renderFolders();
+
+  return true;
+
+}
+
+
+function getCurrentPath() {
+
+  if (!currentFolderId) {
+    return [];
+  }
+
+  const result = [];
+
+  let id =
+    currentFolderId;
+
+  while (id) {
+
+    const folder =
+      allFolders.find(
+        item =>
+          item.id === id
+      );
+
+    if (!folder) {
+      break;
+    }
+
+    result.unshift(
+      folder.name
+    );
+
+    id =
+      folder.parent_id;
+
+  }
+
+  return result;
+
+}
+
+
+function getStoragePath() {
+
+  if (!currentFolderId) {
+    return "";
+  }
+
+  return getFolderStoragePath(
+    currentFolderId
+  );
+
+}
+
+
+function getFolderStoragePath(folderId) {
+
+  const parts = [];
+
+  let id =
+    folderId;
+
+  while (id) {
+
+    const folder =
+      allFolders.find(
+        item =>
+          item.id === id
+      );
+
+    if (!folder) {
+      break;
+    }
+
+    parts.unshift(
+      "folder_" +
+      folder.id
+    );
+
+    id =
+      folder.parent_id;
+
+  }
+
+  return parts.join("/");
+
+}
+
+
+function renderFolders() {
+
+  folders.innerHTML = "";
+
+  const path =
+    getCurrentPath();
+
+  currentPath =
+    path;
+
+  currentFolder.textContent =
+    path.length === 0
+      ? "📁 Home"
+      : "📁 " +
+        path.join(" / ");
+
+
+  const children =
+    allFolders.filter(
+      folder =>
+        folder.parent_id ===
+        currentFolderId
+    );
+
+
+  if (children.length === 0) {
+
+    folders.innerHTML =
+      '<div class="empty">এই Folder-এ এখনো কোনো Sub-folder নেই।</div>';
+
+    return;
+
+  }
+
+
+  children.forEach(
+    function(folder) {
+
+      const div =
+        document.createElement("div");
+
+      div.className =
+        "folder";
+
+
+      const openButton =
+        document.createElement("button");
+
+      openButton.className =
+        "folder-open";
+
+      openButton.innerHTML =
+        '<span class="folder-icon">📁</span>' +
+        '<span class="folder-name">' +
+        escapeHtml(folder.name) +
+        '</span>';
+
+
+      openButton.onclick =
+        function() {
+
+          openFolder(folder.id);
+
+        };
+
+
+      div.appendChild(
+        openButton
+      );
+
+
+      if (isAdmin) {
+
+        const manage =
+          document.createElement("div");
+
+        manage.className =
+          "folder-manage";
+
+
+        const renameButton =
+          document.createElement("button");
+
+        renameButton.className =
+          "rename-button";
+
+        renameButton.textContent =
+          "✏️ Rename";
+
+
+        renameButton.onclick =
+          function(event) {
+
+            event.stopPropagation();
+
+            renameFolder(folder);
+
+          };
+
+
+        const deleteButton =
+          document.createElement("button");
+
+        deleteButton.className =
+          "delete-button";
+
+        deleteButton.textContent =
+          "🗑️ Delete";
+
+
+        deleteButton.onclick =
+          function(event) {
+
+            event.stopPropagation();
+
+            deleteFolder(folder);
+
+          };
+
+
+        manage.appendChild(
+          renameButton
+        );
+
+        manage.appendChild(
+          deleteButton
+        );
+
+        div.appendChild(
+          manage
+        );
+
+      }
+
+
+      folders.appendChild(
+        div
+      );
+
+    }
+  );
+
+}
+
+
+function openFolder(id) {
+
+  currentFolderId =
+    id;
+
+  saveCurrentFolder();
+
+  renderFolders();
+
+  loadPhotos();
+
+}
+
+
+function goHome() {
+
+  currentFolderId =
+    null;
+
+  saveCurrentFolder();
+
+  renderFolders();
+
+  loadPhotos();
+
+}
+
+
+function goBack() {
+
+  if (!currentFolderId) {
+    return;
+  }
+
+  const current =
+    allFolders.find(
+      folder =>
+        folder.id ===
+        currentFolderId
+    );
+
+  currentFolderId =
+    current
+      ? current.parent_id
+      : null;
+
+  saveCurrentFolder();
+
+  renderFolders();
+
+  loadPhotos();
+
+}
+
+
+async function createFolder() {
+
+  if (!requireAdmin()) {
+    return;
+  }
+
+  const folderName =
+    prompt(
+      currentFolderId
+        ? "Sub-folder-এর নাম লিখুন:"
+        : "নতুন Folder-এর নাম লিখুন:"
+    );
+
+  if (!folderName) {
+    return;
+  }
+
+  const cleanName =
+    folderName.trim();
+
+  if (!cleanName) {
+    return;
+  }
+
+  const exists =
+    allFolders.some(
+      folder =>
+        folder.parent_id ===
+          currentFolderId &&
+        folder.name.toLowerCase() ===
+          cleanName.toLowerCase()
+    );
+
+  if (exists) {
+
+    alert(
+      "এই নামে Folder আগে থেকেই আছে।"
+    );
+
+    return;
+
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("folders")
+      .insert({
+        name: cleanName,
+        parent_id: currentFolderId
+      });
+
+  if (error) {
+
+    alert(
+      "❌ Folder তৈরি হয়নি: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+  await loadFolders();
+
+}
+
+
+async function renameFolder(folder) {
+
+  if (!requireAdmin()) {
+    return;
+  }
+
+  const newName =
+    prompt(
+      "নতুন Folder নাম লিখুন:",
+      folder.name
+    );
+
+  if (!newName) {
+    return;
+  }
+
+  const cleanName =
+    newName.trim();
+
+  if (!cleanName) {
+    return;
+  }
+
+  if (cleanName === folder.name) {
+    return;
+  }
+
+  const exists =
+    allFolders.some(
+      item =>
+        item.id !== folder.id &&
+        item.parent_id ===
+          folder.parent_id &&
+        item.name.toLowerCase() ===
+          cleanName.toLowerCase()
+    );
+
+  if (exists) {
+
+    alert(
+      "এই নামে Folder আগে থেকেই আছে।"
+    );
+
+    return;
+
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("folders")
+      .update({
+        name: cleanName
+      })
+      .eq(
+        "id",
+        folder.id
+      );
+
+  if (error) {
+
+    alert(
+      "❌ Rename হয়নি: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+  message.textContent =
+    "✅ Folder Rename হয়েছে।";
+
+  await loadFolders();
+
+  loadPhotos();
+
+}
+
+
+function getDescendantIds(parentId) {
+
+  const result = [];
+
+  const children =
+    allFolders.filter(
+      folder =>
+        folder.parent_id ===
+        parentId
+    );
+
+  for (
+    const child of children
+  ) {
+
+    result.push(
+      child.id
+    );
+
+    result.push(
+      ...getDescendantIds(
+        child.id
+      )
+    );
+
+  }
+
+  return result;
+
+}
+
+
+async function deleteFolder(folder) {
+
+  if (!requireAdmin()) {
+    return;
+  }
+
+  const answer =
+    confirm(
+      '🗑️ "' +
+      folder.name +
+      '" Folder Delete করবেন?\n\nএই Folder-এর ভিতরের ছবি ও Sub-folder-ও মুছে যাবে।'
+    );
+
+  if (!answer) {
+    return;
+  }
+
+  message.textContent =
+    "⏳ Folder Delete হচ্ছে...";
+
+  const ids =
+    getDescendantIds(
+      folder.id
+    );
+
+  ids.push(
+    folder.id
+  );
+
+  for (
+    const id of ids
+  ) {
+
+    const storagePath =
+      getFolderStoragePath(id);
+
+    const removed =
+      await deleteStorageTree(
+        storagePath
+      );
+
+    if (!removed) {
+
+      message.textContent =
+        "❌ Folder-এর ছবি Delete করা যায়নি।";
+
+      return;
+
+    }
+
+  }
+
+  const { error } =
+    await supabaseClient
+      .from("folders")
+      .delete()
+      .in("id", ids);
+
+  if (error) {
+
+    alert(
+      "❌ Folder Delete হয়নি: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+  message.textContent =
+    "✅ Folder Delete হয়েছে।";
+
+  if (
+    ids.includes(
+      currentFolderId
+    )
+  ) {
+
+    currentFolderId =
+      folder.parent_id;
+
+    saveCurrentFolder();
+
+  }
+
+  await loadFolders();
+
+  loadPhotos();
+
+}
+
+
+async function listStorageFiles(path) {
+
+  const { data, error } =
+    await supabaseClient
+      .storage
+      .from("photos")
+      .list(
+        path,
+        {
+          limit: 1000
+        }
+      );
+
+  if (error) {
+
+    console.error(error);
+
+    return null;
+
+  }
+
+  const files = [];
+
+  for (
+    const item of data || []
+  ) {
+
+    const fullPath =
+      path
+        ? path + "/" + item.name
+        : item.name;
+
+    if (item.metadata) {
+
+      files.push(
+        fullPath
+      );
+
+    } else {
+
+      const childFiles =
+        await listStorageFiles(
+          fullPath
+        );
+
+      if (childFiles === null) {
+        return null;
+      }
+
+      files.push(
+        ...childFiles
+      );
+
+    }
+
+  }
+
+  return files;
+
+}
+
+
+async function deleteStorageTree(path) {
+
+  if (!isAdmin) {
+    return false;
+  }
+
+  const files =
+    await listStorageFiles(path);
+
+  if (files === null) {
+    return false;
+  }
+
+  if (files.length === 0) {
+    return true;
+  }
+
+  const { error } =
+    await supabaseClient
+      .storage
+      .from("photos")
+      .remove(files);
+
+  if (error) {
+
+    console.error(error);
+
+    return false;
+
+  }
+
+  return true;
+
+}
+
+
+async function deletePhoto(
+  fullPath,
+  card
+) {
+
+  if (!requireAdmin()) {
+    return;
+  }
+
+  const answer =
+    confirm(
+      "🗑️ এই ছবিটি Delete করবেন?"
+    );
+
+  if (!answer) {
+    return;
+  }
+
+  const deleteButton =
+    card.querySelector(
+      ".photo-delete-button"
+    );
+
+  if (deleteButton) {
+
+    deleteButton.disabled =
+      true;
+
+    deleteButton.textContent =
+      "⏳ Delete হচ্ছে...";
+
+  }
+
+  const { error } =
+    await supabaseClient
+      .storage
+      .from("photos")
+      .remove([
+        fullPath
+      ]);
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "❌ ছবি Delete হয়নি: " +
+      error.message
+    );
+
+    if (deleteButton) {
+
+      deleteButton.disabled =
+        false;
+
+      deleteButton.textContent =
+        "🗑️ Delete";
+
+    }
+
+    return;
+
+  }
+
+  await supabaseClient
+    .from("photo_likes")
+    .delete()
+    .eq(
+      "photo_name",
+      fullPath
+    );
+
+  message.textContent =
+    "✅ ছবি Delete হয়েছে।";
+
+  if (
+    viewer.style.display ===
+    "flex"
+  ) {
+
+    closeViewer();
+
+  }
+
+  await loadPhotos();
+
+}
+
+
+async function refreshFolders() {
+
+  await loadFolders();
+
+  await loadPhotos();
+
+}
+
+
+function escapeHtml(text) {
+
+  const div =
+    document.createElement("div");
+
+  div.textContent =
+    text;
+
+  return div.innerHTML;
+
+}
+
+
+function getFileExtension(file) {
+
+  const originalName =
+    file.name || "";
+
+  const dot =
+    originalName.lastIndexOf(".");
+
+  if (
+    dot !== -1 &&
+    dot <
+      originalName.length - 1
+  ) {
+
+    const ext =
+      originalName
+        .substring(dot + 1)
+        .toLowerCase()
+        .replace(
+          /[^a-z0-9]/g,
+          ""
+        );
+
+    if (ext) {
+      return ext;
+    }
+
+  }
+
+  if (
+    file.type ===
+    "image/png"
+  ) {
+    return "png";
+  }
+
+  if (
+    file.type ===
+    "image/webp"
+  ) {
+    return "webp";
+  }
+
+  if (
+    file.type ===
+    "image/gif"
+  ) {
+    return "gif";
+  }
+
+  return "jpg";
+
+}
+
+
+photoInput.addEventListener(
+  "change",
+  function() {
+
+    if (!isAdmin) {
+
+      this.value = "";
+
+      return;
+
+    }
+
+    previewArea.innerHTML = "";
+
+    const files =
+      Array.from(
+        this.files || []
+      );
+
+    if (files.length === 0) {
+      return;
+    }
+
+    files.forEach(
+      function(file, index) {
+
+        const item =
+          document.createElement("div");
+
+        item.className =
+          "preview-item";
+
+        const img =
+          document.createElement("img");
+
+        img.src =
+          URL.createObjectURL(file);
+
+        const number =
+          document.createElement("div");
+
+        number.className =
+          "preview-number";
+
+        number.textContent =
+          "#" + (index + 1);
+
+        item.appendChild(img);
+        item.appendChild(number);
+
+        previewArea.appendChild(item);
+
+      }
+    );
+
+    message.textContent =
+      "📸 " +
+      files.length +
+      "টি ছবি নির্বাচিত হয়েছে.";
+
+  }
+);
+
+
+uploadButton.addEventListener(
+  "click",
+  async function() {
+
+    if (!requireAdmin()) {
+      return;
+    }
+
+    const files =
+      Array.from(
+        photoInput.files || []
+      );
+
+    if (files.length === 0) {
+
+      message.textContent =
+        "❌ আগে ছবি নির্বাচন করুন।";
+
+      return;
+
+    }
+
+    uploadButton.disabled =
+      true;
+
+    photoInput.disabled =
+      true;
+
+    let successCount = 0;
+    let failedCount = 0;
+
+    try {
+
+      const folderPath =
+        getStoragePath();
+
+      for (
+        let i = 0;
+        i < files.length;
+        i++
+      ) {
+
+        const file =
+          files[i];
+
+        message.textContent =
+          "⏳ ছবি " +
+          (i + 1) +
+          " / " +
+          files.length +
+          " আপলোড হচ্ছে...";
+
+        const extension =
+          getFileExtension(file);
+
+        const fileName =
+          Date.now() +
+          "-" +
+          String(i + 1).padStart(3, "0") +
+          "-" +
+          Math.random()
+            .toString(36)
+            .substring(2, 8) +
+          "." +
+          extension;
+
+        const storagePath =
+          folderPath
+            ? folderPath + "/" + fileName
+            : fileName;
+
+        const { error } =
+          await supabaseClient
+            .storage
+            .from("photos")
+            .upload(
+              storagePath,
+              file,
+              {
+                upsert: false,
+                contentType:
+                  file.type ||
+                  "image/jpeg"
+              }
+            );
+
+        if (error) {
+
+          console.error(
+            "Upload error:",
+            error
+          );
+
+          failedCount++;
+
+        } else {
+
+          successCount++;
+
+        }
+
+      }
+
+      if (
+        successCount > 0 &&
+        failedCount === 0
+      ) {
+
+        message.textContent =
+          "✅ " +
+          successCount +
+          "টি ছবি সফলভাবে পোস্ট হয়েছে!";
+
+      } else if (
+        successCount > 0 &&
+        failedCount > 0
+      ) {
+
+        message.textContent =
+          "⚠️ " +
+          successCount +
+          "টি ছবি পোস্ট হয়েছে, " +
+          failedCount +
+          "টি হয়নি।";
+
+      } else {
+
+        message.textContent =
+          "❌ কোনো ছবি পোস্ট হয়নি।";
+
+      }
+
+      photoInput.value = "";
+
+      previewArea.innerHTML = "";
+
+      await loadPhotos();
+
+    } catch (error) {
+
+      console.error(error);
+
+      message.textContent =
+        "❌ ছবি পোস্ট হয়নি: " +
+        error.message;
+
+    }
+
+    uploadButton.disabled =
+      false;
+
+    photoInput.disabled =
+      false;
+
+  }
+);
+
+
+async function loadPhotos() {
+
+  gallery.innerHTML =
+    '<div class="empty">⏳ ছবি লোড হচ্ছে...</div>';
+
+  const folderPath =
+    getStoragePath();
+
+  const { data, error } =
+    await supabaseClient
+      .storage
+      .from("photos")
+      .list(
+        folderPath,
+        {
+          limit: 1000,
+          sortBy: {
+            column: "name",
+            order: "asc"
+          }
+        }
+      );
+
+  if (error) {
+
+    console.error(error);
+
+    gallery.innerHTML =
+      '<div class="empty">❌ ছবি লোড করা যায়নি।</div>';
+
+    return;
+
+  }
+
+  const files =
+    (data || [])
+      .filter(
+        file =>
+          file.name &&
+          file.metadata
+      );
+
+  currentImages =
+    files;
+
+  if (files.length === 0) {
+
+    gallery.innerHTML =
+      '<div class="empty">এই Folder-এ এখনো কোনো ছবি নেই।</div>';
+
+    return;
+
+  }
+
+  gallery.innerHTML = "";
+
+  for (
+    let i = 0;
+    i < files.length;
+    i++
+  ) {
+
+    const file =
+      files[i];
+
+    const fullPath =
+      folderPath
+        ? folderPath + "/" + file.name
+        : file.name;
+
+    const { data: publicData } =
+      supabaseClient
+        .storage
+        .from("photos")
+        .getPublicUrl(
+          fullPath
+        );
+
+    const card =
+      document.createElement("div");
+
+    card.className =
+      "photo-card";
+
+    const number =
+      document.createElement("div");
+
+    number.className =
+      "photo-number";
+
+    number.textContent =
+      "#" + (i + 1);
+
+    const img =
+      document.createElement("img");
+
+    img.src =
+      publicData.publicUrl;
+
+    img.alt =
+      "Posted picture " +
+      (i + 1);
+
+    img.onclick =
+      function() {
+        openViewer(i);
+      };
+
+    const info =
+      document.createElement("div");
+
+    info.className =
+      "photo-info";
+
+    const likeButton =
+      document.createElement("button");
+
+    likeButton.className =
+      "like-button";
+
+    likeButton.textContent =
+      "❤️ লোড হচ্ছে...";
+
+    likeButton.onclick =
+      async function(event) {
+
+        event.stopPropagation();
+
+        await addLike(
+          fullPath,
+          likeButton
+        );
+
+      };
+
+    info.appendChild(
+      likeButton
+    );
+
+    if (isAdmin) {
+
+      const deleteButton =
+        document.createElement("button");
+
+      deleteButton.className =
+        "photo-delete-button";
+
+      deleteButton.textContent =
+        "🗑️ Delete";
+
+      deleteButton.onclick =
+        async function(event) {
+
+          event.stopPropagation();
+
+          await deletePhoto(
+            fullPath,
+            card
+          );
+
+        };
+
+      info.appendChild(
+        deleteButton
+      );
+
+    }
+
+    card.appendChild(number);
+    card.appendChild(img);
+    card.appendChild(info);
+
+    gallery.appendChild(card);
+
+    loadLikeCount(
+      fullPath,
+      likeButton
+    );
+
+  }
+
+}
+
+
+async function loadLikeCount(
+  photoName,
+  button
+) {
+
+  const { data, error } =
+    await supabaseClient
+      .from("photo_likes")
+      .select("like_count")
+      .eq(
+        "photo_name",
+        photoName
+      )
+      .maybeSingle();
+
+  if (error) {
+
+    console.error(
+      "Like load error:",
+      error
+    );
+
+    button.textContent =
+      "❤️ 0";
+
+    return;
+
+  }
+
+  const count =
+    data
+      ? Number(
+          data.like_count || 0
+        )
+      : 0;
+
+  button.textContent =
+    "❤️ " + count;
+
+}
+
+
+async function addLike(
+  photoName,
+  button
+) {
+
+  if (button.disabled) {
+    return;
+  }
+
+  button.disabled =
+    true;
+
+  try {
+
+    const {
+      data: oldData,
+      error: readError
+    } =
+      await supabaseClient
+        .from("photo_likes")
+        .select("like_count")
+        .eq(
+          "photo_name",
+          photoName
+        )
+        .maybeSingle();
+
+    if (readError) {
+
+      console.error(
+        "Like read error:",
+        readError
+      );
+
+      button.textContent =
+        "❌ Like হয়নি";
+
+      return;
+
+    }
+
+    if (!oldData) {
+
+      const { error } =
+        await supabaseClient
+          .from("photo_likes")
+          .insert({
+            photo_name:
+              photoName,
+            like_count:
+              1
+          });
+
+      if (error) {
+
+        console.error(
+          "Like insert error:",
+          error
+        );
+
+        button.textContent =
+          "❌ Like হয়নি";
+
+        return;
+
+      }
+
+      button.textContent =
+        "❤️ 1";
+
+      button.classList.add(
+        "liked"
+      );
+
+    } else {
+
+      const newCount =
+        Number(
+          oldData.like_count || 0
+        ) + 1;
+
+      const { error } =
+        await supabaseClient
+          .from("photo_likes")
+          .update({
+            like_count:
+              newCount
+          })
+          .eq(
+            "photo_name",
+            photoName
+          );
+
+      if (error) {
+
+        console.error(
+          "Like update error:",
+          error
+        );
+
+        button.textContent =
+          "❌ Like হয়নি";
+
+        return;
+
+      }
+
+      button.textContent =
+        "❤️ " + newCount;
+
+      button.classList.add(
+        "liked"
+      );
+
+    }
+
+  } finally {
+
+    button.disabled =
+      false;
+
+  }
+
+}
+
+
+function openViewer(index) {
+
+  if (!currentImages.length) {
+    return;
+  }
+
+  currentViewerIndex =
+    index;
+
+  showViewerImage();
+
+  viewer.style.display =
+    "flex";
+
+}
+
+
+function closeViewer() {
+
+  viewer.style.display =
+    "none";
+
+}
+
+
+async function showViewerImage() {
+
+  const file =
+    currentImages[
+      currentViewerIndex
+    ];
+
+  if (!file) {
+    return;
+  }
+
+  const folderPath =
+    getStoragePath();
+
+  const fullPath =
+    folderPath
+      ? folderPath + "/" + file.name
+      : file.name;
+
+  const { data } =
+    supabaseClient
+      .storage
+      .from("photos")
+      .getPublicUrl(
+        fullPath
+      );
+
+  viewerImage.src =
+    data.publicUrl;
+
+  loadViewerLike(
+    fullPath
+  );
+
+}
+
+
+async function loadViewerLike(
+  photoName
+) {
+
+  const { data } =
+    await supabaseClient
+      .from("photo_likes")
+      .select("like_count")
+      .eq(
+        "photo_name",
+        photoName
+      )
+      .maybeSingle();
+
+  const count =
+    data
+      ? Number(
+          data.like_count || 0
+        )
+      : 0;
+
+  viewerLike.textContent =
+    "❤️ " + count;
+
+}
+
+
+async function likeCurrentImage() {
+
+  const file =
+    currentImages[
+      currentViewerIndex
+    ];
+
+  if (!file) {
+    return;
+  }
+
+  const folderPath =
+    getStoragePath();
+
+  const fullPath =
+    folderPath
+      ? folderPath + "/" + file.name
+      : file.name;
+
+  await addLike(
+    fullPath,
+    viewerLike
+  );
+
+}
+
+
+function previousImage() {
+
+  if (!currentImages.length) {
+    return;
+  }
+
+  currentViewerIndex--;
+
+  if (
+    currentViewerIndex < 0
+  ) {
+
+    currentViewerIndex =
+      currentImages.length - 1;
+
+  }
+
+  showViewerImage();
+
+}
+
+
+function nextImage() {
+
+  if (!currentImages.length) {
+    return;
+  }
+
+  currentViewerIndex++;
+
+  if (
+    currentViewerIndex >=
+    currentImages.length
+  ) {
+
+    currentViewerIndex = 0;
+
+  }
+
+  showViewerImage();
+
+}
+
+
+let touchStartX = 0;
+let touchEndX = 0;
+
+
+viewerImage.addEventListener(
+  "touchstart",
+  function(event) {
+
+    touchStartX =
+      event.changedTouches[0]
+        .screenX;
+
+  },
+  {
+    passive: true
+  }
+);
+
+
+viewerImage.addEventListener(
+  "touchend",
+  function(event) {
+
+    touchEndX =
+      event.changedTouches[0]
+        .screenX;
+
+    const difference =
+      touchEndX -
+      touchStartX;
+
+    if (
+      Math.abs(difference) < 50
+    ) {
+      return;
+    }
+
+    if (
+      difference > 0
+    ) {
+
+      previousImage();
+
+    } else {
+
+      nextImage();
+
+    }
+
+  },
+  {
+    passive: true
+  }
+);
+
+
+async function startApp() {
+
+  const {
+    data: sessionData
+  } =
+    await supabaseClient
+      .auth
+      .getSession();
+
+  currentUser =
+    sessionData.session
+      ? sessionData.session.user
+      : null;
+
+  isAdmin =
+    checkAdmin(
+      currentUser
+    );
+
+  if (
+    currentUser &&
+    !isAdmin
+  ) {
+
+    await supabaseClient.auth
+      .signOut();
+
+    currentUser = null;
+    isAdmin = false;
+
+  }
+
+  updateAdminUI();
+
+  const foldersLoaded =
+    await loadFolders();
+
+  if (foldersLoaded) {
+
+    await loadPhotos();
+
+  }
+
+}
+
+
+startApp();
+
+</script>
+
+</body>
+</html>
