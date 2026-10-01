@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Picture Post</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     * {
@@ -21,7 +24,7 @@
       background: #111;
       color: white;
       text-align: center;
-      padding: 20px 10px;
+      padding: 22px 10px;
     }
 
     header h1 {
@@ -35,12 +38,12 @@
     }
 
     .container {
-      max-width: 600px;
+      max-width: 650px;
       margin: 20px auto;
       padding: 15px;
     }
 
-    .post-box {
+    .box {
       background: white;
       padding: 20px;
       border-radius: 15px;
@@ -49,13 +52,13 @@
 
     input[type="file"] {
       width: 100%;
-      margin: 10px 0;
+      margin: 12px 0;
     }
 
     button {
       width: 100%;
-      padding: 12px;
-      border: none;
+      padding: 13px;
+      border: 0;
       border-radius: 10px;
       background: #111;
       color: white;
@@ -63,17 +66,47 @@
       cursor: pointer;
     }
 
+    button:disabled {
+      opacity: 0.6;
+    }
+
     #preview {
       width: 100%;
-      margin-top: 15px;
+      max-height: 450px;
+      object-fit: contain;
+      margin: 10px 0 15px;
       border-radius: 12px;
       display: none;
     }
 
-    .message {
+    #message {
       text-align: center;
       margin-top: 15px;
-      color: #555;
+      font-weight: bold;
+    }
+
+    .gallery {
+      margin-top: 20px;
+    }
+
+    .photo-card {
+      background: white;
+      margin-bottom: 18px;
+      padding: 10px;
+      border-radius: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .photo-card img {
+      width: 100%;
+      border-radius: 12px;
+      display: block;
+    }
+
+    .empty {
+      text-align: center;
+      color: #777;
+      padding: 20px;
     }
   </style>
 </head>
@@ -87,24 +120,42 @@
 
   <div class="container">
 
-    <div class="post-box">
+    <div class="box">
       <h2>ছবি পোস্ট করুন</h2>
 
       <input type="file" id="photoInput" accept="image/*">
 
       <img id="preview">
 
-      <button onclick="showMessage()">ছবি পোস্ট করুন</button>
+      <button id="uploadButton">ছবি পোস্ট করুন</button>
 
-      <div class="message" id="message"></div>
+      <div id="message"></div>
+    </div>
+
+    <div class="gallery">
+      <h2>📷 পোস্ট করা ছবি</h2>
+      <div id="gallery">
+        <div class="empty">ছবি লোড হচ্ছে...</div>
+      </div>
     </div>
 
   </div>
 
   <script>
+    const SUPABASE_URL =
+      "https://syzauwriwjwnlwbcxlnf.supabase.co";
+
+    const SUPABASE_KEY =
+      "sb_publishable_CIj1SRMGjbByiTkx-Yx8Eg_g7jHkTh9";
+
+    const supabaseClient =
+      supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     const photoInput = document.getElementById("photoInput");
     const preview = document.getElementById("preview");
+    const uploadButton = document.getElementById("uploadButton");
     const message = document.getElementById("message");
+    const gallery = document.getElementById("gallery");
 
     photoInput.addEventListener("change", function () {
       const file = this.files[0];
@@ -116,14 +167,97 @@
       }
     });
 
-    function showMessage() {
-      if (!photoInput.files[0]) {
+    uploadButton.addEventListener("click", async function () {
+      const file = photoInput.files[0];
+
+      if (!file) {
         message.textContent = "আগে একটি ছবি নির্বাচন করুন।";
         return;
       }
 
-      message.textContent = "ছবিটি প্রস্তুত হয়েছে।";
+      uploadButton.disabled = true;
+      message.textContent = "ছবি আপলোড হচ্ছে...";
+
+      try {
+        const fileName =
+          Date.now() + "-" +
+          Math.random().toString(36).substring(2) +
+          "-" +
+          file.name.replace(/\s+/g, "-");
+
+        const { error } = await supabaseClient
+          .storage
+          .from("photos")
+          .upload(fileName, file);
+
+        if (error) {
+          throw error;
+        }
+
+        message.textContent = "✅ ছবি সফলভাবে পোস্ট হয়েছে!";
+
+        photoInput.value = "";
+        preview.style.display = "none";
+
+        loadPhotos();
+
+      } catch (error) {
+        console.error(error);
+        message.textContent =
+          "❌ ছবি পোস্ট হয়নি: " + error.message;
+      }
+
+      uploadButton.disabled = false;
+    });
+
+    async function loadPhotos() {
+      const { data, error } = await supabaseClient
+        .storage
+        .from("photos")
+        .list("", {
+          limit: 100,
+          sortBy: {
+            column: "name",
+            order: "desc"
+          }
+        });
+
+      if (error) {
+        gallery.innerHTML =
+          '<div class="empty">ছবি লোড করা যায়নি।</div>';
+        return;
+      }
+
+      const files = data.filter(file => file.name);
+
+      if (files.length === 0) {
+        gallery.innerHTML =
+          '<div class="empty">এখনো কোনো ছবি পোস্ট করা হয়নি।</div>';
+        return;
+      }
+
+      gallery.innerHTML = "";
+
+      files.forEach(file => {
+        const { data: publicData } =
+          supabaseClient
+            .storage
+            .from("photos")
+            .getPublicUrl(file.name);
+
+        const card = document.createElement("div");
+        card.className = "photo-card";
+
+        const img = document.createElement("img");
+        img.src = publicData.publicUrl;
+        img.alt = "Posted picture";
+
+        card.appendChild(img);
+        gallery.appendChild(card);
+      });
     }
+
+    loadPhotos();
   </script>
 
 </body>
