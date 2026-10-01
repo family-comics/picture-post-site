@@ -1,13 +1,3 @@
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-<title>Picture Post</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 *{box-sizing:border-box}
 
@@ -27,9 +17,9 @@ body{
 button{
   box-sizing:border-box;
   border:1px solid #806719;
-  border-radius:6px;
-  padding:5px 7px;
-  font-size:10px;
+  border-radius:5px;
+  padding:4px 6px;
+  font-size:9px;
   cursor:pointer;
   background:#171717;
   color:#e8c957;
@@ -52,7 +42,7 @@ header{
     linear-gradient(135deg,#080808,#211b0b);
   color:#fff;
   text-align:center;
-  padding:8px 6px;
+  padding:7px 5px;
   position:sticky;
   top:0;
   z-index:20;
@@ -67,15 +57,15 @@ header h1{
 }
 
 header p{
-  margin:2px 0 5px;
+  margin:2px 0 4px;
   color:#aaa;
-  font-size:9px;
+  font-size:8px;
 }
 
 .auth-area{
   display:flex;
   justify-content:center;
-  gap:4px;
+  gap:3px;
   flex-wrap:wrap;
 }
 
@@ -83,16 +73,16 @@ header p{
   background:#141414;
   color:#e7c650;
   border:1px solid #6d571b;
-  padding:5px 8px;
+  padding:4px 7px;
   border-radius:5px;
-  font-size:9px;
+  font-size:8px;
 }
 
 .admin-status{
   display:none;
   color:#d4af37;
   font-size:8px;
-  margin-top:3px;
+  margin-top:2px;
 }
 
 /* MAIN */
@@ -101,7 +91,7 @@ header p{
   width:100%;
   max-width:700px;
   margin:auto;
-  padding:5px;
+  padding:4px;
 }
 
 /* TOP BUTTONS */
@@ -109,15 +99,16 @@ header p{
 .top-buttons{
   display:flex;
   gap:4px;
-  margin-bottom:5px;
+  margin-bottom:4px;
 }
 
 .top-buttons button{
   flex:1;
+  height:34px;
   background:#171717;
   color:#d9bd55;
   border:1px solid #6d571b;
-  padding:5px 6px;
+  padding:3px 5px;
   font-size:9px;
   border-radius:5px;
   box-shadow:0 2px 7px rgba(0,0,0,.3);
@@ -127,23 +118,23 @@ header p{
 
 .box{
   background:rgba(20,20,20,.96);
-  padding:7px;
-  border-radius:8px;
-  margin-bottom:6px;
+  padding:6px;
+  border-radius:7px;
+  margin-bottom:4px;
   border:1px solid #3d341c;
-  box-shadow:0 2px 12px rgba(0,0,0,.35);
+  box-shadow:0 2px 10px rgba(0,0,0,.3);
 }
 
 .box h2{
-  margin:0 0 5px;
-  font-size:12px;
+  margin:0 0 4px;
+  font-size:11px;
   color:#e0c45a;
 }
 
 #currentFolder{
   color:#999;
   font-size:8px;
-  margin-bottom:5px;
+  margin-bottom:4px;
   word-break:break-word;
 }
 
@@ -151,16 +142,17 @@ header p{
 
 .folder-actions{
   display:flex;
-  gap:4px;
-  margin-bottom:5px;
+  gap:3px;
+  margin-bottom:4px;
 }
 
 .folder-actions button{
   flex:1;
+  height:30px;
   background:#171717;
   color:#d7ba4f;
   border:1px solid #5d4d19;
-  padding:4px 3px;
+  padding:3px 2px;
   font-size:8px;
   border-radius:5px;
 }
@@ -177,14 +169,15 @@ header p{
   background:
     linear-gradient(145deg,#1d1d1d,#111);
   padding:2px;
-  border-radius:6px;
+  border-radius:5px;
   border:1px solid #4b401e;
   min-width:0;
-  box-shadow:0 2px 6px rgba(0,0,0,.3);
+  box-shadow:0 1px 5px rgba(0,0,0,.3);
 }
 
 .folder-open{
   width:100%;
+  height:auto;
   background:transparent;
   border:0;
   padding:2px 1px;
@@ -194,15 +187,15 @@ header p{
 
 .folder-icon{
   display:block;
-  font-size:15px;
-  line-height:16px;
-  margin-bottom:1px;
+  font-size:14px;
+  line-height:14px;
+  margin-bottom:0;
 }
 
 .folder-name{
   display:block;
-  font-size:8px;
-  line-height:10px;
+  font-size:7px;
+  line-height:9px;
   font-weight:bold;
   word-break:break-word;
   color:#d8c77c;
@@ -211,14 +204,15 @@ header p{
 .folder-manage{
   display:flex;
   gap:2px;
-  margin-top:2px;
+  margin-top:1px;
 }
 
 .folder-manage button{
   flex:1;
   padding:2px 0;
   font-size:6px;
-  border-radius:4px;
+  line-height:10px;
+  border-radius:3px;
   white-space:nowrap;
 }
 
@@ -238,13 +232,15 @@ header p{
 
 input[type=file]{
   width:100%;
-  margin:4px 0;
-  font-size:9px;
+  height:34px;
+  margin:3px 0;
+  font-size:8px;
+  line-height:22px;
   color:#aaa;
   background:#111;
   border:1px solid #4b4328;
   border-radius:5px;
-  padding:4px;
+  padding:3px;
 }
 
 /* PREVIEW */
@@ -253,13 +249,13 @@ input[type=file]{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:3px;
-  margin:4px 0;
+  margin:3px 0;
 }
 
 .preview-item{
   position:relative;
   background:#111;
-  border-radius:5px;
+  border-radius:4px;
   overflow:hidden;
   aspect-ratio:1/1;
   border:1px solid #443b20;
@@ -287,11 +283,12 @@ input[type=file]{
 
 #uploadButton{
   width:100%;
+  height:38px;
   background:
     linear-gradient(135deg,#9a7617,#d7b53d);
   color:#0c0c0c;
   border:0;
-  padding:6px;
+  padding:4px;
   font-size:9px;
   font-weight:bold;
   border-radius:5px;
@@ -299,7 +296,7 @@ input[type=file]{
 
 #message{
   text-align:center;
-  margin-top:4px;
+  margin-top:3px;
   font-size:8px;
   font-weight:bold;
   word-break:break-word;
@@ -311,15 +308,15 @@ input[type=file]{
 .gallery{
   display:grid;
   grid-template-columns:repeat(2,1fr);
-  gap:4px;
+  gap:3px;
 }
 
 .photo-card{
   background:#111;
-  border-radius:7px;
+  border-radius:6px;
   overflow:hidden;
   border:1px solid #3e3825;
-  box-shadow:0 2px 8px rgba(0,0,0,.4);
+  box-shadow:0 2px 7px rgba(0,0,0,.4);
   position:relative;
 }
 
@@ -354,7 +351,7 @@ input[type=file]{
   color:#aaa;
   border:1px solid #443f31;
   margin-bottom:2px;
-  padding:4px;
+  padding:3px;
   font-size:8px;
 }
 
@@ -369,7 +366,7 @@ input[type=file]{
   background:#291313;
   color:#ee7777;
   border:1px solid #713535;
-  padding:4px;
+  padding:3px;
   font-size:8px;
 }
 
@@ -378,7 +375,7 @@ input[type=file]{
 .empty{
   text-align:center;
   color:#777;
-  padding:12px 5px;
+  padding:9px 5px;
   grid-column:1/-1;
   font-size:9px;
 }
@@ -540,17 +537,43 @@ input[type=file]{
 @media(max-width:420px){
 
   .container{
-    padding:4px;
+    padding:3px;
   }
 
   .box{
-    padding:6px;
-    margin-bottom:5px;
+    padding:5px;
+    margin-bottom:4px;
   }
 
   .box h2{
-    font-size:11px;
-    margin-bottom:4px;
+    font-size:10px;
+    margin-bottom:3px;
+  }
+
+  #currentFolder{
+    margin-bottom:3px;
+  }
+
+  .top-buttons{
+    gap:3px;
+    margin-bottom:3px;
+  }
+
+  .top-buttons button{
+    height:31px;
+    padding:2px 4px;
+    font-size:8px;
+  }
+
+  .folder-actions{
+    gap:3px;
+    margin-bottom:3px;
+  }
+
+  .folder-actions button{
+    height:28px;
+    padding:2px;
+    font-size:7px;
   }
 
   .folders{
@@ -559,32 +582,39 @@ input[type=file]{
   }
 
   .folder{
-    padding:2px 1px;
+    padding:1px;
   }
 
   .folder-icon{
-    font-size:14px;
-    line-height:15px;
+    font-size:13px;
+    line-height:13px;
   }
 
   .folder-name{
     font-size:7px;
-    line-height:9px;
+    line-height:8px;
   }
 
   .folder-manage{
     gap:1px;
-    margin-top:2px;
+    margin-top:1px;
   }
 
   .folder-manage button{
-    font-size:5.5px;
-    padding:2px 0;
+    font-size:5px;
+    line-height:9px;
+    padding:1px 0;
   }
 
-  .folder-actions button{
-    padding:4px 2px;
-    font-size:7px;
+  input[type=file]{
+    height:32px;
+    font-size:8px;
+    padding:2px;
+  }
+
+  #uploadButton{
+    height:36px;
+    font-size:8px;
   }
 
   #previewArea{
@@ -606,6 +636,10 @@ input[type=file]{
     font-size:7px;
   }
 
+  .empty{
+    padding:8px 4px;
+  }
+
   #viewerImage{
     padding-left:35px;
     padding-right:35px;
@@ -618,2617 +652,3 @@ input[type=file]{
   }
 }
 </style>
-</head>
-
-<body>
-
-<header>
-
-<h1>📸 Picture Post</h1>
-
-<p>ছবি শেয়ার করার সহজ জায়গা</p>
-
-<div class="auth-area">
-
-<button
-id="loginButton"
-class="auth-button"
-onclick="openLogin()">
-🔐 Admin Login
-</button>
-
-<button
-id="logoutButton"
-class="auth-button"
-onclick="logoutAdmin()"
-style="display:none;">
-🚪 Logout
-</button>
-
-</div>
-
-<div
-id="adminStatus"
-class="admin-status">
-👑 Admin Mode চালু
-</div>
-
-</header>
-
-
-<div class="container">
-
-<div class="top-buttons">
-
-<button onclick="goHome()">
-🏠 Home
-</button>
-
-<button onclick="goBack()">
-⬅️ Back
-</button>
-
-</div>
-
-
-<div class="box">
-
-<h2>📁 Picture Folder</h2>
-
-<div id="currentFolder">
-📁 Home
-</div>
-
-
-<div
-id="adminFolderActions"
-class="folder-actions"
-style="display:none;">
-
-<button onclick="createFolder()">
-➕ নতুন Folder
-</button>
-
-<button onclick="refreshFolders()">
-🔄 Refresh
-</button>
-
-</div>
-
-
-<div
-id="publicRefreshArea"
-class="folder-actions">
-
-<button onclick="refreshFolders()">
-🔄 Refresh
-</button>
-
-</div>
-
-
-<div
-id="folders"
-class="folders">
-
-<div class="empty">
-⏳ Folder লোড হচ্ছে...
-</div>
-
-</div>
-
-</div>
-
-
-<div
-id="adminUploadBox"
-class="box"
-style="display:none;">
-
-<h2>📤 ছবি পোস্ট করুন</h2>
-
-<input
-type="file"
-id="photoInput"
-accept="image/*"
-multiple>
-
-<div id="previewArea"></div>
-
-<button id="uploadButton">
-📤 ছবি পোস্ট করুন
-</button>
-
-<div id="message"></div>
-
-</div>
-
-
-<div class="box">
-
-<h2>🖼️ পোস্ট করা ছবি</h2>
-
-<div
-id="gallery"
-class="gallery">
-
-<div class="empty">
-ছবি লোড হচ্ছে...
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-
-<!-- LOGIN -->
-
-<div id="loginModal">
-
-<div class="login-box">
-
-<h2>🔐 Admin Login</h2>
-
-<input
-type="email"
-id="loginEmail"
-placeholder="Admin Email"
-autocomplete="off">
-
-<input
-type="password"
-id="loginPassword"
-placeholder="Password"
-autocomplete="current-password">
-
-<button
-id="loginSubmit"
-class="login-submit"
-onclick="loginAdmin()">
-🔐 Login
-</button>
-
-<button
-class="login-close"
-onclick="closeLogin()">
-✕ বন্ধ
-</button>
-
-<div id="loginMessage"></div>
-
-</div>
-
-</div>
-
-
-<!-- VIEWER -->
-
-<div id="viewer">
-
-<div class="viewer-top">
-
-<button onclick="closeViewer()">
-✕ বন্ধ
-</button>
-
-<button onclick="goHome();closeViewer();">
-🏠 Home
-</button>
-
-</div>
-
-
-<div class="viewer-stage">
-
-<button
-class="viewer-arrow viewer-prev"
-onclick="previousImage()"
-aria-label="Previous">
-‹
-</button>
-
-<img
-id="viewerImage"
-alt="Picture">
-
-<button
-class="viewer-arrow viewer-next"
-onclick="nextImage()"
-aria-label="Next">
-›
-</button>
-
-</div>
-
-
-<div class="viewer-bottom">
-
-<button
-id="viewerLike"
-onclick="likeCurrentImage()">
-❤️ 0
-</button>
-
-</div>
-
-</div>
-
-
-<script>
-
-/* =========================
-   SUPABASE
-========================= */
-
-const SUPABASE_URL =
-"https://vhqiqbapbxwmvycxrsvc.supabase.co";
-
-const SUPABASE_KEY =
-"sb_publishable_CIj1SRMGjbByiTkx-Yx8Eg_g7jHkTh9";
-
-const ADMIN_EMAIL =
-"prince.masud.ak46@gmail.com";
-
-
-const supabaseClient =
-supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
-
-
-/* =========================
-   ELEMENTS
-========================= */
-
-const photoInput =
-document.getElementById("photoInput");
-
-const previewArea =
-document.getElementById("previewArea");
-
-const uploadButton =
-document.getElementById("uploadButton");
-
-const message =
-document.getElementById("message");
-
-const gallery =
-document.getElementById("gallery");
-
-const folders =
-document.getElementById("folders");
-
-const currentFolder =
-document.getElementById("currentFolder");
-
-const viewer =
-document.getElementById("viewer");
-
-const viewerImage =
-document.getElementById("viewerImage");
-
-const viewerLike =
-document.getElementById("viewerLike");
-
-const loginModal =
-document.getElementById("loginModal");
-
-const loginEmail =
-document.getElementById("loginEmail");
-
-const loginPassword =
-document.getElementById("loginPassword");
-
-const loginSubmit =
-document.getElementById("loginSubmit");
-
-const loginMessage =
-document.getElementById("loginMessage");
-
-const loginButton =
-document.getElementById("loginButton");
-
-const logoutButton =
-document.getElementById("logoutButton");
-
-const adminStatus =
-document.getElementById("adminStatus");
-
-const adminFolderActions =
-document.getElementById("adminFolderActions");
-
-const publicRefreshArea =
-document.getElementById("publicRefreshArea");
-
-const adminUploadBox =
-document.getElementById("adminUploadBox");
-
-
-/* =========================
-   VARIABLES
-========================= */
-
-let currentUser = null;
-let isAdmin = false;
-
-let allFolders = [];
-let currentFolderId = null;
-let currentPath = [];
-let currentImages = [];
-let currentViewerIndex = 0;
-
-const FOLDER_STORAGE_KEY =
-"picture_post_current_folder";
-
-const LOCAL_LIKE_KEY =
-"picture_post_local_likes";
-
-
-/* =========================
-   ADMIN
-========================= */
-
-function checkAdmin(user){
-
-if(!user){
-return false;
-}
-
-return String(
-user.email || ""
-).toLowerCase().trim()
-===
-ADMIN_EMAIL.toLowerCase().trim();
-
-}
-
-
-function updateAdminUI(){
-
-if(isAdmin){
-
-loginButton.style.display="none";
-
-logoutButton.style.display=
-"inline-block";
-
-adminStatus.style.display=
-"block";
-
-adminFolderActions.style.display=
-"flex";
-
-publicRefreshArea.style.display=
-"none";
-
-adminUploadBox.style.display=
-"block";
-
-}else{
-
-loginButton.style.display=
-"inline-block";
-
-logoutButton.style.display=
-"none";
-
-adminStatus.style.display=
-"none";
-
-adminFolderActions.style.display=
-"none";
-
-publicRefreshArea.style.display=
-"flex";
-
-adminUploadBox.style.display=
-"none";
-
-}
-
-}
-
-
-supabaseClient.auth.onAuthStateChange(
-function(event,session){
-
-currentUser=
-session ? session.user : null;
-
-isAdmin=
-checkAdmin(currentUser);
-
-updateAdminUI();
-
-if(currentUser && !isAdmin){
-
-supabaseClient.auth.signOut();
-
-currentUser=null;
-isAdmin=false;
-
-updateAdminUI();
-
-alert(
-"❌ এই account-এর Admin permission নেই।"
-);
-
-}
-
-});
-
-
-/* =========================
-   LOGIN
-========================= */
-
-function openLogin(){
-
-loginModal.style.display="flex";
-
-loginMessage.textContent="";
-
-loginEmail.value="";
-loginPassword.value="";
-
-setTimeout(
-function(){
-loginEmail.focus();
-},
-100
-);
-
-}
-
-
-function closeLogin(){
-
-loginModal.style.display="none";
-
-loginMessage.textContent="";
-
-}
-
-
-async function loginAdmin(){
-
-const email=
-loginEmail.value.trim();
-
-const password=
-loginPassword.value;
-
-if(!email){
-
-loginMessage.textContent=
-"❌ Email দিন।";
-
-return;
-}
-
-if(!password){
-
-loginMessage.textContent=
-"❌ Password দিন।";
-
-return;
-}
-
-if(
-email.toLowerCase() !==
-ADMIN_EMAIL.toLowerCase()
-){
-
-loginMessage.textContent=
-"❌ এই Email Admin নয়।";
-
-return;
-}
-
-loginSubmit.disabled=true;
-
-loginMessage.textContent=
-"⏳ Login হচ্ছে...";
-
-
-const {data,error}=
-await supabaseClient.auth
-.signInWithPassword({
-email:email,
-password:password
-});
-
-
-if(error){
-
-console.error(
-"Login error:",
-error
-);
-
-loginMessage.textContent=
-"❌ Login হয়নি: "+
-error.message;
-
-loginSubmit.disabled=false;
-
-return;
-}
-
-
-currentUser=data.user;
-
-isAdmin=
-checkAdmin(currentUser);
-
-if(!isAdmin){
-
-await supabaseClient.auth.signOut();
-
-currentUser=null;
-isAdmin=false;
-
-updateAdminUI();
-
-loginMessage.textContent=
-"❌ এই account Admin নয়।";
-
-loginSubmit.disabled=false;
-
-return;
-}
-
-
-updateAdminUI();
-
-loginMessage.textContent=
-"✅ Admin Login সফল হয়েছে!";
-
-setTimeout(
-function(){
-
-closeLogin();
-
-message.textContent=
-"👑 Admin Mode চালু হয়েছে।";
-
-loadFolders();
-
-loadPhotos();
-
-},
-700
-);
-
-loginSubmit.disabled=false;
-
-}
-
-
-async function logoutAdmin(){
-
-const answer=
-confirm(
-"🚪 Admin Logout করবেন?"
-);
-
-if(!answer){
-return;
-}
-
-await supabaseClient.auth.signOut();
-
-currentUser=null;
-isAdmin=false;
-
-updateAdminUI();
-
-message.textContent=
-"✅ Admin Logout হয়েছে।";
-
-}
-
-
-/* =========================
-   ADMIN CHECK
-========================= */
-
-function requireAdmin(){
-
-if(!isAdmin){
-
-alert(
-"🔒 এই কাজটি শুধু Admin করতে পারবেন।"
-);
-
-return false;
-}
-
-return true;
-
-}
-
-
-/* =========================
-   FOLDER SAVE
-========================= */
-
-function saveCurrentFolder(){
-
-if(currentFolderId){
-
-localStorage.setItem(
-FOLDER_STORAGE_KEY,
-String(currentFolderId)
-);
-
-}else{
-
-localStorage.removeItem(
-FOLDER_STORAGE_KEY
-);
-
-}
-
-}
-
-
-function restoreCurrentFolder(){
-
-const saved=
-localStorage.getItem(
-FOLDER_STORAGE_KEY
-);
-
-if(!saved){
-
-currentFolderId=null;
-return;
-}
-
-const id=Number(saved);
-
-const exists=
-allFolders.some(
-folder=>folder.id===id
-);
-
-if(exists){
-
-currentFolderId=id;
-
-}else{
-
-currentFolderId=null;
-
-localStorage.removeItem(
-FOLDER_STORAGE_KEY
-);
-
-}
-
-}
-
-
-/* =========================
-   LOAD FOLDERS
-========================= */
-
-async function loadFolders(){
-
-folders.innerHTML=
-'<div class="empty">⏳ Folder লোড হচ্ছে...</div>';
-
-const {data,error}=
-await supabaseClient
-.from("folders")
-.select("id,name,parent_id")
-.order(
-"id",
-{ascending:true}
-);
-
-if(error){
-
-console.error(error);
-
-folders.innerHTML=
-'<div class="empty">❌ Folder লোড করা যায়নি।</div>';
-
-return false;
-}
-
-allFolders=data || [];
-
-restoreCurrentFolder();
-
-renderFolders();
-
-return true;
-
-}
-
-
-/* =========================
-   CURRENT PATH
-========================= */
-
-function getCurrentPath(){
-
-if(!currentFolderId){
-return [];
-}
-
-const result=[];
-
-let id=currentFolderId;
-
-while(id){
-
-const folder=
-allFolders.find(
-item=>item.id===id
-);
-
-if(!folder){
-break;
-}
-
-result.unshift(
-folder.name
-);
-
-id=folder.parent_id;
-
-}
-
-return result;
-
-}
-
-
-function getStoragePath(){
-
-if(!currentFolderId){
-return "";
-}
-
-return getFolderStoragePath(
-currentFolderId
-);
-
-
-}
-
-
-function getFolderStoragePath(folderId){
-
-const parts=[];
-
-let id=folderId;
-
-while(id){
-
-const folder=
-allFolders.find(
-item=>item.id===id
-);
-
-if(!folder){
-break;
-}
-
-parts.unshift(
-"folder_"+folder.id
-);
-
-id=folder.parent_id;
-
-}
-
-return parts.join("/");
-
-}
-
-
-/* =========================
-   RENDER FOLDERS
-========================= */
-
-function renderFolders(){
-
-folders.innerHTML="";
-
-const path=getCurrentPath();
-
-currentPath=path;
-
-currentFolder.textContent=
-path.length===0
-?
-"📁 Home"
-:
-"📁 "+path.join(" / ");
-
-
-const children=
-allFolders.filter(
-folder=>
-folder.parent_id===
-currentFolderId
-);
-
-
-if(children.length===0){
-
-folders.innerHTML=
-'<div class="empty">এই Folder-এ এখনো কোনো Sub-folder নেই।</div>';
-
-return;
-
-}
-
-
-children.forEach(
-function(folder){
-
-const div=
-document.createElement("div");
-
-div.className="folder";
-
-
-const openButton=
-document.createElement("button");
-
-openButton.className=
-"folder-open";
-
-openButton.innerHTML=
-'<span class="folder-icon">📁</span>'+
-'<span class="folder-name">'+
-escapeHtml(folder.name)+
-'</span>';
-
-openButton.onclick=
-function(){
-
-openFolder(folder.id);
-
-};
-
-div.appendChild(openButton);
-
-
-if(isAdmin){
-
-const manage=
-document.createElement("div");
-
-manage.className=
-"folder-manage";
-
-
-const renameButton=
-document.createElement("button");
-
-renameButton.className=
-"rename-button";
-
-renameButton.textContent=
-"✏️ Rename";
-
-renameButton.onclick=
-function(event){
-
-event.stopPropagation();
-
-renameFolder(folder);
-
-};
-
-
-const deleteButton=
-document.createElement("button");
-
-deleteButton.className=
-"delete-button";
-
-deleteButton.textContent=
-"🗑️ Delete";
-
-deleteButton.onclick=
-function(event){
-
-event.stopPropagation();
-
-deleteFolder(folder);
-
-};
-
-
-manage.appendChild(renameButton);
-manage.appendChild(deleteButton);
-
-div.appendChild(manage);
-
-}
-
-folders.appendChild(div);
-
-}
-);
-
-}
-
-
-/* =========================
-   OPEN / HOME / BACK
-========================= */
-
-function openFolder(id){
-
-currentFolderId=id;
-
-saveCurrentFolder();
-
-renderFolders();
-
-loadPhotos();
-
-}
-
-
-function goHome(){
-
-currentFolderId=null;
-
-saveCurrentFolder();
-
-renderFolders();
-
-loadPhotos();
-
-}
-
-
-function goBack(){
-
-if(!currentFolderId){
-return;
-}
-
-const current=
-allFolders.find(
-folder=>
-folder.id===
-currentFolderId
-);
-
-currentFolderId=
-current
-?
-current.parent_id
-:
-null;
-
-saveCurrentFolder();
-
-renderFolders();
-
-loadPhotos();
-
-}
-
-
-/* =========================
-   CREATE FOLDER
-========================= */
-
-async function createFolder(){
-
-if(!requireAdmin()){
-return;
-}
-
-const folderName=
-prompt(
-currentFolderId
-?
-"Sub-folder-এর নাম লিখুন:"
-:
-"নতুন Folder-এর নাম লিখুন:"
-);
-
-if(!folderName){
-return;
-}
-
-const cleanName=
-folderName.trim();
-
-if(!cleanName){
-return;
-}
-
-
-const exists=
-allFolders.some(
-folder=>
-folder.parent_id===
-currentFolderId &&
-folder.name.toLowerCase()===
-cleanName.toLowerCase()
-);
-
-if(exists){
-
-alert(
-"এই নামে Folder আগে থেকেই আছে।"
-);
-
-return;
-}
-
-
-const {error}=
-await supabaseClient
-.from("folders")
-.insert({
-name:cleanName,
-parent_id:currentFolderId
-});
-
-if(error){
-
-alert(
-"❌ Folder তৈরি হয়নি: "+
-error.message
-);
-
-return;
-}
-
-message.textContent=
-"✅ Folder তৈরি হয়েছে।";
-
-await loadFolders();
-
-}
-
-
-/* =========================
-   RENAME
-========================= */
-
-async function renameFolder(folder){
-
-if(!requireAdmin()){
-return;
-}
-
-const newName=
-prompt(
-"নতুন Folder নাম লিখুন:",
-folder.name
-);
-
-if(!newName){
-return;
-}
-
-const cleanName=
-newName.trim();
-
-if(!cleanName){
-return;
-}
-
-if(cleanName===folder.name){
-return;
-}
-
-
-const exists=
-allFolders.some(
-item=>
-item.id!==folder.id &&
-item.parent_id===
-folder.parent_id &&
-item.name.toLowerCase()===
-cleanName.toLowerCase()
-);
-
-if(exists){
-
-alert(
-"এই নামে Folder আগে থেকেই আছে।"
-);
-
-return;
-}
-
-
-const {error}=
-await supabaseClient
-.from("folders")
-.update({
-name:cleanName
-})
-.eq(
-"id",
-folder.id
-);
-
-if(error){
-
-alert(
-"❌ Rename হয়নি: "+
-error.message
-);
-
-return;
-}
-
-message.textContent=
-"✅ Folder Rename হয়েছে।";
-
-await loadFolders();
-
-loadPhotos();
-
-}
-
-
-/* =========================
-   DESCENDANTS
-========================= */
-
-function getDescendantIds(parentId){
-
-const result=[];
-
-const children=
-allFolders.filter(
-folder=>
-folder.parent_id===
-parentId
-);
-
-for(const child of children){
-
-result.push(child.id);
-
-result.push(
-...getDescendantIds(
-child.id
-)
-);
-
-}
-
-return result;
-
-}
-
-
-/* =========================
-   STORAGE LIST
-========================= */
-
-async function listStorageFiles(path){
-
-const {data,error}=
-await supabaseClient
-.storage
-.from("photos")
-.list(
-path,
-{limit:1000}
-);
-
-if(error){
-
-console.error(error);
-
-return null;
-}
-
-const files=[];
-
-for(const item of data || []){
-
-const fullPath=
-path
-?
-path+"/"+item.name
-:
-item.name;
-
-if(item.metadata){
-
-files.push(fullPath);
-
-}else{
-
-const childFiles=
-await listStorageFiles(
-fullPath
-);
-
-if(childFiles===null){
-return null;
-}
-
-files.push(
-...childFiles
-);
-
-}
-
-}
-
-return files;
-
-}
-
-
-async function deleteStorageTree(path){
-
-if(!isAdmin){
-return false;
-}
-
-const files=
-await listStorageFiles(path);
-
-if(files===null){
-return false;
-}
-
-if(files.length===0){
-return true;
-}
-
-const {error}=
-await supabaseClient
-.storage
-.from("photos")
-.remove(files);
-
-if(error){
-
-console.error(error);
-
-return false;
-}
-
-return true;
-
-}
-
-
-/* =========================
-   DELETE FOLDER
-========================= */
-
-async function deleteFolder(folder){
-
-if(!requireAdmin()){
-return;
-}
-
-const answer=
-confirm(
-'🗑️ "'+
-folder.name+
-'" Folder Delete করবেন?\n\nএই Folder-এর ভিতরের ছবি ও Sub-folder-ও মুছে যাবে।'
-);
-
-if(!answer){
-return;
-}
-
-message.textContent=
-"⏳ Folder Delete হচ্ছে...";
-
-
-const ids=
-getDescendantIds(
-folder.id
-);
-
-ids.push(folder.id);
-
-
-for(const id of ids){
-
-const storagePath=
-getFolderStoragePath(id);
-
-const removed=
-await deleteStorageTree(
-storagePath
-);
-
-if(!removed){
-
-message.textContent=
-"❌ Folder-এর ছবি Delete করা যায়নি।";
-
-return;
-}
-
-}
-
-
-const {error}=
-await supabaseClient
-.from("folders")
-.delete()
-.in(
-"id",
-ids
-);
-
-if(error){
-
-alert(
-"❌ Folder Delete হয়নি: "+
-error.message
-);
-
-return;
-}
-
-
-message.textContent=
-"✅ Folder Delete হয়েছে।";
-
-
-if(
-ids.includes(
-currentFolderId
-)
-){
-
-currentFolderId=
-folder.parent_id;
-
-saveCurrentFolder();
-
-}
-
-
-await loadFolders();
-
-loadPhotos();
-
-}
-
-
-/* =========================
-   REFRESH
-========================= */
-
-async function refreshFolders(){
-
-await loadFolders();
-
-await loadPhotos();
-
-}
-
-
-/* =========================
-   ESCAPE
-========================= */
-
-function escapeHtml(text){
-
-const div=
-document.createElement("div");
-
-div.textContent=text;
-
-return div.innerHTML;
-
-}
-
-
-/* =========================
-   FILE EXTENSION
-========================= */
-
-function getFileExtension(file){
-
-const originalName=
-file.name || "";
-
-const dot=
-originalName.lastIndexOf(".");
-
-if(
-dot!==-1 &&
-dot<originalName.length-1
-){
-
-const ext=
-originalName
-.substring(dot+1)
-.toLowerCase()
-.replace(
-/[^a-z0-9]/g,
-""
-);
-
-if(ext){
-return ext;
-}
-
-}
-
-if(file.type==="image/png"){
-return "png";
-}
-
-if(file.type==="image/webp"){
-return "webp";
-}
-
-if(file.type==="image/gif"){
-return "gif";
-}
-
-return "jpg";
-
-}
-
-
-/* =========================
-   IMAGE PREVIEW
-========================= */
-
-photoInput.addEventListener(
-"change",
-function(){
-
-if(!isAdmin){
-
-this.value="";
-return;
-
-}
-
-previewArea.innerHTML="";
-
-const files=
-Array.from(
-this.files || []
-);
-
-if(files.length===0){
-return;
-}
-
-
-files.forEach(
-function(file,index){
-
-const item=
-document.createElement("div");
-
-item.className=
-"preview-item";
-
-
-const img=
-document.createElement("img");
-
-img.src=
-URL.createObjectURL(file);
-
-
-const number=
-document.createElement("div");
-
-number.className=
-"preview-number";
-
-number.textContent=
-"#"+(index+1);
-
-
-item.appendChild(img);
-item.appendChild(number);
-
-previewArea.appendChild(item);
-
-}
-);
-
-
-message.textContent=
-"📸 "+
-files.length+
-"টি ছবি নির্বাচিত হয়েছে.";
-
-}
-);
-
-
-/* =========================
-   UPLOAD
-========================= */
-
-uploadButton.addEventListener(
-"click",
-async function(){
-
-if(!requireAdmin()){
-return;
-}
-
-const files=
-Array.from(
-photoInput.files || []
-);
-
-if(files.length===0){
-
-message.textContent=
-"❌ আগে ছবি নির্বাচন করুন.";
-
-return;
-}
-
-
-uploadButton.disabled=true;
-photoInput.disabled=true;
-
-
-let successCount=0;
-let failedCount=0;
-
-
-try{
-
-const folderPath=
-getStoragePath();
-
-
-for(
-let i=0;
-i<files.length;
-i++
-){
-
-const file=files[i];
-
-message.textContent=
-"⏳ ছবি "+
-(i+1)+
-" / "+
-files.length+
-" আপলোড হচ্ছে...";
-
-
-const extension=
-getFileExtension(file);
-
-
-const fileName=
-Date.now()+
-"-"+
-String(i+1).padStart(3,"0")+
-"-"+
-Math.random()
-.toString(36)
-.substring(2,8)+
-"."+extension;
-
-
-const storagePath=
-folderPath
-?
-folderPath+"/"+fileName
-:
-fileName;
-
-
-const {error}=
-await supabaseClient
-.storage
-.from("photos")
-.upload(
-storagePath,
-file,
-{
-upsert:false,
-contentType:
-file.type ||
-"image/jpeg"
-}
-);
-
-
-if(error){
-
-console.error(
-"Upload error:",
-error
-);
-
-failedCount++;
-
-}else{
-
-successCount++;
-
-}
-
-}
-
-
-if(
-successCount>0 &&
-failedCount===0
-){
-
-message.textContent=
-"✅ "+
-successCount+
-"টি ছবি সফলভাবে পোস্ট হয়েছে!";
-
-}else if(
-successCount>0 &&
-failedCount>0
-){
-
-message.textContent=
-"⚠️ "+
-successCount+
-"টি ছবি পোস্ট হয়েছে, "+
-failedCount+
-"টি হয়নি।";
-
-}else{
-
-message.textContent=
-"❌ কোনো ছবি পোস্ট হয়নি.";
-
-}
-
-
-photoInput.value="";
-previewArea.innerHTML="";
-
-await loadPhotos();
-
-
-}catch(error){
-
-console.error(error);
-
-message.textContent=
-"❌ ছবি পোস্ট হয়নি: "+
-error.message;
-
-}
-
-
-uploadButton.disabled=false;
-photoInput.disabled=false;
-
-}
-);
-
-
-/* =========================
-   LOAD PHOTOS
-========================= */
-
-async function loadPhotos(){
-
-gallery.innerHTML=
-'<div class="empty">⏳ ছবি লোড হচ্ছে...</div>';
-
-const folderPath=
-getStoragePath();
-
-
-const {data,error}=
-await supabaseClient
-.storage
-.from("photos")
-.list(
-folderPath,
-{
-limit:1000,
-sortBy:{
-column:"name",
-order:"asc"
-}
-}
-);
-
-
-if(error){
-
-console.error(error);
-
-gallery.innerHTML=
-'<div class="empty">❌ ছবি লোড করা যায়নি।</div>';
-
-return;
-}
-
-
-const files=
-(data || [])
-.filter(
-file=>
-file.name &&
-file.metadata
-);
-
-
-currentImages=files;
-
-
-if(files.length===0){
-
-gallery.innerHTML=
-'<div class="empty">এই Folder-এ এখনো কোনো ছবি নেই।</div>';
-
-return;
-}
-
-
-gallery.innerHTML="";
-
-
-for(
-let i=0;
-i<files.length;
-i++
-){
-
-const file=files[i];
-
-
-const fullPath=
-folderPath
-?
-folderPath+"/"+file.name
-:
-file.name;
-
-
-const {data:publicData}=
-supabaseClient
-.storage
-.from("photos")
-.getPublicUrl(
-fullPath
-);
-
-
-const card=
-document.createElement("div");
-
-card.className=
-"photo-card";
-
-
-const number=
-document.createElement("div");
-
-number.className=
-"photo-number";
-
-number.textContent=
-"#"+(i+1);
-
-
-const img=
-document.createElement("img");
-
-img.src=
-publicData.publicUrl;
-
-img.alt=
-"Posted picture "+
-(i+1);
-
-img.onclick=
-function(){
-openViewer(i);
-};
-
-
-const info=
-document.createElement("div");
-
-info.className=
-"photo-info";
-
-
-const likeButton=
-document.createElement("button");
-
-likeButton.className=
-"like-button";
-
-likeButton.textContent=
-"❤️ 0";
-
-
-likeButton.onclick=
-async function(event){
-
-event.stopPropagation();
-
-await addLike(
-fullPath,
-likeButton
-);
-
-};
-
-
-info.appendChild(
-likeButton
-);
-
-
-if(isAdmin){
-
-const deleteButton=
-document.createElement("button");
-
-deleteButton.className=
-"photo-delete-button";
-
-deleteButton.textContent=
-"🗑️ Delete";
-
-
-deleteButton.onclick=
-async function(event){
-
-event.stopPropagation();
-
-await deletePhoto(
-fullPath,
-card
-);
-
-};
-
-
-info.appendChild(
-deleteButton
-);
-
-}
-
-
-card.appendChild(number);
-card.appendChild(img);
-card.appendChild(info);
-
-gallery.appendChild(card);
-
-
-loadLikeCount(
-fullPath,
-likeButton
-);
-
-}
-
-}
-
-
-/* =========================
-   LOCAL LIKE FALLBACK
-========================= */
-
-function getLocalLikes(){
-
-try{
-
-return JSON.parse(
-localStorage.getItem(
-LOCAL_LIKE_KEY
-) || "{}"
-);
-
-}catch(e){
-
-return {};
-
-}
-
-}
-
-
-function saveLocalLikes(data){
-
-try{
-
-localStorage.setItem(
-LOCAL_LIKE_KEY,
-JSON.stringify(data)
-);
-
-}catch(e){}
-
-}
-
-
-function getLocalLike(photoName){
-
-const likes=
-getLocalLikes();
-
-return Number(
-likes[photoName] || 0
-);
-
-}
-
-
-function addLocalLike(photoName){
-
-const likes=
-getLocalLikes();
-
-likes[photoName]=
-Number(likes[photoName] || 0)+1;
-
-saveLocalLikes(likes);
-
-return likes[photoName];
-
-}
-
-
-/* =========================
-   LIKE COUNT
-========================= */
-
-async function loadLikeCount(
-photoName,
-button
-){
-
-const {data,error}=
-await supabaseClient
-.from("photo_likes")
-.select("like_count")
-.eq(
-"photo_name",
-photoName
-)
-.maybeSingle();
-
-
-let count=0;
-
-
-if(!error && data){
-
-count=
-Number(
-data.like_count || 0
-);
-
-}else{
-
-/*
-   Supabase policy error হলে
-   local count দেখাবে।
-*/
-
-count=
-getLocalLike(photoName);
-
-}
-
-
-button.textContent=
-"❤️ "+count;
-
-}
-
-
-/* =========================
-   ADD LIKE
-========================= */
-
-async function addLike(
-photoName,
-button
-){
-
-if(button.disabled){
-return;
-}
-
-button.disabled=true;
-
-
-try{
-
-/*
-  প্রথমে Supabase-এ চেষ্টা।
-*/
-
-const {
-data:oldData,
-error:readError
-}=
-await supabaseClient
-.from("photo_likes")
-.select("like_count")
-.eq(
-"photo_name",
-photoName
-)
-.maybeSingle();
-
-
-/*
-  যদি Supabase read policy কাজ না করে,
-  local fallback ব্যবহার হবে।
-*/
-
-if(readError){
-
-console.warn(
-"Supabase Like unavailable:",
-readError
-);
-
-const localCount=
-addLocalLike(photoName);
-
-button.textContent=
-"❤️ "+localCount;
-
-button.classList.add("liked");
-
-return;
-
-}
-
-
-/*
-  নতুন Like row
-*/
-
-if(!oldData){
-
-const {error}=
-await supabaseClient
-.from("photo_likes")
-.insert({
-photo_name:photoName,
-like_count:1
-});
-
-
-if(error){
-
-console.warn(
-"Like insert unavailable:",
-error
-);
-
-const localCount=
-addLocalLike(photoName);
-
-button.textContent=
-"❤️ "+localCount;
-
-button.classList.add("liked");
-
-return;
-
-}
-
-
-button.textContent=
-"❤️ 1";
-
-button.classList.add("liked");
-
-
-}else{
-
-const newCount=
-Number(
-oldData.like_count || 0
-)+1;
-
-
-const {error}=
-await supabaseClient
-.from("photo_likes")
-.update({
-like_count:newCount
-})
-.eq(
-"photo_name",
-photoName
-);
-
-
-if(error){
-
-console.warn(
-"Like update unavailable:",
-error
-);
-
-const localCount=
-addLocalLike(photoName);
-
-button.textContent=
-"❤️ "+localCount;
-
-button.classList.add("liked");
-
-return;
-
-}
-
-
-button.textContent=
-"❤️ "+newCount;
-
-button.classList.add("liked");
-
-}
-
-
-}catch(error){
-
-console.error(error);
-
-const localCount=
-addLocalLike(photoName);
-
-button.textContent=
-"❤️ "+localCount;
-
-button.classList.add("liked");
-
-
-}finally{
-
-button.disabled=false;
-
-}
-
-}
-
-
-/* =========================
-   DELETE PHOTO
-========================= */
-
-async function deletePhoto(
-fullPath,
-card
-){
-
-if(!requireAdmin()){
-return;
-}
-
-
-const answer=
-confirm(
-"🗑️ এই ছবিটি Delete করবেন?"
-);
-
-if(!answer){
-return;
-}
-
-
-const deleteButton=
-card.querySelector(
-".photo-delete-button"
-);
-
-
-if(deleteButton){
-
-deleteButton.disabled=true;
-
-deleteButton.textContent=
-"⏳ Delete হচ্ছে...";
-
-}
-
-
-const {error}=
-await supabaseClient
-.storage
-.from("photos")
-.remove([
-fullPath
-]);
-
-
-if(error){
-
-console.error(error);
-
-alert(
-"❌ ছবি Delete হয়নি: "+
-error.message
-);
-
-
-if(deleteButton){
-
-deleteButton.disabled=false;
-
-deleteButton.textContent=
-"🗑️ Delete";
-
-}
-
-return;
-
-}
-
-
-await supabaseClient
-.from("photo_likes")
-.delete()
-.eq(
-"photo_name",
-fullPath
-);
-
-
-message.textContent=
-"✅ ছবি Delete হয়েছে.";
-
-
-if(
-viewer.style.display==="flex"
-){
-
-closeViewer();
-
-}
-
-
-await loadPhotos();
-
-}
-
-
-/* =========================
-   VIEWER
-========================= */
-
-function openViewer(index){
-
-if(!currentImages.length){
-return;
-}
-
-currentViewerIndex=index;
-
-showViewerImage();
-
-viewer.style.display="flex";
-
-}
-
-
-function closeViewer(){
-
-viewer.style.display="none";
-
-}
-
-
-async function showViewerImage(){
-
-const file=
-currentImages[
-currentViewerIndex
-];
-
-if(!file){
-return;
-}
-
-
-const folderPath=
-getStoragePath();
-
-
-const fullPath=
-folderPath
-?
-folderPath+"/"+file.name
-:
-file.name;
-
-
-const {data}=
-supabaseClient
-.storage
-.from("photos")
-.getPublicUrl(
-fullPath
-);
-
-
-viewerImage.src=
-data.publicUrl;
-
-
-loadViewerLike(
-fullPath
-);
-
-}
-
-
-/* =========================
-   VIEWER LIKE
-========================= */
-
-async function loadViewerLike(
-photoName
-){
-
-const {data,error}=
-await supabaseClient
-.from("photo_likes")
-.select("like_count")
-.eq(
-"photo_name",
-photoName
-)
-.maybeSingle();
-
-
-let count=0;
-
-
-if(!error && data){
-
-count=
-Number(
-data.like_count || 0
-);
-
-}else{
-
-count=
-getLocalLike(photoName);
-
-}
-
-
-viewerLike.textContent=
-"❤️ "+count;
-
-}
-
-
-async function likeCurrentImage(){
-
-const file=
-currentImages[
-currentViewerIndex
-];
-
-if(!file){
-return;
-}
-
-
-const folderPath=
-getStoragePath();
-
-
-const fullPath=
-folderPath
-?
-folderPath+"/"+file.name
-:
-file.name;
-
-
-await addLike(
-fullPath,
-viewerLike
-);
-
-}
-
-
-/* =========================
-   PREVIOUS / NEXT
-========================= */
-
-function previousImage(){
-
-if(!currentImages.length){
-return;
-}
-
-currentViewerIndex--;
-
-if(currentViewerIndex<0){
-
-currentViewerIndex=
-currentImages.length-1;
-
-}
-
-showViewerImage();
-
-}
-
-
-function nextImage(){
-
-if(!currentImages.length){
-return;
-}
-
-currentViewerIndex++;
-
-if(
-currentViewerIndex>=
-currentImages.length
-){
-
-currentViewerIndex=0;
-
-}
-
-showViewerImage();
-
-}
-
-
-/* =========================
-   SWIPE
-========================= */
-
-let touchStartX=0;
-let touchEndX=0;
-
-
-viewerImage.addEventListener(
-"touchstart",
-function(event){
-
-touchStartX=
-event.changedTouches[0].screenX;
-
-},
-{
-passive:true
-}
-);
-
-
-viewerImage.addEventListener(
-"touchend",
-function(event){
-
-touchEndX=
-event.changedTouches[0].screenX;
-
-
-const difference=
-touchEndX-touchStartX;
-
-
-if(
-Math.abs(difference)<50
-){
-return;
-}
-
-
-if(difference>0){
-
-previousImage();
-
-}else{
-
-nextImage();
-
-}
-
-},
-{
-passive:true
-}
-);
-
-
-/* =========================
-   START APP
-========================= */
-
-async function startApp(){
-
-const {
-data:sessionData
-}=
-await supabaseClient
-.auth
-.getSession();
-
-
-currentUser=
-sessionData.session
-?
-sessionData.session.user
-:
-null;
-
-
-isAdmin=
-checkAdmin(
-currentUser
-);
-
-
-if(
-currentUser &&
-!isAdmin
-){
-
-await supabaseClient.auth
-.signOut();
-
-currentUser=null;
-isAdmin=false;
-
-}
-
-
-updateAdminUI();
-
-
-const foldersLoaded=
-await loadFolders();
-
-
-if(foldersLoaded){
-
-await loadPhotos();
-
-}
-
-}
-
-
-startApp();
-
-</script>
-
-</body>
-</html>
