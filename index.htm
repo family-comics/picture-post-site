@@ -55,6 +55,10 @@
       cursor: pointer;
     }
 
+    button:disabled {
+      opacity: .6;
+    }
+
     .top-buttons {
       display: flex;
       gap: 7px;
@@ -84,32 +88,74 @@
       color: #666;
       font-size: 13px;
       margin-bottom: 10px;
+      word-break: break-word;
+    }
+
+    .folder-actions {
+      display: flex;
+      gap: 7px;
+      margin-bottom: 10px;
+    }
+
+    .folder-actions button {
+      flex: 1;
+      background: #111;
+      color: white;
     }
 
     .folders {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 7px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
     }
 
     .folder {
       background: #f1f1f1;
-      padding: 11px 5px;
-      text-align: center;
+      padding: 10px 7px;
       border-radius: 10px;
-      font-size: 13px;
-      cursor: pointer;
       border: 1px solid #ddd;
     }
 
-    .folder:active {
-      transform: scale(.97);
+    .folder-open {
+      width: 100%;
+      background: transparent;
+      padding: 7px 4px;
+      text-align: center;
     }
 
     .folder-icon {
       display: block;
-      font-size: 25px;
-      margin-bottom: 3px;
+      font-size: 27px;
+      margin-bottom: 4px;
+    }
+
+    .folder-name {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      word-break: break-word;
+    }
+
+    .folder-manage {
+      display: flex;
+      gap: 5px;
+      margin-top: 7px;
+    }
+
+    .folder-manage button {
+      flex: 1;
+      padding: 7px 4px;
+      font-size: 12px;
+    }
+
+    .rename-button {
+      background: #e8eefc;
+      color: #174ea6;
+    }
+
+    .delete-button {
+      background: #ffe4e4;
+      color: #b00020;
     }
 
     input[type="file"] {
@@ -137,6 +183,7 @@
       margin-top: 8px;
       font-size: 13px;
       font-weight: bold;
+      word-break: break-word;
     }
 
     .gallery {
@@ -182,7 +229,6 @@
       grid-column: 1 / -1;
     }
 
-    /* Viewer */
     #viewer {
       position: fixed;
       inset: 0;
@@ -238,10 +284,10 @@
       }
 
       .folders {
-        gap: 5px;
+        gap: 6px;
       }
 
-      .folder {
+      .folder-name {
         font-size: 12px;
       }
     }
@@ -263,50 +309,90 @@
   </div>
 
   <div class="box">
+
     <h2>📁 Picture Folder</h2>
 
     <div id="currentFolder">📁 Home</div>
 
-    <div id="folders" class="folders"></div>
+    <div class="folder-actions">
+      <button onclick="createFolder()">➕ নতুন Folder</button>
+      <button onclick="refreshFolders()">🔄 Refresh</button>
+    </div>
+
+    <div id="folders" class="folders">
+      <div class="empty">⏳ Folder লোড হচ্ছে...</div>
+    </div>
+
   </div>
 
   <div class="box">
+
     <h2>📤 ছবি পোস্ট করুন</h2>
 
-    <input type="file" id="photoInput" accept="image/*">
+    <input
+      type="file"
+      id="photoInput"
+      accept="image/*"
+    >
 
     <img id="preview">
 
-    <button id="uploadButton">📤 ছবি পোস্ট করুন</button>
+    <button id="uploadButton">
+      📤 ছবি পোস্ট করুন
+    </button>
 
     <div id="message"></div>
+
   </div>
 
   <div class="box">
+
     <h2>🖼️ পোস্ট করা ছবি</h2>
 
     <div id="gallery" class="gallery">
       <div class="empty">ছবি লোড হচ্ছে...</div>
     </div>
+
   </div>
 
 </div>
+
 
 <!-- Image Viewer -->
 
 <div id="viewer">
 
   <div class="viewer-top">
-    <button onclick="closeViewer()">✕ বন্ধ</button>
-    <button onclick="goHome()">🏠 Home</button>
+
+    <button onclick="closeViewer()">
+      ✕ বন্ধ
+    </button>
+
+    <button onclick="goHome(); closeViewer();">
+      🏠 Home
+    </button>
+
   </div>
 
   <img id="viewerImage">
 
   <div class="viewer-bottom">
-    <button onclick="previousImage()">👈</button>
-    <button id="viewerLike" onclick="likeCurrentImage()">❤️ 0</button>
-    <button onclick="nextImage()">👉</button>
+
+    <button onclick="previousImage()">
+      👈
+    </button>
+
+    <button
+      id="viewerLike"
+      onclick="likeCurrentImage()"
+    >
+      ❤️ 0
+    </button>
+
+    <button onclick="nextImage()">
+      👉
+    </button>
+
   </div>
 
 </div>
@@ -321,7 +407,10 @@ const SUPABASE_KEY =
   "sb_publishable_CIj1SRMGjbByiTkx-Yx8Eg_g7jHkTh9";
 
 const supabaseClient =
-  supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 
 const photoInput =
@@ -356,141 +445,221 @@ const viewerLike =
 
 
 /* =========================
-   FOLDER STRUCTURE
+   FOLDER STATE
 ========================= */
 
-const folderStructure = {
+let allFolders = [];
 
-  "বাংলা পিকচার": {
-    "ফানি": {},
-    "সুন্দর": {},
-    "প্রকৃতি": {}
-  },
-
-  "মুভির পিকচার": {
-    "বাংলা": {},
-    "হিন্দি": {}
-  },
-
-  "ফানি পিকচার": {
-    "মিম": {},
-    "জোকস": {}
-  },
-
-  "সুন্দর পিকচার": {
-    "প্রকৃতি": {},
-    "ফুল": {}
-  },
-
-  "অন্যান্য": {
-    "নতুন": {},
-    "বিবিধ": {}
-  }
-
-};
-
-
-/* =========================
-   NAVIGATION
-========================= */
+let currentFolderId = null;
 
 let currentPath = [];
 
-let historyPaths = [];
+let currentImages = [];
+
+let currentViewerIndex = 0;
 
 
-function getCurrentFolderObject() {
+/* =========================
+   LOAD FOLDERS
+========================= */
 
-  let obj = folderStructure;
+async function loadFolders() {
 
-  for (const part of currentPath) {
-    obj = obj[part] || {};
-  }
+  folders.innerHTML =
+    '<div class="empty">⏳ Folder লোড হচ্ছে...</div>';
 
-  return obj;
-}
+  const { data, error } =
+    await supabaseClient
+      .from("folders")
+      .select("id,name,parent_id")
+      .order("id", { ascending: true });
 
+  if (error) {
 
-function getFolderPath() {
+    console.error(error);
 
-  return currentPath.join("/");
-}
+    folders.innerHTML =
+      '<div class="empty">❌ Folder লোড করা যায়নি।</div>';
 
-
-function openFolder(folderName) {
-
-  historyPaths.push([...currentPath]);
-
-  currentPath.push(folderName);
-
-  renderFolders();
-
-  loadPhotos();
-}
-
-
-function goBack() {
-
-  if (currentPath.length === 0) {
     return;
+
   }
 
-  currentPath.pop();
+  allFolders = data || [];
 
   renderFolders();
 
-  loadPhotos();
 }
 
 
-function goHome() {
+/* =========================
+   CURRENT FOLDER PATH
+========================= */
 
-  currentPath = [];
+function getCurrentPath() {
 
-  renderFolders();
+  if (!currentFolderId) {
+    return [];
+  }
 
-  loadPhotos();
+  const result = [];
+
+  let id = currentFolderId;
+
+  while (id) {
+
+    const folder =
+      allFolders.find(
+        item => item.id === id
+      );
+
+    if (!folder) break;
+
+    result.unshift(folder.name);
+
+    id = folder.parent_id;
+
+  }
+
+  return result;
+
 }
 
+
+function getStoragePath() {
+
+  return getCurrentPath().join("/");
+
+}
+
+
+/* =========================
+   RENDER FOLDERS
+========================= */
 
 function renderFolders() {
 
-  const obj = getCurrentFolderObject();
-
   folders.innerHTML = "";
 
+  const path =
+    getCurrentPath();
+
+  currentPath = path;
+
   currentFolder.textContent =
-    currentPath.length === 0
+    path.length === 0
       ? "📁 Home"
-      : "📁 " + currentPath.join(" / ");
+      : "📁 " + path.join(" / ");
 
 
-  const names = Object.keys(obj);
+  const children =
+    allFolders.filter(
+      folder =>
+        folder.parent_id === currentFolderId
+    );
 
-  if (names.length === 0) {
+
+  if (children.length === 0) {
 
     folders.innerHTML =
-      '<div class="empty">এই ফোল্ডারের ভিতরে আর কোনো ফোল্ডার নেই।</div>';
+      '<div class="empty">এই Folder-এ এখনো কোনো Sub-folder নেই।</div>';
 
     return;
+
   }
 
 
-  names.forEach(name => {
+  children.forEach(folder => {
 
-    const div = document.createElement("div");
+    const div =
+      document.createElement("div");
 
-    div.className = "folder";
+    div.className =
+      "folder";
 
-    div.innerHTML =
+
+    const openButton =
+      document.createElement("button");
+
+    openButton.className =
+      "folder-open";
+
+
+    openButton.innerHTML =
       '<span class="folder-icon">📁</span>' +
-      name;
+      '<span class="folder-name">' +
+      escapeHtml(folder.name) +
+      '</span>';
 
-    div.onclick = function () {
 
-      openFolder(name);
+    openButton.onclick =
+      function () {
 
-    };
+        openFolder(folder.id);
+
+      };
+
+
+    const manage =
+      document.createElement("div");
+
+    manage.className =
+      "folder-manage";
+
+
+    const renameButton =
+      document.createElement("button");
+
+    renameButton.className =
+      "rename-button";
+
+    renameButton.textContent =
+      "✏️ Rename";
+
+
+    renameButton.onclick =
+      function () {
+
+        renameFolder(folder);
+
+      };
+
+
+    const deleteButton =
+      document.createElement("button");
+
+    deleteButton.className =
+      "delete-button";
+
+    deleteButton.textContent =
+      "🗑️ Delete";
+
+
+    deleteButton.onclick =
+      function () {
+
+        deleteFolder(folder);
+
+      };
+
+
+    manage.appendChild(
+      renameButton
+    );
+
+    manage.appendChild(
+      deleteButton
+    );
+
+
+    div.appendChild(
+      openButton
+    );
+
+    div.appendChild(
+      manage
+    );
+
 
     folders.appendChild(div);
 
@@ -500,129 +669,862 @@ function renderFolders() {
 
 
 /* =========================
-   IMAGE PREVIEW
+   OPEN FOLDER
 ========================= */
 
-photoInput.addEventListener("change", function () {
+function openFolder(id) {
 
-  const file = this.files[0];
+  currentFolderId =
+    id;
 
-  if (!file) return;
+  renderFolders();
 
-  preview.src =
-    URL.createObjectURL(file);
+  loadPhotos();
 
-  preview.style.display = "block";
-
-  message.textContent = "";
-
-});
+}
 
 
 /* =========================
-   UPLOAD PHOTO
+   HOME
 ========================= */
 
-uploadButton.addEventListener("click", async function () {
+function goHome() {
 
-  const file = photoInput.files[0];
+  currentFolderId =
+    null;
 
-  if (!file) {
+  renderFolders();
 
-    message.textContent =
-      "❌ আগে একটি ছবি নির্বাচন করুন।";
+  loadPhotos();
 
+}
+
+
+/* =========================
+   BACK
+========================= */
+
+function goBack() {
+
+  if (!currentFolderId) {
+    return;
+  }
+
+  const current =
+    allFolders.find(
+      folder =>
+        folder.id === currentFolderId
+    );
+
+  currentFolderId =
+    current
+      ? current.parent_id
+      : null;
+
+  renderFolders();
+
+  loadPhotos();
+
+}
+
+
+/* =========================
+   CREATE FOLDER
+========================= */
+
+async function createFolder() {
+
+  const folderName =
+    prompt(
+      currentFolderId
+        ? "Sub-folder-এর নাম লিখুন:"
+        : "নতুন Folder-এর নাম লিখুন:"
+    );
+
+
+  if (!folderName) {
     return;
   }
 
 
-  uploadButton.disabled = true;
+  const cleanName =
+    folderName.trim();
+
+
+  if (!cleanName) {
+    return;
+  }
+
+
+  const exists =
+    allFolders.some(
+      folder =>
+        folder.parent_id === currentFolderId &&
+        folder.name.toLowerCase() ===
+        cleanName.toLowerCase()
+    );
+
+
+  if (exists) {
+
+    alert(
+      "এই নামে Folder আগে থেকেই আছে।"
+    );
+
+    return;
+
+  }
+
+
+  const { error } =
+    await supabaseClient
+      .from("folders")
+      .insert({
+
+        name:
+          cleanName,
+
+        parent_id:
+          currentFolderId
+
+      });
+
+
+  if (error) {
+
+    alert(
+      "❌ Folder তৈরি হয়নি: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  await loadFolders();
+
+}
+
+
+/* =========================
+   RENAME FOLDER
+========================= */
+
+async function renameFolder(
+  folder
+) {
+
+  const newName =
+    prompt(
+      "নতুন Folder নাম লিখুন:",
+      folder.name
+    );
+
+
+  if (!newName) {
+    return;
+  }
+
+
+  const cleanName =
+    newName.trim();
+
+
+  if (!cleanName) {
+    return;
+  }
+
+
+  if (
+    cleanName ===
+    folder.name
+  ) {
+    return;
+  }
+
+
+  const exists =
+    allFolders.some(
+      item =>
+        item.id !== folder.id &&
+        item.parent_id === folder.parent_id &&
+        item.name.toLowerCase() ===
+        cleanName.toLowerCase()
+    );
+
+
+  if (exists) {
+
+    alert(
+      "এই নামে Folder আগে থেকেই আছে।"
+    );
+
+    return;
+
+  }
+
+
+  const oldPath =
+    getFolderPathById(
+      folder.id
+    );
+
+
+  const newPath =
+    getParentStoragePath(
+      folder.parent_id
+    ) +
+    (
+      getParentStoragePath(
+        folder.parent_id
+      )
+        ? "/"
+        : ""
+    ) +
+    cleanName;
+
 
   message.textContent =
-    "⏳ ছবি আপলোড হচ্ছে...";
+    "⏳ Folder-এর ছবি সরানো হচ্ছে...";
 
 
-  try {
-
-    const safeName =
-      file.name
-        .replace(/\s+/g, "-")
-        .replace(/[^\w.\-]/g, "");
-
-
-    const fileName =
-      Date.now() +
-      "-" +
-      Math.random()
-        .toString(36)
-        .substring(2, 8) +
-      "-" +
-      safeName;
+  const moved =
+    await moveStorageTree(
+      oldPath,
+      newPath
+    );
 
 
-    const folderPath =
-      getFolderPath();
+  if (!moved) {
+
+    message.textContent =
+      "❌ Folder rename করা যায়নি।";
+
+    return;
+
+  }
 
 
-    const storagePath =
-      folderPath
-        ? folderPath + "/" + fileName
-        : fileName;
+  const { error } =
+    await supabaseClient
+      .from("folders")
+      .update({
+
+        name:
+          cleanName
+
+      })
+      .eq(
+        "id",
+        folder.id
+      );
+
+
+  if (error) {
+
+    alert(
+      "❌ Rename হয়নি: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  message.textContent =
+    "✅ Folder Rename হয়েছে।";
+
+
+  await loadFolders();
+
+  loadPhotos();
+
+}
+
+
+/* =========================
+   DELETE FOLDER
+========================= */
+
+async function deleteFolder(
+  folder
+) {
+
+  const answer =
+    confirm(
+      '🗑️ "' +
+      folder.name +
+      '" Folder Delete করবেন?\n\nএই Folder-এর ভিতরের ছবি ও Sub-folder-ও মুছে যাবে।'
+    );
+
+
+  if (!answer) {
+    return;
+  }
+
+
+  message.textContent =
+    "⏳ Folder Delete হচ্ছে...";
+
+
+  const storagePath =
+    getFolderPathById(
+      folder.id
+    );
+
+
+  const removed =
+    await deleteStorageTree(
+      storagePath
+    );
+
+
+  if (!removed) {
+
+    message.textContent =
+      "❌ Folder-এর ছবি Delete করা যায়নি।";
+
+    return;
+
+  }
+
+
+  const ids =
+    getDescendantIds(
+      folder.id
+    );
+
+
+  ids.push(
+    folder.id
+  );
+
+
+  const { error } =
+    await supabaseClient
+      .from("folders")
+      .delete()
+      .in(
+        "id",
+        ids
+      );
+
+
+  if (error) {
+
+    alert(
+      "❌ Folder Delete হয়নি: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  message.textContent =
+    "✅ Folder Delete হয়েছে।";
+
+
+  if (
+    ids.includes(
+      currentFolderId
+    )
+  ) {
+
+    currentFolderId =
+      folder.parent_id;
+
+  }
+
+
+  await loadFolders();
+
+  loadPhotos();
+
+}
+
+
+/* =========================
+   DESCENDANT IDS
+========================= */
+
+function getDescendantIds(
+  parentId
+) {
+
+  const result = [];
+
+  const children =
+    allFolders.filter(
+      folder =>
+        folder.parent_id === parentId
+    );
+
+
+  for (
+    const child
+    of children
+  ) {
+
+    result.push(
+      child.id
+    );
+
+    result.push(
+      ...getDescendantIds(
+        child.id
+      )
+    );
+
+  }
+
+
+  return result;
+
+}
+
+
+/* =========================
+   FOLDER STORAGE PATH
+========================= */
+
+function getFolderPathById(
+  folderId
+) {
+
+  const parts = [];
+
+  let id =
+    folderId;
+
+
+  while (id) {
+
+    const folder =
+      allFolders.find(
+        item =>
+          item.id === id
+      );
+
+
+    if (!folder) {
+      break;
+    }
+
+
+    parts.unshift(
+      folder.name
+    );
+
+
+    id =
+      folder.parent_id;
+
+  }
+
+
+  return parts.join("/");
+
+}
+
+
+function getParentStoragePath(
+  parentId
+) {
+
+  if (!parentId) {
+    return "";
+  }
+
+  return getFolderPathById(
+    parentId
+  );
+
+}
+
+
+/* =========================
+   STORAGE LIST
+========================= */
+
+async function listStorageFiles(
+  path
+) {
+
+  const { data, error } =
+    await supabaseClient
+      .storage
+      .from("photos")
+      .list(
+        path,
+        {
+          limit: 1000
+        }
+      );
+
+
+  if (error) {
+    console.error(error);
+    return null;
+  }
+
+
+  const files = [];
+
+
+  for (
+    const item
+    of (data || [])
+  ) {
+
+    const fullPath =
+      path
+        ? path + "/" + item.name
+        : item.name;
+
+
+    if (
+      item.metadata
+    ) {
+
+      files.push(
+        fullPath
+      );
+
+    } else {
+
+      const childFiles =
+        await listStorageFiles(
+          fullPath
+        );
+
+
+      if (
+        childFiles === null
+      ) {
+        return null;
+      }
+
+
+      files.push(
+        ...childFiles
+      );
+
+    }
+
+  }
+
+
+  return files;
+
+}
+
+
+/* =========================
+   MOVE STORAGE TREE
+========================= */
+
+async function moveStorageTree(
+  oldPath,
+  newPath
+) {
+
+  const files =
+    await listStorageFiles(
+      oldPath
+    );
+
+
+  if (files === null) {
+    return false;
+  }
+
+
+  for (
+    const oldFile
+    of files
+  ) {
+
+    const relative =
+      oldFile
+        .startsWith(
+          oldPath + "/"
+        )
+        ? oldFile.substring(
+            oldPath.length + 1
+          )
+        : oldFile;
+
+
+    const newFile =
+      newPath
+        ? newPath + "/" + relative
+        : relative;
 
 
     const { error } =
       await supabaseClient
         .storage
         .from("photos")
-        .upload(
-          storagePath,
-          file
+        .move(
+          oldFile,
+          newFile
         );
 
 
     if (error) {
 
-      throw error;
+      console.error(error);
+
+      return false;
 
     }
-
-
-    message.textContent =
-      "✅ ছবি সফলভাবে পোস্ট হয়েছে!";
-
-
-    photoInput.value = "";
-
-    preview.style.display = "none";
-
-
-    loadPhotos();
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    message.textContent =
-      "❌ ছবি পোস্ট হয়নি: " +
-      error.message;
 
   }
 
 
-  uploadButton.disabled = false;
+  return true;
 
-});
+}
+
+
+/* =========================
+   DELETE STORAGE TREE
+========================= */
+
+async function deleteStorageTree(
+  path
+) {
+
+  const files =
+    await listStorageFiles(
+      path
+    );
+
+
+  if (files === null) {
+    return false;
+  }
+
+
+  if (
+    files.length === 0
+  ) {
+    return true;
+  }
+
+
+  const { error } =
+    await supabaseClient
+      .storage
+      .from("photos")
+      .remove(files);
+
+
+  if (error) {
+
+    console.error(error);
+
+    return false;
+
+  }
+
+
+  return true;
+
+}
+
+
+/* =========================
+   REFRESH
+========================= */
+
+function refreshFolders() {
+
+  loadFolders();
+
+  loadPhotos();
+
+}
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function escapeHtml(
+  text
+) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+  div.textContent =
+    text;
+
+  return div.innerHTML;
+
+}
+
+
+/* =========================
+   IMAGE PREVIEW
+========================= */
+
+photoInput.addEventListener(
+  "change",
+  function () {
+
+    const file =
+      this.files[0];
+
+
+    if (!file) {
+      return;
+    }
+
+
+    preview.src =
+      URL.createObjectURL(
+        file
+      );
+
+
+    preview.style.display =
+      "block";
+
+
+    message.textContent =
+      "";
+
+  }
+);
+
+
+/* =========================
+   UPLOAD PHOTO
+========================= */
+
+uploadButton.addEventListener(
+  "click",
+  async function () {
+
+    const file =
+      photoInput.files[0];
+
+
+    if (!file) {
+
+      message.textContent =
+        "❌ আগে একটি ছবি নির্বাচন করুন।";
+
+      return;
+
+    }
+
+
+    uploadButton.disabled =
+      true;
+
+
+    message.textContent =
+      "⏳ ছবি আপলোড হচ্ছে...";
+
+
+    try {
+
+      const safeName =
+        file.name
+          .replace(
+            /\s+/g,
+            "-"
+          )
+          .replace(
+            /[^\w.\-]/g,
+            ""
+          );
+
+
+      const fileName =
+        Date.now() +
+        "-" +
+        Math.random()
+          .toString(36)
+          .substring(
+            2,
+            8
+          ) +
+        "-" +
+        safeName;
+
+
+      const folderPath =
+        getStoragePath();
+
+
+      const storagePath =
+        folderPath
+          ? folderPath +
+            "/" +
+            fileName
+          : fileName;
+
+
+      const { error } =
+        await supabaseClient
+          .storage
+          .from("photos")
+          .upload(
+            storagePath,
+            file
+          );
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      message.textContent =
+        "✅ ছবি সফলভাবে পোস্ট হয়েছে!";
+
+
+      photoInput.value =
+        "";
+
+      preview.style.display =
+        "none";
+
+
+      loadPhotos();
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      message.textContent =
+        "❌ ছবি পোস্ট হয়নি: " +
+        error.message;
+
+    }
+
+
+    uploadButton.disabled =
+      false;
+
+  }
+);
 
 
 /* =========================
    LOAD PHOTOS
 ========================= */
-
-let currentImages = [];
-
-let currentViewerIndex = 0;
-
 
 async function loadPhotos() {
 
@@ -631,23 +1533,23 @@ async function loadPhotos() {
 
 
   const folderPath =
-    getFolderPath();
+    getStoragePath();
 
 
   const { data, error } =
     await supabaseClient
       .storage
       .from("photos")
-      .list(folderPath, {
-
-        limit: 100,
-
-        sortBy: {
-          column: "name",
-          order: "desc"
+      .list(
+        folderPath,
+        {
+          limit: 100,
+          sortBy: {
+            column: "name",
+            order: "desc"
+          }
         }
-
-      });
+      );
 
 
   if (error) {
@@ -664,36 +1566,48 @@ async function loadPhotos() {
 
   const files =
     (data || [])
-      .filter(file =>
-        file.name &&
-        file.metadata
+      .filter(
+        file =>
+          file.name &&
+          file.metadata
       );
 
 
-  currentImages = files;
+  currentImages =
+    files;
 
 
-  if (files.length === 0) {
+  if (
+    files.length === 0
+  ) {
 
     gallery.innerHTML =
-      '<div class="empty">এই ফোল্ডারে এখনো কোনো ছবি নেই।</div>';
+      '<div class="empty">এই Folder-এ এখনো কোনো ছবি নেই।</div>';
 
     return;
 
   }
 
 
-  gallery.innerHTML = "";
+  gallery.innerHTML =
+    "";
 
 
-  for (let i = 0; i < files.length; i++) {
+  for (
+    let i = 0;
+    i < files.length;
+    i++
+  ) {
 
-    const file = files[i];
+    const file =
+      files[i];
 
 
     const fullPath =
       folderPath
-        ? folderPath + "/" + file.name
+        ? folderPath +
+          "/" +
+          file.name
         : file.name;
 
 
@@ -701,18 +1615,24 @@ async function loadPhotos() {
       supabaseClient
         .storage
         .from("photos")
-        .getPublicUrl(fullPath);
+        .getPublicUrl(
+          fullPath
+        );
 
 
     const card =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     card.className =
       "photo-card";
 
 
     const img =
-      document.createElement("img");
+      document.createElement(
+        "img"
+      );
 
     img.src =
       publicData.publicUrl;
@@ -721,22 +1641,27 @@ async function loadPhotos() {
       "Posted picture";
 
 
-    img.onclick = function () {
+    img.onclick =
+      function () {
 
-      openViewer(i);
+        openViewer(i);
 
-    };
+      };
 
 
     const info =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     info.className =
       "photo-info";
 
 
     const likeButton =
-      document.createElement("button");
+      document.createElement(
+        "button"
+      );
 
     likeButton.className =
       "like-button";
@@ -761,11 +1686,17 @@ async function loadPhotos() {
     );
 
 
-    card.appendChild(img);
+    card.appendChild(
+      img
+    );
 
-    card.appendChild(info);
+    card.appendChild(
+      info
+    );
 
-    gallery.appendChild(card);
+    gallery.appendChild(
+      card
+    );
 
 
     loadLikeCount(
@@ -790,8 +1721,13 @@ async function loadLikeCount(
   const { data, error } =
     await supabaseClient
       .from("photo_likes")
-      .select("like_count")
-      .eq("photo_name", photoName)
+      .select(
+        "like_count"
+      )
+      .eq(
+        "photo_name",
+        photoName
+      )
       .maybeSingle();
 
 
@@ -826,14 +1762,20 @@ async function addLike(
   button
 ) {
 
-  button.disabled = true;
+  button.disabled =
+    true;
 
 
   const { data: oldData } =
     await supabaseClient
       .from("photo_likes")
-      .select("like_count")
-      .eq("photo_name", photoName)
+      .select(
+        "like_count"
+      )
+      .eq(
+        "photo_name",
+        photoName
+      )
       .maybeSingle();
 
 
@@ -843,12 +1785,10 @@ async function addLike(
       await supabaseClient
         .from("photo_likes")
         .insert({
-
           photo_name:
             photoName,
-
-          like_count: 1
-
+          like_count:
+            1
         });
 
 
@@ -873,10 +1813,8 @@ async function addLike(
       await supabaseClient
         .from("photo_likes")
         .update({
-
           like_count:
             newCount
-
         })
         .eq(
           "photo_name",
@@ -887,7 +1825,8 @@ async function addLike(
     if (!error) {
 
       button.textContent =
-        "❤️ " + newCount;
+        "❤️ " +
+        newCount;
 
       button.classList.add(
         "liked"
@@ -898,7 +1837,8 @@ async function addLike(
   }
 
 
-  button.disabled = false;
+  button.disabled =
+    false;
 
 }
 
@@ -907,11 +1847,15 @@ async function addLike(
    IMAGE VIEWER
 ========================= */
 
-function openViewer(index) {
+function openViewer(
+  index
+) {
 
   if (
     !currentImages.length
-  ) return;
+  ) {
+    return;
+  }
 
 
   currentViewerIndex =
@@ -943,16 +1887,20 @@ async function showViewerImage() {
     ];
 
 
-  if (!file) return;
+  if (!file) {
+    return;
+  }
 
 
   const folderPath =
-    getFolderPath();
+    getStoragePath();
 
 
   const fullPath =
     folderPath
-      ? folderPath + "/" + file.name
+      ? folderPath +
+        "/" +
+        file.name
       : file.name;
 
 
@@ -960,7 +1908,9 @@ async function showViewerImage() {
     supabaseClient
       .storage
       .from("photos")
-      .getPublicUrl(fullPath);
+      .getPublicUrl(
+        fullPath
+      );
 
 
   viewerImage.src =
@@ -981,7 +1931,9 @@ async function loadViewerLike(
   const { data } =
     await supabaseClient
       .from("photo_likes")
-      .select("like_count")
+      .select(
+        "like_count"
+      )
       .eq(
         "photo_name",
         photoName
@@ -1009,16 +1961,20 @@ async function likeCurrentImage() {
     ];
 
 
-  if (!file) return;
+  if (!file) {
+    return;
+  }
 
 
   const folderPath =
-    getFolderPath();
+    getStoragePath();
 
 
   const fullPath =
     folderPath
-      ? folderPath + "/" + file.name
+      ? folderPath +
+        "/" +
+        file.name
       : file.name;
 
 
@@ -1032,8 +1988,11 @@ async function likeCurrentImage() {
 
 function previousImage() {
 
-  if (!currentImages.length)
+  if (
+    !currentImages.length
+  ) {
     return;
+  }
 
 
   currentViewerIndex--;
@@ -1056,8 +2015,11 @@ function previousImage() {
 
 function nextImage() {
 
-  if (!currentImages.length)
+  if (
+    !currentImages.length
+  ) {
     return;
+  }
 
 
   currentViewerIndex++;
@@ -1068,7 +2030,8 @@ function nextImage() {
     currentImages.length
   ) {
 
-    currentViewerIndex = 0;
+    currentViewerIndex =
+      0;
 
   }
 
@@ -1082,9 +2045,11 @@ function nextImage() {
    SWIPE
 ========================= */
 
-let touchStartX = 0;
+let touchStartX =
+  0;
 
-let touchEndX = 0;
+let touchEndX =
+  0;
 
 
 viewerImage.addEventListener(
@@ -1092,10 +2057,13 @@ viewerImage.addEventListener(
   function(event) {
 
     touchStartX =
-      event.changedTouches[0].screenX;
+      event.changedTouches[0]
+        .screenX;
 
   },
-  { passive: true }
+  {
+    passive: true
+  }
 );
 
 
@@ -1104,19 +2072,25 @@ viewerImage.addEventListener(
   function(event) {
 
     touchEndX =
-      event.changedTouches[0].screenX;
+      event.changedTouches[0]
+        .screenX;
 
 
     const difference =
-      touchEndX - touchStartX;
+      touchEndX -
+      touchStartX;
 
 
     if (
       Math.abs(difference) < 50
-    ) return;
+    ) {
+      return;
+    }
 
 
-    if (difference > 0) {
+    if (
+      difference > 0
+    ) {
 
       previousImage();
 
@@ -1127,7 +2101,9 @@ viewerImage.addEventListener(
     }
 
   },
-  { passive: true }
+  {
+    passive: true
+  }
 );
 
 
@@ -1135,7 +2111,7 @@ viewerImage.addEventListener(
    START
 ========================= */
 
-renderFolders();
+loadFolders();
 
 loadPhotos();
 
