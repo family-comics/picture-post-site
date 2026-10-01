@@ -16,7 +16,7 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      background: #f4f5f7;
       color: #222;
     }
 
@@ -24,248 +24,1122 @@
       background: #111;
       color: white;
       text-align: center;
-      padding: 22px 10px;
+      padding: 16px 10px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
     }
 
     header h1 {
       margin: 0;
-      font-size: 28px;
+      font-size: 24px;
     }
 
     header p {
-      margin: 8px 0 0;
+      margin: 5px 0 0;
       color: #ccc;
+      font-size: 13px;
     }
 
     .container {
-      max-width: 650px;
-      margin: 20px auto;
-      padding: 15px;
+      max-width: 700px;
+      margin: auto;
+      padding: 10px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 13px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .top-buttons {
+      display: flex;
+      gap: 7px;
+      margin-bottom: 10px;
+    }
+
+    .top-buttons button {
+      flex: 1;
+      background: #111;
+      color: white;
     }
 
     .box {
       background: white;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      padding: 14px;
+      border-radius: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 9px rgba(0,0,0,.07);
+    }
+
+    .box h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    #currentFolder {
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .folders {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+    }
+
+    .folder {
+      background: #f1f1f1;
+      padding: 11px 5px;
+      text-align: center;
+      border-radius: 10px;
+      font-size: 13px;
+      cursor: pointer;
+      border: 1px solid #ddd;
+    }
+
+    .folder:active {
+      transform: scale(.97);
+    }
+
+    .folder-icon {
+      display: block;
+      font-size: 25px;
+      margin-bottom: 3px;
     }
 
     input[type="file"] {
       width: 100%;
-      margin: 12px 0;
-    }
-
-    button {
-      width: 100%;
-      padding: 13px;
-      border: 0;
-      border-radius: 10px;
-      background: #111;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      opacity: 0.6;
+      margin: 8px 0;
     }
 
     #preview {
       width: 100%;
-      max-height: 450px;
+      max-height: 300px;
       object-fit: contain;
-      margin: 10px 0 15px;
-      border-radius: 12px;
+      border-radius: 10px;
       display: none;
+      margin: 8px 0;
+    }
+
+    #uploadButton {
+      width: 100%;
+      background: #111;
+      color: white;
     }
 
     #message {
       text-align: center;
-      margin-top: 15px;
+      margin-top: 8px;
+      font-size: 13px;
       font-weight: bold;
     }
 
     .gallery {
-      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 9px;
     }
 
     .photo-card {
       background: white;
-      margin-bottom: 18px;
-      padding: 10px;
-      border-radius: 15px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
     }
 
     .photo-card img {
       width: 100%;
-      border-radius: 12px;
+      height: 180px;
+      object-fit: cover;
       display: block;
+      cursor: pointer;
+    }
+
+    .photo-info {
+      padding: 7px;
+    }
+
+    .like-button {
+      width: 100%;
+      background: #f1f1f1;
+      color: #222;
+    }
+
+    .like-button.liked {
+      background: #ffe1e5;
+      color: #d60025;
     }
 
     .empty {
       text-align: center;
       color: #777;
       padding: 20px;
+      grid-column: 1 / -1;
+    }
+
+    /* Viewer */
+    #viewer {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.94);
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+    }
+
+    .viewer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+    }
+
+    .viewer-top button {
+      background: #333;
+      color: white;
+    }
+
+    #viewerImage {
+      width: 100%;
+      flex: 1;
+      object-fit: contain;
+      min-height: 0;
+      padding: 5px;
+    }
+
+    .viewer-bottom {
+      display: flex;
+      gap: 7px;
+      padding: 10px;
+    }
+
+    .viewer-bottom button {
+      flex: 1;
+      background: #333;
+      color: white;
+    }
+
+    #viewerLike {
+      background: #b00020;
+    }
+
+    @media (max-width: 420px) {
+      .gallery {
+        gap: 7px;
+      }
+
+      .photo-card img {
+        height: 145px;
+      }
+
+      .folders {
+        gap: 5px;
+      }
+
+      .folder {
+        font-size: 12px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <header>
-    <h1>📸 Picture Post</h1>
-    <p>ছবি শেয়ার করার সহজ জায়গা</p>
-  </header>
+<header>
+  <h1>📸 Picture Post</h1>
+  <p>ছবি শেয়ার করার সহজ জায়গা</p>
+</header>
 
-  <div class="container">
+<div class="container">
 
-    <div class="box">
-      <h2>ছবি পোস্ট করুন</h2>
-
-      <input type="file" id="photoInput" accept="image/*">
-
-      <img id="preview">
-
-      <button id="uploadButton">ছবি পোস্ট করুন</button>
-
-      <div id="message"></div>
-    </div>
-
-    <div class="gallery">
-      <h2>📷 পোস্ট করা ছবি</h2>
-
-      <div id="gallery">
-        <div class="empty">ছবি লোড হচ্ছে...</div>
-      </div>
-    </div>
-
+  <div class="top-buttons">
+    <button onclick="goHome()">🏠 Home</button>
+    <button onclick="goBack()">⬅️ Back</button>
   </div>
 
-  <script>
-    const SUPABASE_URL =
-      "https://vhqiqbapbxwmvycxrsvc.supabase.co";
+  <div class="box">
+    <h2>📁 Picture Folder</h2>
 
-    const SUPABASE_KEY =
-      "sb_publishable_CIj1SRMGjbByiTkx-Yx8Eg_g7jHkTh9";
+    <div id="currentFolder">📁 Home</div>
 
-    const supabaseClient =
-      supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <div id="folders" class="folders"></div>
+  </div>
 
-    const photoInput = document.getElementById("photoInput");
-    const preview = document.getElementById("preview");
-    const uploadButton = document.getElementById("uploadButton");
-    const message = document.getElementById("message");
-    const gallery = document.getElementById("gallery");
+  <div class="box">
+    <h2>📤 ছবি পোস্ট করুন</h2>
 
-    photoInput.addEventListener("change", function () {
-      const file = this.files[0];
+    <input type="file" id="photoInput" accept="image/*">
 
-      if (file) {
-        preview.src = URL.createObjectURL(file);
-        preview.style.display = "block";
-        message.textContent = "";
-      }
-    });
+    <img id="preview">
 
-    uploadButton.addEventListener("click", async function () {
-      const file = photoInput.files[0];
+    <button id="uploadButton">📤 ছবি পোস্ট করুন</button>
 
-      if (!file) {
-        message.textContent = "আগে একটি ছবি নির্বাচন করুন।";
-        return;
-      }
+    <div id="message"></div>
+  </div>
 
-      uploadButton.disabled = true;
-      message.textContent = "ছবি আপলোড হচ্ছে...";
+  <div class="box">
+    <h2>🖼️ পোস্ট করা ছবি</h2>
 
-      try {
-        const fileName =
-          Date.now() +
-          "-" +
-          Math.random().toString(36).substring(2) +
-          "-" +
-          file.name.replace(/\s+/g, "-");
+    <div id="gallery" class="gallery">
+      <div class="empty">ছবি লোড হচ্ছে...</div>
+    </div>
+  </div>
 
-        const { error } = await supabaseClient
-          .storage
-          .from("photos")
-          .upload(fileName, file);
+</div>
 
-        if (error) {
-          throw error;
-        }
+<!-- Image Viewer -->
 
-        message.textContent =
-          "✅ ছবি সফলভাবে পোস্ট হয়েছে!";
+<div id="viewer">
 
-        photoInput.value = "";
-        preview.style.display = "none";
+  <div class="viewer-top">
+    <button onclick="closeViewer()">✕ বন্ধ</button>
+    <button onclick="goHome()">🏠 Home</button>
+  </div>
 
-        loadPhotos();
+  <img id="viewerImage">
 
-      } catch (error) {
-        console.error(error);
+  <div class="viewer-bottom">
+    <button onclick="previousImage()">👈</button>
+    <button id="viewerLike" onclick="likeCurrentImage()">❤️ 0</button>
+    <button onclick="nextImage()">👉</button>
+  </div>
 
-        message.textContent =
-          "❌ ছবি পোস্ট হয়নি: " + error.message;
-      }
+</div>
 
-      uploadButton.disabled = false;
-    });
 
-    async function loadPhotos() {
+<script>
 
-      const { data, error } = await supabaseClient
+const SUPABASE_URL =
+  "https://vhqiqbapbxwmvycxrsvc.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_CIj1SRMGjbByiTkx-Yx8Eg_g7jHkTh9";
+
+const supabaseClient =
+  supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
+const photoInput =
+  document.getElementById("photoInput");
+
+const preview =
+  document.getElementById("preview");
+
+const uploadButton =
+  document.getElementById("uploadButton");
+
+const message =
+  document.getElementById("message");
+
+const gallery =
+  document.getElementById("gallery");
+
+const folders =
+  document.getElementById("folders");
+
+const currentFolder =
+  document.getElementById("currentFolder");
+
+const viewer =
+  document.getElementById("viewer");
+
+const viewerImage =
+  document.getElementById("viewerImage");
+
+const viewerLike =
+  document.getElementById("viewerLike");
+
+
+/* =========================
+   FOLDER STRUCTURE
+========================= */
+
+const folderStructure = {
+
+  "বাংলা পিকচার": {
+    "ফানি": {},
+    "সুন্দর": {},
+    "প্রকৃতি": {}
+  },
+
+  "মুভির পিকচার": {
+    "বাংলা": {},
+    "হিন্দি": {}
+  },
+
+  "ফানি পিকচার": {
+    "মিম": {},
+    "জোকস": {}
+  },
+
+  "সুন্দর পিকচার": {
+    "প্রকৃতি": {},
+    "ফুল": {}
+  },
+
+  "অন্যান্য": {
+    "নতুন": {},
+    "বিবিধ": {}
+  }
+
+};
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+let currentPath = [];
+
+let historyPaths = [];
+
+
+function getCurrentFolderObject() {
+
+  let obj = folderStructure;
+
+  for (const part of currentPath) {
+    obj = obj[part] || {};
+  }
+
+  return obj;
+}
+
+
+function getFolderPath() {
+
+  return currentPath.join("/");
+}
+
+
+function openFolder(folderName) {
+
+  historyPaths.push([...currentPath]);
+
+  currentPath.push(folderName);
+
+  renderFolders();
+
+  loadPhotos();
+}
+
+
+function goBack() {
+
+  if (currentPath.length === 0) {
+    return;
+  }
+
+  currentPath.pop();
+
+  renderFolders();
+
+  loadPhotos();
+}
+
+
+function goHome() {
+
+  currentPath = [];
+
+  renderFolders();
+
+  loadPhotos();
+}
+
+
+function renderFolders() {
+
+  const obj = getCurrentFolderObject();
+
+  folders.innerHTML = "";
+
+  currentFolder.textContent =
+    currentPath.length === 0
+      ? "📁 Home"
+      : "📁 " + currentPath.join(" / ");
+
+
+  const names = Object.keys(obj);
+
+  if (names.length === 0) {
+
+    folders.innerHTML =
+      '<div class="empty">এই ফোল্ডারের ভিতরে আর কোনো ফোল্ডার নেই।</div>';
+
+    return;
+  }
+
+
+  names.forEach(name => {
+
+    const div = document.createElement("div");
+
+    div.className = "folder";
+
+    div.innerHTML =
+      '<span class="folder-icon">📁</span>' +
+      name;
+
+    div.onclick = function () {
+
+      openFolder(name);
+
+    };
+
+    folders.appendChild(div);
+
+  });
+
+}
+
+
+/* =========================
+   IMAGE PREVIEW
+========================= */
+
+photoInput.addEventListener("change", function () {
+
+  const file = this.files[0];
+
+  if (!file) return;
+
+  preview.src =
+    URL.createObjectURL(file);
+
+  preview.style.display = "block";
+
+  message.textContent = "";
+
+});
+
+
+/* =========================
+   UPLOAD PHOTO
+========================= */
+
+uploadButton.addEventListener("click", async function () {
+
+  const file = photoInput.files[0];
+
+  if (!file) {
+
+    message.textContent =
+      "❌ আগে একটি ছবি নির্বাচন করুন।";
+
+    return;
+  }
+
+
+  uploadButton.disabled = true;
+
+  message.textContent =
+    "⏳ ছবি আপলোড হচ্ছে...";
+
+
+  try {
+
+    const safeName =
+      file.name
+        .replace(/\s+/g, "-")
+        .replace(/[^\w.\-]/g, "");
+
+
+    const fileName =
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .substring(2, 8) +
+      "-" +
+      safeName;
+
+
+    const folderPath =
+      getFolderPath();
+
+
+    const storagePath =
+      folderPath
+        ? folderPath + "/" + fileName
+        : fileName;
+
+
+    const { error } =
+      await supabaseClient
         .storage
         .from("photos")
-        .list("", {
-          limit: 100,
-          sortBy: {
-            column: "name",
-            order: "desc"
-          }
-        });
+        .upload(
+          storagePath,
+          file
+        );
 
-      if (error) {
-        gallery.innerHTML =
-          '<div class="empty">ছবি লোড করা যায়নি।</div>';
-        return;
-      }
 
-      const files = data.filter(file => file.name);
+    if (error) {
 
-      if (files.length === 0) {
-        gallery.innerHTML =
-          '<div class="empty">এখনো কোনো ছবি পোস্ট করা হয়নি।</div>';
-        return;
-      }
+      throw error;
 
-      gallery.innerHTML = "";
-
-      files.forEach(file => {
-
-        const { data: publicData } =
-          supabaseClient
-            .storage
-            .from("photos")
-            .getPublicUrl(file.name);
-
-        const card = document.createElement("div");
-        card.className = "photo-card";
-
-        const img = document.createElement("img");
-
-        img.src = publicData.publicUrl;
-        img.alt = "Posted picture";
-
-        card.appendChild(img);
-        gallery.appendChild(card);
-      });
     }
 
+
+    message.textContent =
+      "✅ ছবি সফলভাবে পোস্ট হয়েছে!";
+
+
+    photoInput.value = "";
+
+    preview.style.display = "none";
+
+
     loadPhotos();
-  </script>
+
+
+  } catch (error) {
+
+    console.error(error);
+
+    message.textContent =
+      "❌ ছবি পোস্ট হয়নি: " +
+      error.message;
+
+  }
+
+
+  uploadButton.disabled = false;
+
+});
+
+
+/* =========================
+   LOAD PHOTOS
+========================= */
+
+let currentImages = [];
+
+let currentViewerIndex = 0;
+
+
+async function loadPhotos() {
+
+  gallery.innerHTML =
+    '<div class="empty">⏳ ছবি লোড হচ্ছে...</div>';
+
+
+  const folderPath =
+    getFolderPath();
+
+
+  const { data, error } =
+    await supabaseClient
+      .storage
+      .from("photos")
+      .list(folderPath, {
+
+        limit: 100,
+
+        sortBy: {
+          column: "name",
+          order: "desc"
+        }
+
+      });
+
+
+  if (error) {
+
+    console.error(error);
+
+    gallery.innerHTML =
+      '<div class="empty">❌ ছবি লোড করা যায়নি।</div>';
+
+    return;
+
+  }
+
+
+  const files =
+    (data || [])
+      .filter(file =>
+        file.name &&
+        file.metadata
+      );
+
+
+  currentImages = files;
+
+
+  if (files.length === 0) {
+
+    gallery.innerHTML =
+      '<div class="empty">এই ফোল্ডারে এখনো কোনো ছবি নেই।</div>';
+
+    return;
+
+  }
+
+
+  gallery.innerHTML = "";
+
+
+  for (let i = 0; i < files.length; i++) {
+
+    const file = files[i];
+
+
+    const fullPath =
+      folderPath
+        ? folderPath + "/" + file.name
+        : file.name;
+
+
+    const { data: publicData } =
+      supabaseClient
+        .storage
+        .from("photos")
+        .getPublicUrl(fullPath);
+
+
+    const card =
+      document.createElement("div");
+
+    card.className =
+      "photo-card";
+
+
+    const img =
+      document.createElement("img");
+
+    img.src =
+      publicData.publicUrl;
+
+    img.alt =
+      "Posted picture";
+
+
+    img.onclick = function () {
+
+      openViewer(i);
+
+    };
+
+
+    const info =
+      document.createElement("div");
+
+    info.className =
+      "photo-info";
+
+
+    const likeButton =
+      document.createElement("button");
+
+    likeButton.className =
+      "like-button";
+
+    likeButton.textContent =
+      "❤️ লোড হচ্ছে...";
+
+
+    likeButton.onclick =
+      async function () {
+
+        await addLike(
+          fullPath,
+          likeButton
+        );
+
+      };
+
+
+    info.appendChild(
+      likeButton
+    );
+
+
+    card.appendChild(img);
+
+    card.appendChild(info);
+
+    gallery.appendChild(card);
+
+
+    loadLikeCount(
+      fullPath,
+      likeButton
+    );
+
+  }
+
+}
+
+
+/* =========================
+   LIKE COUNT
+========================= */
+
+async function loadLikeCount(
+  photoName,
+  button
+) {
+
+  const { data, error } =
+    await supabaseClient
+      .from("photo_likes")
+      .select("like_count")
+      .eq("photo_name", photoName)
+      .maybeSingle();
+
+
+  if (error) {
+
+    button.textContent =
+      "❤️ 0";
+
+    return;
+
+  }
+
+
+  const count =
+    data
+      ? data.like_count
+      : 0;
+
+
+  button.textContent =
+    "❤️ " + count;
+
+}
+
+
+/* =========================
+   ADD LIKE
+========================= */
+
+async function addLike(
+  photoName,
+  button
+) {
+
+  button.disabled = true;
+
+
+  const { data: oldData } =
+    await supabaseClient
+      .from("photo_likes")
+      .select("like_count")
+      .eq("photo_name", photoName)
+      .maybeSingle();
+
+
+  if (!oldData) {
+
+    const { error } =
+      await supabaseClient
+        .from("photo_likes")
+        .insert({
+
+          photo_name:
+            photoName,
+
+          like_count: 1
+
+        });
+
+
+    if (!error) {
+
+      button.textContent =
+        "❤️ 1";
+
+      button.classList.add(
+        "liked"
+      );
+
+    }
+
+  } else {
+
+    const newCount =
+      oldData.like_count + 1;
+
+
+    const { error } =
+      await supabaseClient
+        .from("photo_likes")
+        .update({
+
+          like_count:
+            newCount
+
+        })
+        .eq(
+          "photo_name",
+          photoName
+        );
+
+
+    if (!error) {
+
+      button.textContent =
+        "❤️ " + newCount;
+
+      button.classList.add(
+        "liked"
+      );
+
+    }
+
+  }
+
+
+  button.disabled = false;
+
+}
+
+
+/* =========================
+   IMAGE VIEWER
+========================= */
+
+function openViewer(index) {
+
+  if (
+    !currentImages.length
+  ) return;
+
+
+  currentViewerIndex =
+    index;
+
+
+  showViewerImage();
+
+
+  viewer.style.display =
+    "flex";
+
+}
+
+
+function closeViewer() {
+
+  viewer.style.display =
+    "none";
+
+}
+
+
+async function showViewerImage() {
+
+  const file =
+    currentImages[
+      currentViewerIndex
+    ];
+
+
+  if (!file) return;
+
+
+  const folderPath =
+    getFolderPath();
+
+
+  const fullPath =
+    folderPath
+      ? folderPath + "/" + file.name
+      : file.name;
+
+
+  const { data } =
+    supabaseClient
+      .storage
+      .from("photos")
+      .getPublicUrl(fullPath);
+
+
+  viewerImage.src =
+    data.publicUrl;
+
+
+  loadViewerLike(
+    fullPath
+  );
+
+}
+
+
+async function loadViewerLike(
+  photoName
+) {
+
+  const { data } =
+    await supabaseClient
+      .from("photo_likes")
+      .select("like_count")
+      .eq(
+        "photo_name",
+        photoName
+      )
+      .maybeSingle();
+
+
+  const count =
+    data
+      ? data.like_count
+      : 0;
+
+
+  viewerLike.textContent =
+    "❤️ " + count;
+
+}
+
+
+async function likeCurrentImage() {
+
+  const file =
+    currentImages[
+      currentViewerIndex
+    ];
+
+
+  if (!file) return;
+
+
+  const folderPath =
+    getFolderPath();
+
+
+  const fullPath =
+    folderPath
+      ? folderPath + "/" + file.name
+      : file.name;
+
+
+  await addLike(
+    fullPath,
+    viewerLike
+  );
+
+}
+
+
+function previousImage() {
+
+  if (!currentImages.length)
+    return;
+
+
+  currentViewerIndex--;
+
+
+  if (
+    currentViewerIndex < 0
+  ) {
+
+    currentViewerIndex =
+      currentImages.length - 1;
+
+  }
+
+
+  showViewerImage();
+
+}
+
+
+function nextImage() {
+
+  if (!currentImages.length)
+    return;
+
+
+  currentViewerIndex++;
+
+
+  if (
+    currentViewerIndex >=
+    currentImages.length
+  ) {
+
+    currentViewerIndex = 0;
+
+  }
+
+
+  showViewerImage();
+
+}
+
+
+/* =========================
+   SWIPE
+========================= */
+
+let touchStartX = 0;
+
+let touchEndX = 0;
+
+
+viewerImage.addEventListener(
+  "touchstart",
+  function(event) {
+
+    touchStartX =
+      event.changedTouches[0].screenX;
+
+  },
+  { passive: true }
+);
+
+
+viewerImage.addEventListener(
+  "touchend",
+  function(event) {
+
+    touchEndX =
+      event.changedTouches[0].screenX;
+
+
+    const difference =
+      touchEndX - touchStartX;
+
+
+    if (
+      Math.abs(difference) < 50
+    ) return;
+
+
+    if (difference > 0) {
+
+      previousImage();
+
+    } else {
+
+      nextImage();
+
+    }
+
+  },
+  { passive: true }
+);
+
+
+/* =========================
+   START
+========================= */
+
+renderFolders();
+
+loadPhotos();
+
+</script>
 
 </body>
 </html>
