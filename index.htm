@@ -24,7 +24,7 @@
       background: #111;
       color: white;
       text-align: center;
-      padding: 16px 10px;
+      padding: 12px 10px;
       position: sticky;
       top: 0;
       z-index: 20;
@@ -36,9 +36,31 @@
     }
 
     header p {
-      margin: 5px 0 0;
+      margin: 5px 0 7px;
       color: #ccc;
       font-size: 13px;
+    }
+
+    .auth-area {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .auth-button {
+      background: #333;
+      color: white;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+    }
+
+    .admin-status {
+      display: none;
+      color: #9cff9c;
+      font-size: 11px;
+      margin-top: 5px;
     }
 
     .container {
@@ -106,7 +128,6 @@
       font-size: 11px;
     }
 
-    /* ছোট ও compact Folder Grid */
     .folders {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -289,6 +310,65 @@
     }
 
     /* =========================
+       ADMIN LOGIN
+    ========================= */
+
+    #loginModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.75);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 360px;
+      background: white;
+      border-radius: 15px;
+      padding: 18px;
+      box-shadow: 0 5px 25px rgba(0,0,0,.3);
+    }
+
+    .login-box h2 {
+      margin: 0 0 12px;
+      text-align: center;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 11px;
+      margin-bottom: 8px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .login-submit {
+      width: 100%;
+      background: #111;
+      color: white;
+      margin-top: 4px;
+    }
+
+    .login-close {
+      width: 100%;
+      background: #eee;
+      color: #222;
+      margin-top: 7px;
+    }
+
+    #loginMessage {
+      text-align: center;
+      font-size: 12px;
+      margin-top: 8px;
+      word-break: break-word;
+    }
+
+    /* =========================
        VIEWER
     ========================= */
 
@@ -315,7 +395,6 @@
       padding: 8px 10px;
     }
 
-    /* ছবির জায়গা */
     .viewer-stage {
       position: relative;
       flex: 1;
@@ -333,24 +412,19 @@
       padding: 5px 45px;
     }
 
-    /* বাম/ডান Arrow */
     .viewer-arrow {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
       z-index: 5;
-
       width: 38px;
       height: 55px;
-
       border-radius: 12px;
       background: rgba(255,255,255,.18);
       color: white;
-
       font-size: 24px;
       line-height: 55px;
       padding: 0;
-
       display: flex;
       align-items: center;
       justify-content: center;
@@ -440,35 +514,122 @@
 <body>
 
 <header>
+
   <h1>📸 Picture Post</h1>
+
   <p>ছবি শেয়ার করার সহজ জায়গা</p>
+
+  <div class="auth-area">
+
+    <button
+      id="loginButton"
+      class="auth-button"
+      onclick="openLogin()"
+    >
+      🔐 Admin Login
+    </button>
+
+    <button
+      id="logoutButton"
+      class="auth-button"
+      onclick="logoutAdmin()"
+      style="display:none;"
+    >
+      🚪 Logout
+    </button>
+
+  </div>
+
+  <div
+    id="adminStatus"
+    class="admin-status"
+  >
+    👑 Admin Mode চালু
+  </div>
+
 </header>
+
 
 <div class="container">
 
   <div class="top-buttons">
-    <button onclick="goHome()">🏠 Home</button>
-    <button onclick="goBack()">⬅️ Back</button>
+
+    <button onclick="goHome()">
+      🏠 Home
+    </button>
+
+    <button onclick="goBack()">
+      ⬅️ Back
+    </button>
+
   </div>
+
+
+  <!-- FOLDER -->
 
   <div class="box">
 
     <h2>📁 Picture Folder</h2>
 
-    <div id="currentFolder">📁 Home</div>
-
-    <div class="folder-actions">
-      <button onclick="createFolder()">➕ নতুন Folder</button>
-      <button onclick="refreshFolders()">🔄 Refresh</button>
+    <div id="currentFolder">
+      📁 Home
     </div>
 
-    <div id="folders" class="folders">
-      <div class="empty">⏳ Folder লোড হচ্ছে...</div>
+
+    <!-- শুধু Admin দেখতে পাবে -->
+
+    <div
+      id="adminFolderActions"
+      class="folder-actions"
+      style="display:none;"
+    >
+
+      <button onclick="createFolder()">
+        ➕ নতুন Folder
+      </button>
+
+      <button onclick="refreshFolders()">
+        🔄 Refresh
+      </button>
+
+    </div>
+
+
+    <!-- Public-ও Refresh করতে পারবে -->
+
+    <div
+      id="publicRefreshArea"
+      class="folder-actions"
+    >
+
+      <button onclick="refreshFolders()">
+        🔄 Refresh
+      </button>
+
+    </div>
+
+
+    <div
+      id="folders"
+      class="folders"
+    >
+
+      <div class="empty">
+        ⏳ Folder লোড হচ্ছে...
+      </div>
+
     </div>
 
   </div>
 
-  <div class="box">
+
+  <!-- ADMIN UPLOAD -->
+
+  <div
+    id="adminUploadBox"
+    class="box"
+    style="display:none;"
+  >
 
     <h2>📤 ছবি পোস্ট করুন</h2>
 
@@ -489,13 +650,67 @@
 
   </div>
 
+
+  <!-- GALLERY -->
+
   <div class="box">
 
     <h2>🖼️ পোস্ট করা ছবি</h2>
 
-    <div id="gallery" class="gallery">
-      <div class="empty">ছবি লোড হচ্ছে...</div>
+    <div
+      id="gallery"
+      class="gallery"
+    >
+
+      <div class="empty">
+        ছবি লোড হচ্ছে...
+      </div>
+
     </div>
+
+  </div>
+
+</div>
+
+
+<!-- ADMIN LOGIN MODAL -->
+
+<div id="loginModal">
+
+  <div class="login-box">
+
+    <h2>🔐 Admin Login</h2>
+
+    <input
+      type="email"
+      id="loginEmail"
+      placeholder="Admin Email"
+      autocomplete="email"
+    >
+
+    <input
+      type="password"
+      id="loginPassword"
+      placeholder="Password"
+      autocomplete="current-password"
+    >
+
+    <button
+      id="loginSubmit"
+      class="login-submit"
+      onclick="loginAdmin()"
+    >
+      🔐 Login
+    </button>
+
+    <button
+      class="login-close"
+      onclick="closeLogin()"
+    >
+      ✕ বন্ধ
+    </button>
+
+    <div id="loginMessage"></div>
 
   </div>
 
@@ -512,11 +727,14 @@
       ✕ বন্ধ
     </button>
 
-    <button onclick="goHome(); closeViewer();">
+    <button
+      onclick="goHome(); closeViewer();"
+    >
       🏠 Home
     </button>
 
   </div>
+
 
   <div class="viewer-stage">
 
@@ -528,7 +746,10 @@
       ‹
     </button>
 
-    <img id="viewerImage">
+    <img
+      id="viewerImage"
+      alt="Picture"
+    >
 
     <button
       class="viewer-arrow viewer-next"
@@ -539,6 +760,7 @@
     </button>
 
   </div>
+
 
   <div class="viewer-bottom">
 
@@ -556,11 +778,19 @@
 
 <script>
 
+/* =========================
+   SUPABASE
+========================= */
+
 const SUPABASE_URL =
   "https://vhqiqbapbxwmvycxrsvc.supabase.co";
 
 const SUPABASE_KEY =
   "sb_publishable_CIj1SRMGjbByiTkx-Yx8Eg_g7jHkTh9";
+
+const ADMIN_EMAIL =
+  "prince.masud.ak46@gmail.com";
+
 
 const supabaseClient =
   supabase.createClient(
@@ -569,35 +799,490 @@ const supabaseClient =
   );
 
 
+/* =========================
+   ELEMENTS
+========================= */
+
 const photoInput =
-  document.getElementById("photoInput");
+  document.getElementById(
+    "photoInput"
+  );
 
 const previewArea =
-  document.getElementById("previewArea");
+  document.getElementById(
+    "previewArea"
+  );
 
 const uploadButton =
-  document.getElementById("uploadButton");
+  document.getElementById(
+    "uploadButton"
+  );
 
 const message =
-  document.getElementById("message");
+  document.getElementById(
+    "message"
+  );
 
 const gallery =
-  document.getElementById("gallery");
+  document.getElementById(
+    "gallery"
+  );
 
 const folders =
-  document.getElementById("folders");
+  document.getElementById(
+    "folders"
+  );
 
 const currentFolder =
-  document.getElementById("currentFolder");
+  document.getElementById(
+    "currentFolder"
+  );
 
 const viewer =
-  document.getElementById("viewer");
+  document.getElementById(
+    "viewer"
+  );
 
 const viewerImage =
-  document.getElementById("viewerImage");
+  document.getElementById(
+    "viewerImage"
+  );
 
 const viewerLike =
-  document.getElementById("viewerLike");
+  document.getElementById(
+    "viewerLike"
+  );
+
+const loginModal =
+  document.getElementById(
+    "loginModal"
+  );
+
+const loginEmail =
+  document.getElementById(
+    "loginEmail"
+  );
+
+const loginPassword =
+  document.getElementById(
+    "loginPassword"
+  );
+
+const loginSubmit =
+  document.getElementById(
+    "loginSubmit"
+  );
+
+const loginMessage =
+  document.getElementById(
+    "loginMessage"
+  );
+
+const loginButton =
+  document.getElementById(
+    "loginButton"
+  );
+
+const logoutButton =
+  document.getElementById(
+    "logoutButton"
+  );
+
+const adminStatus =
+  document.getElementById(
+    "adminStatus"
+  );
+
+const adminFolderActions =
+  document.getElementById(
+    "adminFolderActions"
+  );
+
+const publicRefreshArea =
+  document.getElementById(
+    "publicRefreshArea"
+  );
+
+const adminUploadBox =
+  document.getElementById(
+    "adminUploadBox"
+  );
+
+
+/* =========================
+   ADMIN STATE
+========================= */
+
+let currentUser =
+  null;
+
+let isAdmin =
+  false;
+
+
+/* =========================
+   CHECK ADMIN
+========================= */
+
+function checkAdmin(
+  user
+) {
+
+  if (!user) {
+
+    return false;
+
+  }
+
+  return (
+    String(user.email || "")
+      .toLowerCase()
+      .trim()
+    ===
+    ADMIN_EMAIL
+      .toLowerCase()
+      .trim()
+  );
+
+}
+
+
+/* =========================
+   UPDATE UI
+========================= */
+
+function updateAdminUI() {
+
+  if (isAdmin) {
+
+    loginButton.style.display =
+      "none";
+
+    logoutButton.style.display =
+      "inline-block";
+
+    adminStatus.style.display =
+      "block";
+
+    adminFolderActions.style.display =
+      "flex";
+
+    publicRefreshArea.style.display =
+      "none";
+
+    adminUploadBox.style.display =
+      "block";
+
+  } else {
+
+    loginButton.style.display =
+      "inline-block";
+
+    logoutButton.style.display =
+      "none";
+
+    adminStatus.style.display =
+      "none";
+
+    adminFolderActions.style.display =
+      "none";
+
+    publicRefreshArea.style.display =
+      "flex";
+
+    adminUploadBox.style.display =
+      "none";
+
+  }
+
+}
+
+
+/* =========================
+   AUTH STATE
+========================= */
+
+supabaseClient.auth.onAuthStateChange(
+  function(
+    event,
+    session
+  ) {
+
+    currentUser =
+      session
+        ? session.user
+        : null;
+
+    isAdmin =
+      checkAdmin(
+        currentUser
+      );
+
+    updateAdminUI();
+
+    /*
+      অন্য কোনো account দিয়ে login করলে
+      Admin mode চালু হবে না।
+    */
+
+    if (
+      currentUser &&
+      !isAdmin
+    ) {
+
+      supabaseClient.auth
+        .signOut();
+
+      currentUser =
+        null;
+
+      isAdmin =
+        false;
+
+      updateAdminUI();
+
+      alert(
+        "❌ এই account-এর Admin permission নেই।"
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================
+   LOGIN MODAL
+========================= */
+
+function openLogin() {
+
+  loginModal.style.display =
+    "flex";
+
+  loginMessage.textContent =
+    "";
+
+  loginEmail.value =
+    ADMIN_EMAIL;
+
+  loginPassword.value =
+    "";
+
+  setTimeout(
+    function() {
+
+      loginPassword.focus();
+
+    },
+    100
+  );
+
+}
+
+
+function closeLogin() {
+
+  loginModal.style.display =
+    "none";
+
+  loginMessage.textContent =
+    "";
+
+}
+
+
+async function loginAdmin() {
+
+  const email =
+    loginEmail.value.trim();
+
+  const password =
+    loginPassword.value;
+
+
+  if (!email) {
+
+    loginMessage.textContent =
+      "❌ Email দিন।";
+
+    return;
+
+  }
+
+
+  if (!password) {
+
+    loginMessage.textContent =
+      "❌ Password দিন।";
+
+    return;
+
+  }
+
+
+  if (
+    email.toLowerCase() !==
+    ADMIN_EMAIL.toLowerCase()
+  ) {
+
+    loginMessage.textContent =
+      "❌ এই Email Admin নয়।";
+
+    return;
+
+  }
+
+
+  loginSubmit.disabled =
+    true;
+
+  loginMessage.textContent =
+    "⏳ Login হচ্ছে...";
+
+
+  const { data, error } =
+    await supabaseClient.auth
+      .signInWithPassword({
+        email:
+          email,
+
+        password:
+          password
+      });
+
+
+  if (error) {
+
+    console.error(
+      "Login error:",
+      error
+    );
+
+    loginMessage.textContent =
+      "❌ Login হয়নি: " +
+      error.message;
+
+    loginSubmit.disabled =
+      false;
+
+    return;
+
+  }
+
+
+  currentUser =
+    data.user;
+
+  isAdmin =
+    checkAdmin(
+      currentUser
+    );
+
+
+  if (!isAdmin) {
+
+    await supabaseClient.auth
+      .signOut();
+
+    currentUser =
+      null;
+
+    isAdmin =
+      false;
+
+    updateAdminUI();
+
+    loginMessage.textContent =
+      "❌ এই account Admin নয়।";
+
+    loginSubmit.disabled =
+      false;
+
+    return;
+
+  }
+
+
+  updateAdminUI();
+
+  loginMessage.textContent =
+    "✅ Admin Login সফল হয়েছে!";
+
+
+  setTimeout(
+    function() {
+
+      closeLogin();
+
+      message.textContent =
+        "👑 Admin Mode চালু হয়েছে।";
+
+    },
+    700
+  );
+
+
+  loginSubmit.disabled =
+    false;
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+async function logoutAdmin() {
+
+  const answer =
+    confirm(
+      "🚪 Admin Logout করবেন?"
+    );
+
+
+  if (!answer) {
+    return;
+  }
+
+
+  await supabaseClient.auth
+    .signOut();
+
+
+  currentUser =
+    null;
+
+  isAdmin =
+    false;
+
+  updateAdminUI();
+
+  message.textContent =
+    "✅ Admin Logout হয়েছে।";
+
+}
+
+
+/* =========================
+   ADMIN SECURITY CHECK
+========================= */
+
+function requireAdmin() {
+
+  if (!isAdmin) {
+
+    alert(
+      "🔒 এই কাজটি শুধু Admin করতে পারবেন।"
+    );
+
+    return false;
+
+  }
+
+  return true;
+
+}
 
 
 /* =========================
@@ -605,10 +1290,16 @@ const viewerLike =
 ========================= */
 
 let allFolders = [];
-let currentFolderId = null;
+
+let currentFolderId =
+  null;
+
 let currentPath = [];
+
 let currentImages = [];
-let currentViewerIndex = 0;
+
+let currentViewerIndex =
+  0;
 
 
 /* =========================
@@ -625,7 +1316,9 @@ function saveCurrentFolder() {
 
     localStorage.setItem(
       FOLDER_STORAGE_KEY,
-      String(currentFolderId)
+      String(
+        currentFolderId
+      )
     );
 
   } else {
@@ -646,19 +1339,27 @@ function restoreCurrentFolder() {
       FOLDER_STORAGE_KEY
     );
 
+
   if (!saved) {
-    currentFolderId = null;
+
+    currentFolderId =
+      null;
+
     return;
+
   }
+
 
   const id =
     Number(saved);
+
 
   const exists =
     allFolders.some(
       folder =>
         folder.id === id
     );
+
 
   if (exists) {
 
@@ -688,13 +1389,19 @@ async function loadFolders() {
   folders.innerHTML =
     '<div class="empty">⏳ Folder লোড হচ্ছে...</div>';
 
+
   const { data, error } =
     await supabaseClient
       .from("folders")
-      .select("id,name,parent_id")
-      .order("id", {
-        ascending: true
-      });
+      .select(
+        "id,name,parent_id"
+      )
+      .order(
+        "id",
+        {
+          ascending: true
+        }
+      );
 
 
   if (error) {
@@ -729,13 +1436,17 @@ async function loadFolders() {
 function getCurrentPath() {
 
   if (!currentFolderId) {
+
     return [];
+
   }
+
 
   const result = [];
 
   let id =
     currentFolderId;
+
 
   while (id) {
 
@@ -745,18 +1456,22 @@ function getCurrentPath() {
           item.id === id
       );
 
+
     if (!folder) {
       break;
     }
+
 
     result.unshift(
       folder.name
     );
 
+
     id =
       folder.parent_id;
 
   }
+
 
   return result;
 
@@ -770,8 +1485,11 @@ function getCurrentPath() {
 function getStoragePath() {
 
   if (!currentFolderId) {
+
     return "";
+
   }
+
 
   return getFolderStoragePath(
     currentFolderId
@@ -789,6 +1507,7 @@ function getFolderStoragePath(
   let id =
     folderId;
 
+
   while (id) {
 
     const folder =
@@ -797,18 +1516,23 @@ function getFolderStoragePath(
           item.id === id
       );
 
+
     if (!folder) {
       break;
     }
 
+
     parts.unshift(
-      "folder_" + folder.id
+      "folder_" +
+      folder.id
     );
+
 
     id =
       folder.parent_id;
 
   }
+
 
   return parts.join("/");
 
@@ -821,28 +1545,36 @@ function getFolderStoragePath(
 
 function renderFolders() {
 
-  folders.innerHTML = "";
+  folders.innerHTML =
+    "";
+
 
   const path =
     getCurrentPath();
 
+
   currentPath =
     path;
+
 
   currentFolder.textContent =
     path.length === 0
       ? "📁 Home"
-      : "📁 " + path.join(" / ");
+      : "📁 " +
+        path.join(" / ");
 
 
   const children =
     allFolders.filter(
       folder =>
-        folder.parent_id === currentFolderId
+        folder.parent_id ===
+        currentFolderId
     );
 
 
-  if (children.length === 0) {
+  if (
+    children.length === 0
+  ) {
 
     folders.innerHTML =
       '<div class="empty">এই Folder-এ এখনো কোনো Sub-folder নেই।</div>';
@@ -856,14 +1588,18 @@ function renderFolders() {
     function(folder) {
 
       const div =
-        document.createElement("div");
+        document.createElement(
+          "div"
+        );
 
       div.className =
         "folder";
 
 
       const openButton =
-        document.createElement("button");
+        document.createElement(
+          "button"
+        );
 
       openButton.className =
         "folder-open";
@@ -871,7 +1607,9 @@ function renderFolders() {
       openButton.innerHTML =
         '<span class="folder-icon">📁</span>' +
         '<span class="folder-name">' +
-        escapeHtml(folder.name) +
+        escapeHtml(
+          folder.name
+        ) +
         '</span>';
 
 
@@ -885,73 +1623,88 @@ function renderFolders() {
         };
 
 
-      const manage =
-        document.createElement("div");
-
-      manage.className =
-        "folder-manage";
-
-
-      const renameButton =
-        document.createElement("button");
-
-      renameButton.className =
-        "rename-button";
-
-      renameButton.textContent =
-        "✏️ Rename";
-
-
-      renameButton.onclick =
-        function(event) {
-
-          event.stopPropagation();
-
-          renameFolder(
-            folder
-          );
-
-        };
-
-
-      const deleteButton =
-        document.createElement("button");
-
-      deleteButton.className =
-        "delete-button";
-
-      deleteButton.textContent =
-        "🗑️ Delete";
-
-
-      deleteButton.onclick =
-        function(event) {
-
-          event.stopPropagation();
-
-          deleteFolder(
-            folder
-          );
-
-        };
-
-
-      manage.appendChild(
-        renameButton
-      );
-
-      manage.appendChild(
-        deleteButton
-      );
-
-
       div.appendChild(
         openButton
       );
 
-      div.appendChild(
-        manage
-      );
+
+      /*
+        Rename/Delete শুধু Admin-এর জন্য।
+      */
+
+      if (isAdmin) {
+
+        const manage =
+          document.createElement(
+            "div"
+          );
+
+        manage.className =
+          "folder-manage";
+
+
+        const renameButton =
+          document.createElement(
+            "button"
+          );
+
+        renameButton.className =
+          "rename-button";
+
+        renameButton.textContent =
+          "✏️ Rename";
+
+
+        renameButton.onclick =
+          function(event) {
+
+            event.stopPropagation();
+
+            renameFolder(
+              folder
+            );
+
+          };
+
+
+        const deleteButton =
+          document.createElement(
+            "button"
+          );
+
+        deleteButton.className =
+          "delete-button";
+
+        deleteButton.textContent =
+          "🗑️ Delete";
+
+
+        deleteButton.onclick =
+          function(event) {
+
+            event.stopPropagation();
+
+            deleteFolder(
+              folder
+            );
+
+          };
+
+
+        manage.appendChild(
+          renameButton
+        );
+
+        manage.appendChild(
+          deleteButton
+        );
+
+
+        div.appendChild(
+          manage
+        );
+
+      }
 
 
       folders.appendChild(
@@ -973,6 +1726,7 @@ function openFolder(id) {
   currentFolderId =
     id;
 
+
   saveCurrentFolder();
 
   renderFolders();
@@ -991,6 +1745,7 @@ function goHome() {
   currentFolderId =
     null;
 
+
   saveCurrentFolder();
 
   renderFolders();
@@ -1007,14 +1762,17 @@ function goHome() {
 function goBack() {
 
   if (!currentFolderId) {
+
     return;
+
   }
 
 
   const current =
     allFolders.find(
       folder =>
-        folder.id === currentFolderId
+        folder.id ===
+        currentFolderId
     );
 
 
@@ -1038,6 +1796,11 @@ function goBack() {
 ========================= */
 
 async function createFolder() {
+
+  if (!requireAdmin()) {
+    return;
+  }
+
 
   const folderName =
     prompt(
@@ -1064,9 +1827,10 @@ async function createFolder() {
   const exists =
     allFolders.some(
       folder =>
-        folder.parent_id === currentFolderId &&
+        folder.parent_id ===
+          currentFolderId &&
         folder.name.toLowerCase() ===
-        cleanName.toLowerCase()
+          cleanName.toLowerCase()
     );
 
 
@@ -1118,6 +1882,11 @@ async function renameFolder(
   folder
 ) {
 
+  if (!requireAdmin()) {
+    return;
+  }
+
+
   const newName =
     prompt(
       "নতুন Folder নাম লিখুন:",
@@ -1143,17 +1912,21 @@ async function renameFolder(
     cleanName ===
     folder.name
   ) {
+
     return;
+
   }
 
 
   const exists =
     allFolders.some(
       item =>
-        item.id !== folder.id &&
-        item.parent_id === folder.parent_id &&
+        item.id !==
+          folder.id &&
+        item.parent_id ===
+          folder.parent_id &&
         item.name.toLowerCase() ===
-        cleanName.toLowerCase()
+          cleanName.toLowerCase()
     );
 
 
@@ -1214,10 +1987,12 @@ function getDescendantIds(
 
   const result = [];
 
+
   const children =
     allFolders.filter(
       folder =>
-        folder.parent_id === parentId
+        folder.parent_id ===
+        parentId
     );
 
 
@@ -1228,6 +2003,7 @@ function getDescendantIds(
     result.push(
       child.id
     );
+
 
     result.push(
       ...getDescendantIds(
@@ -1250,6 +2026,11 @@ function getDescendantIds(
 async function deleteFolder(
   folder
 ) {
+
+  if (!requireAdmin()) {
+    return;
+  }
+
 
   const answer =
     confirm(
@@ -1392,7 +2173,9 @@ async function listStorageFiles(
 
     const fullPath =
       path
-        ? path + "/" + item.name
+        ? path +
+          "/" +
+          item.name
         : item.name;
 
 
@@ -1442,6 +2225,11 @@ async function listStorageFiles(
 async function deleteStorageTree(
   path
 ) {
+
+  if (!isAdmin) {
+    return false;
+  }
+
 
   const files =
     await listStorageFiles(
@@ -1494,6 +2282,11 @@ async function deletePhoto(
   fullPath,
   card
 ) {
+
+  if (!requireAdmin()) {
+    return;
+  }
+
 
   const answer =
     confirm(
@@ -1571,7 +2364,8 @@ async function deletePhoto(
 
 
   if (
-    viewer.style.display === "flex"
+    viewer.style.display ===
+    "flex"
   ) {
 
     closeViewer();
@@ -1606,10 +2400,14 @@ function escapeHtml(
 ) {
 
   const div =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
+
 
   div.textContent =
     text;
+
 
   return div.innerHTML;
 
@@ -1627,18 +2425,22 @@ function getFileExtension(
   const originalName =
     file.name || "";
 
+
   const dot =
     originalName.lastIndexOf(".");
 
 
   if (
     dot !== -1 &&
-    dot < originalName.length - 1
+    dot <
+      originalName.length - 1
   ) {
 
     const ext =
       originalName
-        .substring(dot + 1)
+        .substring(
+          dot + 1
+        )
         .toLowerCase()
         .replace(
           /[^a-z0-9]/g,
@@ -1647,30 +2449,41 @@ function getFileExtension(
 
 
     if (ext) {
+
       return ext;
+
     }
 
   }
 
 
   if (
-    file.type === "image/png"
+    file.type ===
+    "image/png"
   ) {
+
     return "png";
+
   }
 
 
   if (
-    file.type === "image/webp"
+    file.type ===
+    "image/webp"
   ) {
+
     return "webp";
+
   }
 
 
   if (
-    file.type === "image/gif"
+    file.type ===
+    "image/gif"
   ) {
+
     return "gif";
+
   }
 
 
@@ -1687,7 +2500,19 @@ photoInput.addEventListener(
   "change",
   function() {
 
-    previewArea.innerHTML = "";
+    if (!isAdmin) {
+
+      this.value =
+        "";
+
+      return;
+
+    }
+
+
+    previewArea.innerHTML =
+      "";
+
 
     const files =
       Array.from(
@@ -1705,17 +2530,25 @@ photoInput.addEventListener(
 
 
     files.forEach(
-      function(file, index) {
+      function(
+        file,
+        index
+      ) {
 
         const item =
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
 
         item.className =
           "preview-item";
 
 
         const img =
-          document.createElement("img");
+          document.createElement(
+            "img"
+          );
+
 
         img.src =
           URL.createObjectURL(
@@ -1724,13 +2557,18 @@ photoInput.addEventListener(
 
 
         const number =
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
+
 
         number.className =
           "preview-number";
 
+
         number.textContent =
-          "#" + (index + 1);
+          "#" +
+          (index + 1);
 
 
         item.appendChild(
@@ -1740,6 +2578,7 @@ photoInput.addEventListener(
         item.appendChild(
           number
         );
+
 
         previewArea.appendChild(
           item
@@ -1765,6 +2604,11 @@ photoInput.addEventListener(
 uploadButton.addEventListener(
   "click",
   async function() {
+
+    if (!requireAdmin()) {
+      return;
+    }
+
 
     const files =
       Array.from(
@@ -1831,11 +2675,12 @@ uploadButton.addEventListener(
         const fileName =
           Date.now() +
           "-" +
-          String(i + 1)
-            .padStart(
-              3,
-              "0"
-            ) +
+          String(
+            i + 1
+          ).padStart(
+            3,
+            "0"
+          ) +
           "-" +
           Math.random()
             .toString(36)
@@ -1863,7 +2708,9 @@ uploadButton.addEventListener(
               storagePath,
               file,
               {
-                upsert: false,
+                upsert:
+                  false,
+
                 contentType:
                   file.type ||
                   "image/jpeg"
@@ -1925,6 +2772,7 @@ uploadButton.addEventListener(
       previewArea.innerHTML =
         "";
 
+
       await loadPhotos();
 
 
@@ -1971,9 +2819,13 @@ async function loadPhotos() {
         folderPath,
         {
           limit: 1000,
+
           sortBy: {
-            column: "name",
-            order: "asc"
+            column:
+              "name",
+
+            order:
+              "asc"
           }
         }
       );
@@ -2048,24 +2900,31 @@ async function loadPhotos() {
 
 
     const card =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     card.className =
       "photo-card";
 
 
     const number =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     number.className =
       "photo-number";
 
     number.textContent =
-      "#" + (i + 1);
+      "#" +
+      (i + 1);
 
 
     const img =
-      document.createElement("img");
+      document.createElement(
+        "img"
+      );
 
     img.src =
       publicData.publicUrl;
@@ -2084,14 +2943,18 @@ async function loadPhotos() {
 
 
     const info =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     info.className =
       "photo-info";
 
 
     const likeButton =
-      document.createElement("button");
+      document.createElement(
+        "button"
+      );
 
     likeButton.className =
       "like-button";
@@ -2113,36 +2976,47 @@ async function loadPhotos() {
       };
 
 
-    const deleteButton =
-      document.createElement("button");
-
-    deleteButton.className =
-      "photo-delete-button";
-
-    deleteButton.textContent =
-      "🗑️ Delete";
-
-
-    deleteButton.onclick =
-      async function(event) {
-
-        event.stopPropagation();
-
-        await deletePhoto(
-          fullPath,
-          card
-        );
-
-      };
-
-
     info.appendChild(
       likeButton
     );
 
-    info.appendChild(
-      deleteButton
-    );
+
+    /*
+      Photo Delete শুধু Admin-এর জন্য।
+    */
+
+    if (isAdmin) {
+
+      const deleteButton =
+        document.createElement(
+          "button"
+        );
+
+      deleteButton.className =
+        "photo-delete-button";
+
+      deleteButton.textContent =
+        "🗑️ Delete";
+
+
+      deleteButton.onclick =
+        async function(event) {
+
+          event.stopPropagation();
+
+          await deletePhoto(
+            fullPath,
+            card
+          );
+
+        };
+
+
+      info.appendChild(
+        deleteButton
+      );
+
+    }
 
 
     card.appendChild(
@@ -2212,12 +3086,15 @@ async function loadLikeCount(
 
   const count =
     data
-      ? Number(data.like_count || 0)
+      ? Number(
+          data.like_count || 0
+        )
       : 0;
 
 
   button.textContent =
-    "❤️ " + count;
+    "❤️ " +
+    count;
 
 }
 
@@ -2234,7 +3111,9 @@ async function addLike(
   if (
     button.disabled
   ) {
+
     return;
+
   }
 
 
@@ -2244,7 +3123,10 @@ async function addLike(
 
   try {
 
-    const { data: oldData, error: readError } =
+    const {
+      data: oldData,
+      error: readError
+    } =
       await supabaseClient
         .from("photo_likes")
         .select(
@@ -2304,6 +3186,7 @@ async function addLike(
       button.textContent =
         "❤️ 1";
 
+
       button.classList.add(
         "liked"
       );
@@ -2349,6 +3232,7 @@ async function addLike(
         "❤️ " +
         newCount;
 
+
       button.classList.add(
         "liked"
       );
@@ -2377,7 +3261,9 @@ function openViewer(
   if (
     !currentImages.length
   ) {
+
     return;
+
   }
 
 
@@ -2411,7 +3297,9 @@ async function showViewerImage() {
 
 
   if (!file) {
+
     return;
+
   }
 
 
@@ -2466,12 +3354,15 @@ async function loadViewerLike(
 
   const count =
     data
-      ? Number(data.like_count || 0)
+      ? Number(
+          data.like_count || 0
+        )
       : 0;
 
 
   viewerLike.textContent =
-    "❤️ " + count;
+    "❤️ " +
+    count;
 
 }
 
@@ -2485,7 +3376,9 @@ async function likeCurrentImage() {
 
 
   if (!file) {
+
     return;
+
   }
 
 
@@ -2514,7 +3407,9 @@ function previousImage() {
   if (
     !currentImages.length
   ) {
+
     return;
+
   }
 
 
@@ -2541,7 +3436,9 @@ function nextImage() {
   if (
     !currentImages.length
   ) {
+
     return;
+
   }
 
 
@@ -2607,7 +3504,9 @@ viewerImage.addEventListener(
     if (
       Math.abs(difference) < 50
     ) {
+
       return;
+
     }
 
 
@@ -2631,10 +3530,59 @@ viewerImage.addEventListener(
 
 
 /* =========================
-   START
+   START APP
 ========================= */
 
 async function startApp() {
+
+  /*
+    আগে Auth session দেখি।
+  */
+
+  const {
+    data: sessionData
+  } =
+    await supabaseClient
+      .auth
+      .getSession();
+
+
+  currentUser =
+    sessionData.session
+      ? sessionData.session.user
+      : null;
+
+
+  isAdmin =
+    checkAdmin(
+      currentUser
+    );
+
+
+  /*
+    কোনো ভুল account session থাকলে
+    Admin access দেওয়া হবে না।
+  */
+
+  if (
+    currentUser &&
+    !isAdmin
+  ) {
+
+    await supabaseClient.auth
+      .signOut();
+
+    currentUser =
+      null;
+
+    isAdmin =
+      false;
+
+  }
+
+
+  updateAdminUI();
+
 
   const foldersLoaded =
     await loadFolders();
