@@ -1,1288 +1,958 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Picture Post</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      min-height: 100%;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      background:
-        radial-gradient(circle at top, #fffdf5 0%, #f5f3ed 42%, #eeeeeb 100%);
-      color: #222;
-    }
-
-    button {
-      border: 1px solid #d8c27a;
-      border-radius: 7px;
-      padding: 7px 9px;
-      font-size: 11px;
-      cursor: pointer;
-      background: #fff;
-      color: #5b4810;
-      transition: .15s;
-    }
-
-    button:active {
-      transform: scale(.97);
-    }
-
-    button:disabled {
-      opacity: .55;
-      cursor: not-allowed;
-    }
-
-    /* =========================
-       HEADER
-    ========================= */
-
-    header {
-      background:
-        linear-gradient(135deg, #151515, #29230f);
-      color: white;
-      text-align: center;
-      padding: 10px 8px;
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      border-bottom: 2px solid #d4af37;
-      box-shadow: 0 3px 18px rgba(0,0,0,.18);
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 20px;
-      color: #e5c557;
-    }
-
-    header p {
-      margin: 3px 0 7px;
-      color: #ccc;
-      font-size: 10px;
-    }
-
-    .auth-area {
-      display: flex;
-      justify-content: center;
-      gap: 5px;
-      flex-wrap: wrap;
-    }
-
-    .auth-button {
-      background: #202020;
-      color: #f0cc58;
-      border: 1px solid #6d571b;
-      padding: 6px 9px;
-      border-radius: 6px;
-      font-size: 10px;
-    }
-
-    .admin-status {
-      display: none;
-      color: #d4af37;
-      font-size: 9px;
-      margin-top: 4px;
-    }
-
-    /* =========================
-       MAIN
-    ========================= */
-
-    .container {
-      width: 100%;
-      max-width: 700px;
-      margin: auto;
-      padding: 6px;
-    }
-
-    /* =========================
-       HOME / BACK
-    ========================= */
-
-    .top-buttons {
-      display: flex;
-      gap: 5px;
-      margin-bottom: 6px;
-    }
-
-    .top-buttons button {
-      flex: 1;
-      background: #fff;
-      color: #594710;
-      border: 1px solid #d8c27a;
-      padding: 6px 7px;
-      font-size: 10px;
-      border-radius: 7px;
-      box-shadow: 0 2px 7px rgba(0,0,0,.06);
-    }
-
-    /* =========================
-       BOX
-    ========================= */
-
-    .box {
-      background: rgba(255,255,255,.96);
-      padding: 8px;
-      border-radius: 10px;
-      margin-bottom: 7px;
-      border: 1px solid #e1d8b8;
-      box-shadow: 0 2px 10px rgba(80,60,0,.07);
-    }
-
-    .box h2 {
-      margin: 0 0 6px;
-      font-size: 13px;
-      color: #3d3213;
-    }
-
-    #currentFolder {
-      color: #777;
-      font-size: 9px;
-      margin-bottom: 6px;
-      word-break: break-word;
-    }
-
-    /* =========================
-       FOLDER ACTIONS
-    ========================= */
-
-    .folder-actions {
-      display: flex;
-      gap: 5px;
-      margin-bottom: 6px;
-    }
-
-    .folder-actions button {
-      flex: 1;
-      background: #fffdf5;
-      color: #624d10;
-      border: 1px solid #d8c27a;
-      padding: 5px 4px;
-      font-size: 9px;
-      border-radius: 6px;
-    }
-
-    /* =========================
-       FOLDERS
-    ========================= */
-
-    .folders {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 4px;
-    }
-
-    .folder {
-      background:
-        linear-gradient(145deg, #fffef9, #f7f4e8);
-      padding: 3px 2px;
-      border-radius: 8px;
-      border: 1px solid #ded3ad;
-      min-width: 0;
-      box-shadow: 0 2px 6px rgba(80,60,0,.06);
-    }
-
-    .folder-open {
-      width: 100%;
-      background: transparent;
-      border: 0;
-      padding: 3px 1px;
-      text-align: center;
-      color: #333;
-    }
-
-    .folder-icon {
-      display: block;
-      font-size: 17px;
-      line-height: 18px;
-      margin-bottom: 1px;
-    }
-
-    .folder-name {
-      display: block;
-      font-size: 9px;
-      line-height: 11px;
-      font-weight: bold;
-      word-break: break-word;
-      color: #403715;
-    }
-
-    .folder-manage {
-      display: flex;
-      gap: 2px;
-      margin-top: 3px;
-    }
-
-    .folder-manage button {
-      flex: 1;
-      padding: 3px 1px;
-      font-size: 7px;
-      border-radius: 5px;
-      white-space: nowrap;
-    }
-
-    .rename-button {
-      background: #fff9df;
-      color: #705900;
-      border: 1px solid #d9bd55;
-    }
-
-    .delete-button {
-      background: #fff1f1;
-      color: #a52323;
-      border: 1px solid #e0aaaa;
-    }
-
-    /* =========================
-       FILE INPUT
-    ========================= */
-
-    input[type="file"] {
-      width: 100%;
-      margin: 5px 0;
-      font-size: 10px;
-      color: #555;
-      background: #fff;
-      border: 1px solid #d8d0b8;
-      border-radius: 6px;
-      padding: 5px;
-    }
-
-    /* =========================
-       PREVIEW
-    ========================= */
-
-    #previewArea {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 4px;
-      margin: 5px 0;
-    }
-
-    .preview-item {
-      position: relative;
-      background: #eee;
-      border-radius: 6px;
-      overflow: hidden;
-      aspect-ratio: 1 / 1;
-      border: 1px solid #ddd4b9;
-    }
-
-    .preview-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .preview-number {
-      position: absolute;
-      left: 3px;
-      top: 3px;
-      background: rgba(0,0,0,.75);
-      color: #f0cc58;
-      padding: 1px 4px;
-      border-radius: 4px;
-      font-size: 7px;
-    }
-
-    /* =========================
-       UPLOAD
-    ========================= */
-
-    #uploadButton {
-      width: 100%;
-      background:
-        linear-gradient(135deg, #b28b20, #e0bd4f);
-      color: #17130a;
-      border: 0;
-      padding: 8px;
-      font-size: 10px;
-      font-weight: bold;
-      border-radius: 7px;
-    }
-
-    #message {
-      text-align: center;
-      margin-top: 5px;
-      font-size: 9px;
-      font-weight: bold;
-      word-break: break-word;
-      color: #806719;
-    }
-
-    /* =========================
-       GALLERY
-    ========================= */
-
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 5px;
-    }
-
-    .photo-card {
-      background: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid #ddd5bd;
-      box-shadow: 0 2px 8px rgba(0,0,0,.07);
-      position: relative;
-    }
-
-    .photo-number {
-      position: absolute;
-      top: 4px;
-      left: 4px;
-      z-index: 5;
-      background: rgba(0,0,0,.75);
-      color: #f0cc58;
-      padding: 2px 5px;
-      border-radius: 5px;
-      font-size: 8px;
-      font-weight: bold;
-    }
-
-    .photo-card img {
-      width: 100%;
-      height: 155px;
-      object-fit: cover;
-      display: block;
-      cursor: pointer;
-    }
-
-    .photo-info {
-      padding: 4px;
-    }
-
-    .like-button {
-      width: 100%;
-      background: #faf9f4;
-      color: #666;
-      border: 1px solid #ddd8c8;
-      margin-bottom: 3px;
-      padding: 5px;
-      font-size: 9px;
-    }
-
-    .like-button.liked {
-      background: #fff0f3;
-      color: #d22;
-      border-color: #e5a5ad;
-    }
-
-    .photo-delete-button {
-      width: 100%;
-      background: #fff0f0;
-      color: #b22;
-      border: 1px solid #e0aaaa;
-      padding: 5px;
-      font-size: 9px;
-    }
-
-    /* =========================
-       EMPTY
-    ========================= */
-
-    .empty {
-      text-align: center;
-      color: #777;
-      padding: 14px 6px;
-      grid-column: 1 / -1;
-      font-size: 10px;
-    }
-
-    /* =========================
-       LOGIN
-    ========================= */
-
-    #loginModal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.75);
-      z-index: 200;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 12px;
-    }
-
-    .login-box {
-      width: 100%;
-      max-width: 340px;
-      background: #fff;
-      border: 1px solid #d4af37;
-      border-radius: 12px;
-      padding: 14px;
-      box-shadow: 0 5px 30px rgba(0,0,0,.4);
-    }
-
-    .login-box h2 {
-      margin: 0 0 10px;
-      text-align: center;
-      color: #222;
-      font-size: 16px;
-    }
-
-    .login-box input {
-      width: 100%;
-      padding: 9px;
-      margin-bottom: 6px;
-      background: #fff;
-      color: #222;
-      border: 1px solid #ccc;
-      border-radius: 7px;
-      font-size: 12px;
-      outline: none;
-    }
-
-    .login-submit {
-      width: 100%;
-      background: #d4af37;
-      color: #111;
-      border: 0;
-      margin-top: 3px;
-      padding: 8px;
-      font-size: 11px;
-      font-weight: bold;
-    }
-
-    .login-close {
-      width: 100%;
-      background: #f3f3f3;
-      color: #555;
-      border: 1px solid #ddd;
-      margin-top: 5px;
-      padding: 7px;
-      font-size: 10px;
-    }
-
-    #loginMessage {
-      text-align: center;
-      font-size: 10px;
-      margin-top: 6px;
-      word-break: break-word;
-      color: #9a7900;
-    }
-
-    /* =========================
-       VIEWER
-    ========================= */
-
-    #viewer {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.96);
-      z-index: 100;
-      display: none;
-      flex-direction: column;
-    }
-
-    .viewer-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 7px;
-      flex-shrink: 0;
-    }
-
-    .viewer-top button {
-      background: #222;
-      color: #f0cc58;
-      border: 1px solid #6d571b;
-      padding: 6px 8px;
-      font-size: 10px;
-    }
-
-    .viewer-stage {
-      position: relative;
-      flex: 1;
-      min-height: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #viewerImage {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      min-height: 0;
-      padding: 5px 42px;
-    }
-
-    .viewer-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 5;
-      width: 34px;
-      height: 50px;
-      border-radius: 9px;
-      background: rgba(255,255,255,.15);
-      color: #f0cc58;
-      border: 1px solid rgba(220,180,60,.4);
-      font-size: 22px;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .viewer-prev {
-      left: 5px;
-    }
-
-    .viewer-next {
-      right: 5px;
-    }
-
-    .viewer-bottom {
-      display: flex;
-      justify-content: center;
-      padding: 7px;
-      flex-shrink: 0;
-    }
-
-    #viewerLike {
-      background: #8b1e2d;
-      color: #fff;
-      border: 1px solid #b53b4d;
-      min-width: 100px;
-      padding: 7px 10px;
-      font-size: 10px;
-    }
-
-    /* =========================
-       MOBILE
-    ========================= */
-
-    @media (max-width:420px) {
-
-      .container {
-        padding: 5px;
-      }
-
-      .box {
-        padding: 7px;
-        margin-bottom: 6px;
-      }
-
-      .box h2 {
-        font-size: 12px;
-        margin-bottom: 5px;
-      }
-
-      .folders {
-        grid-template-columns: repeat(3,1fr);
-        gap: 3px;
-      }
-
-      .folder {
-        padding: 3px 1px;
-      }
-
-      .folder-icon {
-        font-size: 16px;
-        line-height: 17px;
-      }
-
-      .folder-name {
-        font-size: 8px;
-        line-height: 10px;
-      }
-
-      .folder-manage {
-        gap: 1px;
-        margin-top: 2px;
-      }
-
-      .folder-manage button {
-        font-size: 6.5px;
-        padding: 3px 0;
-      }
-
-      .folder-actions button {
-        padding: 5px 3px;
-        font-size: 8px;
-      }
-
-      #previewArea {
-        grid-template-columns: repeat(4,1fr);
-        gap: 3px;
-      }
-
-      .gallery {
-        gap: 4px;
-      }
-
-      .photo-card img {
-        height: 140px;
-      }
-
-      .like-button,
-      .photo-delete-button {
-        padding: 4px;
-        font-size: 8px;
-      }
-
-      #viewerImage {
-        padding-left: 38px;
-        padding-right: 38px;
-      }
-
-      .viewer-arrow {
-        width: 31px;
-        height: 45px;
-        font-size: 19px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Picture Post</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+}
+
+body{
+  font-family:Arial,sans-serif;
+  background:
+    radial-gradient(circle at top,#29230f 0%,#111 38%,#070707 100%);
+  color:#eee;
+}
+
+button{
+  box-sizing:border-box;
+  border:1px solid #806719;
+  border-radius:6px;
+  padding:5px 7px;
+  font-size:10px;
+  cursor:pointer;
+  background:#171717;
+  color:#e8c957;
+  transition:.15s;
+}
+
+button:active{
+  transform:scale(.96);
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+/* HEADER */
+
+header{
+  background:
+    linear-gradient(135deg,#080808,#211b0b);
+  color:#fff;
+  text-align:center;
+  padding:8px 6px;
+  position:sticky;
+  top:0;
+  z-index:20;
+  border-bottom:1px solid #b89529;
+  box-shadow:0 3px 18px rgba(0,0,0,.55);
+}
+
+header h1{
+  margin:0;
+  font-size:18px;
+  color:#e5c557;
+}
+
+header p{
+  margin:2px 0 5px;
+  color:#aaa;
+  font-size:9px;
+}
+
+.auth-area{
+  display:flex;
+  justify-content:center;
+  gap:4px;
+  flex-wrap:wrap;
+}
+
+.auth-button{
+  background:#141414;
+  color:#e7c650;
+  border:1px solid #6d571b;
+  padding:5px 8px;
+  border-radius:5px;
+  font-size:9px;
+}
+
+.admin-status{
+  display:none;
+  color:#d4af37;
+  font-size:8px;
+  margin-top:3px;
+}
+
+/* MAIN */
+
+.container{
+  width:100%;
+  max-width:700px;
+  margin:auto;
+  padding:5px;
+}
+
+/* TOP BUTTONS */
+
+.top-buttons{
+  display:flex;
+  gap:4px;
+  margin-bottom:5px;
+}
+
+.top-buttons button{
+  flex:1;
+  background:#171717;
+  color:#d9bd55;
+  border:1px solid #6d571b;
+  padding:5px 6px;
+  font-size:9px;
+  border-radius:5px;
+  box-shadow:0 2px 7px rgba(0,0,0,.3);
+}
+
+/* BOX */
+
+.box{
+  background:rgba(20,20,20,.96);
+  padding:7px;
+  border-radius:8px;
+  margin-bottom:6px;
+  border:1px solid #3d341c;
+  box-shadow:0 2px 12px rgba(0,0,0,.35);
+}
+
+.box h2{
+  margin:0 0 5px;
+  font-size:12px;
+  color:#e0c45a;
+}
+
+#currentFolder{
+  color:#999;
+  font-size:8px;
+  margin-bottom:5px;
+  word-break:break-word;
+}
+
+/* FOLDER ACTIONS */
+
+.folder-actions{
+  display:flex;
+  gap:4px;
+  margin-bottom:5px;
+}
+
+.folder-actions button{
+  flex:1;
+  background:#171717;
+  color:#d7ba4f;
+  border:1px solid #5d4d19;
+  padding:4px 3px;
+  font-size:8px;
+  border-radius:5px;
+}
+
+/* FOLDERS */
+
+.folders{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:3px;
+}
+
+.folder{
+  background:
+    linear-gradient(145deg,#1d1d1d,#111);
+  padding:2px;
+  border-radius:6px;
+  border:1px solid #4b401e;
+  min-width:0;
+  box-shadow:0 2px 6px rgba(0,0,0,.3);
+}
+
+.folder-open{
+  width:100%;
+  background:transparent;
+  border:0;
+  padding:2px 1px;
+  text-align:center;
+  color:#ddd;
+}
+
+.folder-icon{
+  display:block;
+  font-size:15px;
+  line-height:16px;
+  margin-bottom:1px;
+}
+
+.folder-name{
+  display:block;
+  font-size:8px;
+  line-height:10px;
+  font-weight:bold;
+  word-break:break-word;
+  color:#d8c77c;
+}
+
+.folder-manage{
+  display:flex;
+  gap:2px;
+  margin-top:2px;
+}
+
+.folder-manage button{
+  flex:1;
+  padding:2px 0;
+  font-size:6px;
+  border-radius:4px;
+  white-space:nowrap;
+}
+
+.rename-button{
+  background:#211e12;
+  color:#d7bb54;
+  border:1px solid #6b591d;
+}
+
+.delete-button{
+  background:#251313;
+  color:#ef7777;
+  border:1px solid #713434;
+}
+
+/* FILE INPUT */
+
+input[type=file]{
+  width:100%;
+  margin:4px 0;
+  font-size:9px;
+  color:#aaa;
+  background:#111;
+  border:1px solid #4b4328;
+  border-radius:5px;
+  padding:4px;
+}
+
+/* PREVIEW */
+
+#previewArea{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:3px;
+  margin:4px 0;
+}
+
+.preview-item{
+  position:relative;
+  background:#111;
+  border-radius:5px;
+  overflow:hidden;
+  aspect-ratio:1/1;
+  border:1px solid #443b20;
+}
+
+.preview-item img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.preview-number{
+  position:absolute;
+  left:2px;
+  top:2px;
+  background:rgba(0,0,0,.8);
+  color:#f0cc58;
+  padding:1px 3px;
+  border-radius:3px;
+  font-size:6px;
+}
+
+/* UPLOAD */
+
+#uploadButton{
+  width:100%;
+  background:
+    linear-gradient(135deg,#9a7617,#d7b53d);
+  color:#0c0c0c;
+  border:0;
+  padding:6px;
+  font-size:9px;
+  font-weight:bold;
+  border-radius:5px;
+}
+
+#message{
+  text-align:center;
+  margin-top:4px;
+  font-size:8px;
+  font-weight:bold;
+  word-break:break-word;
+  color:#d3b94e;
+}
+
+/* GALLERY */
+
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:4px;
+}
+
+.photo-card{
+  background:#111;
+  border-radius:7px;
+  overflow:hidden;
+  border:1px solid #3e3825;
+  box-shadow:0 2px 8px rgba(0,0,0,.4);
+  position:relative;
+}
+
+.photo-number{
+  position:absolute;
+  top:3px;
+  left:3px;
+  z-index:5;
+  background:rgba(0,0,0,.78);
+  color:#f0cc58;
+  padding:1px 4px;
+  border-radius:4px;
+  font-size:7px;
+  font-weight:bold;
+}
+
+.photo-card img{
+  width:100%;
+  height:145px;
+  object-fit:cover;
+  display:block;
+  cursor:pointer;
+}
+
+.photo-info{
+  padding:3px;
+}
+
+.like-button{
+  width:100%;
+  background:#171717;
+  color:#aaa;
+  border:1px solid #443f31;
+  margin-bottom:2px;
+  padding:4px;
+  font-size:8px;
+}
+
+.like-button.liked{
+  background:#32151c;
+  color:#ff6575;
+  border-color:#803746;
+}
+
+.photo-delete-button{
+  width:100%;
+  background:#291313;
+  color:#ee7777;
+  border:1px solid #713535;
+  padding:4px;
+  font-size:8px;
+}
+
+/* EMPTY */
+
+.empty{
+  text-align:center;
+  color:#777;
+  padding:12px 5px;
+  grid-column:1/-1;
+  font-size:9px;
+}
+
+/* LOGIN */
+
+#loginModal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.82);
+  z-index:200;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:10px;
+}
+
+.login-box{
+  width:100%;
+  max-width:330px;
+  background:#171717;
+  border:1px solid #a88929;
+  border-radius:10px;
+  padding:12px;
+  box-shadow:0 5px 30px rgba(0,0,0,.7);
+}
+
+.login-box h2{
+  margin:0 0 9px;
+  text-align:center;
+  color:#e2c454;
+  font-size:15px;
+}
+
+.login-box input{
+  width:100%;
+  padding:8px;
+  margin-bottom:5px;
+  background:#0d0d0d;
+  color:#eee;
+  border:1px solid #4b4328;
+  border-radius:6px;
+  font-size:11px;
+  outline:none;
+}
+
+.login-submit{
+  width:100%;
+  background:#d4af37;
+  color:#111;
+  border:0;
+  margin-top:2px;
+  padding:7px;
+  font-size:10px;
+  font-weight:bold;
+}
+
+.login-close{
+  width:100%;
+  background:#222;
+  color:#aaa;
+  border:1px solid #444;
+  margin-top:4px;
+  padding:6px;
+  font-size:9px;
+}
+
+#loginMessage{
+  text-align:center;
+  font-size:9px;
+  margin-top:5px;
+  word-break:break-word;
+  color:#d2b54c;
+}
+
+/* VIEWER */
+
+#viewer{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.97);
+  z-index:100;
+  display:none;
+  flex-direction:column;
+}
+
+.viewer-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:6px;
+  flex-shrink:0;
+}
+
+.viewer-top button{
+  background:#191919;
+  color:#e8c957;
+  border:1px solid #5d4d1c;
+  padding:5px 7px;
+  font-size:9px;
+}
+
+.viewer-stage{
+  position:relative;
+  flex:1;
+  min-height:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#viewerImage{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  min-height:0;
+  padding:5px 38px;
+}
+
+.viewer-arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:5;
+  width:31px;
+  height:45px;
+  border-radius:8px;
+  background:rgba(255,255,255,.1);
+  color:#f0cc58;
+  border:1px solid rgba(220,180,60,.35);
+  font-size:20px;
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.viewer-prev{left:4px}
+.viewer-next{right:4px}
+
+.viewer-bottom{
+  display:flex;
+  justify-content:center;
+  padding:6px;
+  flex-shrink:0;
+}
+
+#viewerLike{
+  background:#751c2c;
+  color:#fff;
+  border:1px solid #a8384b;
+  min-width:90px;
+  padding:6px 9px;
+  font-size:9px;
+}
+
+/* MOBILE */
+
+@media(max-width:420px){
+
+  .container{
+    padding:4px;
+  }
+
+  .box{
+    padding:6px;
+    margin-bottom:5px;
+  }
+
+  .box h2{
+    font-size:11px;
+    margin-bottom:4px;
+  }
+
+  .folders{
+    grid-template-columns:repeat(3,1fr);
+    gap:2px;
+  }
+
+  .folder{
+    padding:2px 1px;
+  }
+
+  .folder-icon{
+    font-size:14px;
+    line-height:15px;
+  }
+
+  .folder-name{
+    font-size:7px;
+    line-height:9px;
+  }
+
+  .folder-manage{
+    gap:1px;
+    margin-top:2px;
+  }
+
+  .folder-manage button{
+    font-size:5.5px;
+    padding:2px 0;
+  }
+
+  .folder-actions button{
+    padding:4px 2px;
+    font-size:7px;
+  }
+
+  #previewArea{
+    grid-template-columns:repeat(4,1fr);
+    gap:2px;
+  }
+
+  .gallery{
+    gap:3px;
+  }
+
+  .photo-card img{
+    height:130px;
+  }
+
+  .like-button,
+  .photo-delete-button{
+    padding:3px;
+    font-size:7px;
+  }
+
+  #viewerImage{
+    padding-left:35px;
+    padding-right:35px;
+  }
+
+  .viewer-arrow{
+    width:29px;
+    height:42px;
+    font-size:18px;
+  }
+}
+</style>
 </head>
 
 <body>
 
 <header>
 
-  <h1>📸 Picture Post</h1>
+<h1>📸 Picture Post</h1>
 
-  <p>ছবি শেয়ার করার সহজ জায়গা</p>
+<p>ছবি শেয়ার করার সহজ জায়গা</p>
 
-  <div class="auth-area">
+<div class="auth-area">
 
-    <button
-      id="loginButton"
-      class="auth-button"
-      onclick="openLogin()"
-    >
-      🔐 Admin Login
-    </button>
+<button
+id="loginButton"
+class="auth-button"
+onclick="openLogin()">
+🔐 Admin Login
+</button>
 
-    <button
-      id="logoutButton"
-      class="auth-button"
-      onclick="logoutAdmin()"
-      style="display:none;"
-    >
-      🚪 Logout
-    </button>
+<button
+id="logoutButton"
+class="auth-button"
+onclick="logoutAdmin()"
+style="display:none;">
+🚪 Logout
+</button>
 
-  </div>
+</div>
 
-  <div
-    id="adminStatus"
-    class="admin-status"
-  >
-    👑 Admin Mode চালু
-  </div>
+<div
+id="adminStatus"
+class="admin-status">
+👑 Admin Mode চালু
+</div>
 
 </header>
 
 
 <div class="container">
 
-  <div class="top-buttons">
+<div class="top-buttons">
 
-    <button onclick="goHome()">
-      🏠 Home
-    </button>
+<button onclick="goHome()">
+🏠 Home
+</button>
 
-    <button onclick="goBack()">
-      ⬅️ Back
-    </button>
-
-  </div>
-
-
-  <div class="box">
-
-    <h2>📁 Picture Folder</h2>
-
-    <div id="currentFolder">
-      📁 Home
-    </div>
-
-
-    <div
-      id="adminFolderActions"
-      class="folder-actions"
-      style="display:none;"
-    >
-
-      <button onclick="createFolder()">
-        ➕ নতুন Folder
-      </button>
-
-      <button onclick="refreshFolders()">
-        🔄 Refresh
-      </button>
-
-    </div>
-
-
-    <div
-      id="publicRefreshArea"
-      class="folder-actions"
-    >
-
-      <button onclick="refreshFolders()">
-        🔄 Refresh
-      </button>
-
-    </div>
-
-
-    <div
-      id="folders"
-      class="folders"
-    >
-
-      <div class="empty">
-        ⏳ Folder লোড হচ্ছে...
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <div
-    id="adminUploadBox"
-    class="box"
-    style="display:none;"
-  >
-
-    <h2>📤 ছবি পোস্ট করুন</h2>
-
-    <input
-      type="file"
-      id="photoInput"
-      accept="image/*"
-      multiple
-    >
-
-    <div id="previewArea"></div>
-
-    <button id="uploadButton">
-      📤 ছবি পোস্ট করুন
-    </button>
-
-    <div id="message"></div>
-
-  </div>
-
-
-  <div class="box">
-
-    <h2>🖼️ পোস্ট করা ছবি</h2>
-
-    <div
-      id="gallery"
-      class="gallery"
-    >
-
-      <div class="empty">
-        ছবি লোড হচ্ছে...
-      </div>
-
-    </div>
-
-  </div>
+<button onclick="goBack()">
+⬅️ Back
+</button>
 
 </div>
 
+
+<div class="box">
+
+<h2>📁 Picture Folder</h2>
+
+<div id="currentFolder">
+📁 Home
+</div>
+
+
+<div
+id="adminFolderActions"
+class="folder-actions"
+style="display:none;">
+
+<button onclick="createFolder()">
+➕ নতুন Folder
+</button>
+
+<button onclick="refreshFolders()">
+🔄 Refresh
+</button>
+
+</div>
+
+
+<div
+id="publicRefreshArea"
+class="folder-actions">
+
+<button onclick="refreshFolders()">
+🔄 Refresh
+</button>
+
+</div>
+
+
+<div
+id="folders"
+class="folders">
+
+<div class="empty">
+⏳ Folder লোড হচ্ছে...
+</div>
+
+</div>
+
+</div>
+
+
+<div
+id="adminUploadBox"
+class="box"
+style="display:none;">
+
+<h2>📤 ছবি পোস্ট করুন</h2>
+
+<input
+type="file"
+id="photoInput"
+accept="image/*"
+multiple>
+
+<div id="previewArea"></div>
+
+<button id="uploadButton">
+📤 ছবি পোস্ট করুন
+</button>
+
+<div id="message"></div>
+
+</div>
+
+
+<div class="box">
+
+<h2>🖼️ পোস্ট করা ছবি</h2>
+
+<div
+id="gallery"
+class="gallery">
+
+<div class="empty">
+ছবি লোড হচ্ছে...
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- LOGIN -->
 
 <div id="loginModal">
 
-  <div class="login-box">
+<div class="login-box">
 
-    <h2>🔐 Admin Login</h2>
+<h2>🔐 Admin Login</h2>
 
-    <input
-      type="email"
-      id="loginEmail"
-      placeholder="Admin Email"
-      autocomplete="off"
-    >
+<input
+type="email"
+id="loginEmail"
+placeholder="Admin Email"
+autocomplete="off">
 
-    <input
-      type="password"
-      id="loginPassword"
-      placeholder="Password"
-      autocomplete="current-password"
-    >
+<input
+type="password"
+id="loginPassword"
+placeholder="Password"
+autocomplete="current-password">
 
-    <button
-      id="loginSubmit"
-      class="login-submit"
-      onclick="loginAdmin()"
-    >
-      🔐 Login
-    </button>
+<button
+id="loginSubmit"
+class="login-submit"
+onclick="loginAdmin()">
+🔐 Login
+</button>
 
-    <button
-      class="login-close"
-      onclick="closeLogin()"
-    >
-      ✕ বন্ধ
-    </button>
+<button
+class="login-close"
+onclick="closeLogin()">
+✕ বন্ধ
+</button>
 
-    <div id="loginMessage"></div>
+<div id="loginMessage"></div>
 
-  </div>
+</div>
 
 </div>
 
 
+<!-- VIEWER -->
+
 <div id="viewer">
 
-  <div class="viewer-top">
+<div class="viewer-top">
 
-    <button onclick="closeViewer()">
-      ✕ বন্ধ
-    </button>
+<button onclick="closeViewer()">
+✕ বন্ধ
+</button>
 
-    <button
-      onclick="goHome(); closeViewer();"
-    >
-      🏠 Home
-    </button>
+<button onclick="goHome();closeViewer();">
+🏠 Home
+</button>
 
-  </div>
+</div>
 
 
-  <div class="viewer-stage">
+<div class="viewer-stage">
 
-    <button
-      class="viewer-arrow viewer-prev"
-      onclick="previousImage()"
-      aria-label="Previous"
-    >
-      ‹
-    </button>
+<button
+class="viewer-arrow viewer-prev"
+onclick="previousImage()"
+aria-label="Previous">
+‹
+</button>
 
-    <img
-      id="viewerImage"
-      alt="Picture"
-    >
+<img
+id="viewerImage"
+alt="Picture">
 
-    <button
-      class="viewer-arrow viewer-next"
-      onclick="nextImage()"
-      aria-label="Next"
-    >
-      ›
-    </button>
+<button
+class="viewer-arrow viewer-next"
+onclick="nextImage()"
+aria-label="Next">
+›
+</button>
 
-  </div>
+</div>
 
 
-  <div class="viewer-bottom">
+<div class="viewer-bottom">
 
-    <button
-      id="viewerLike"
-      onclick="likeCurrentImage()"
-    >
-      ❤️ 0
-    </button>
+<button
+id="viewerLike"
+onclick="likeCurrentImage()">
+❤️ 0
+</button>
 
-  </div>
+</div>
 
 </div>
 
 
 <script>
 
+/* =========================
+   SUPABASE
+========================= */
+
 const SUPABASE_URL =
-  "https://vhqiqbapbxwmvycxrsvc.supabase.co";
+"https://vhqiqbapbxwmvycxrsvc.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_CIj1SRMGjbByiTkx-Yx8Eg_g7jHkTh9";
+"sb_publishable_CIj1SRMGjbByiTkx-Yx8Eg_g7jHkTh9";
 
 const ADMIN_EMAIL =
-  "prince.masud.ak46@gmail.com";
+"prince.masud.ak46@gmail.com";
 
 
 const supabaseClient =
-  supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-
-const photoInput =
-  document.getElementById("photoInput");
-
-const previewArea =
-  document.getElementById("previewArea");
-
-const uploadButton =
-  document.getElementById("uploadButton");
-
-const message =
-  document.getElementById("message");
-
-const gallery =
-  document.getElementById("gallery");
-
-const folders =
-  document.getElementById("folders");
-
-const currentFolder =
-  document.getElementById("currentFolder");
-
-const viewer =
-  document.getElementById("viewer");
-
-const viewerImage =
-  document.getElementById("viewerImage");
-
-const viewerLike =
-  document.getElementById("viewerLike");
-
-const loginModal =
-  document.getElementById("loginModal");
-
-const loginEmail =
-  document.getElementById("loginEmail");
-
-const loginPassword =
-  document.getElementById("loginPassword");
-
-const loginSubmit =
-  document.getElementById("loginSubmit");
-
-const loginMessage =
-  document.getElementById("loginMessage");
-
-const loginButton =
-  document.getElementById("loginButton");
-
-const logoutButton =
-  document.getElementById("logoutButton");
-
-const adminStatus =
-  document.getElementById("adminStatus");
-
-const adminFolderActions =
-  document.getElementById("adminFolderActions");
-
-const publicRefreshArea =
-  document.getElementById("publicRefreshArea");
-
-const adminUploadBox =
-  document.getElementById("adminUploadBox");
-
-
-let currentUser = null;
-let isAdmin = false;
-
-function checkAdmin(user) {
-
-  if (!user) {
-    return false;
-  }
-
-  return (
-    String(user.email || "")
-      .toLowerCase()
-      .trim()
-    ===
-    ADMIN_EMAIL
-      .toLowerCase()
-      .trim()
-  );
-
-}
-
-
-function updateAdminUI() {
-
-  if (isAdmin) {
-
-    loginButton.style.display =
-      "none";
-
-    logoutButton.style.display =
-      "inline-block";
-
-    adminStatus.style.display =
-      "block";
-
-    adminFolderActions.style.display =
-      "flex";
-
-    publicRefreshArea.style.display =
-      "none";
-
-    adminUploadBox.style.display =
-      "block";
-
-  } else {
-
-    loginButton.style.display =
-      "inline-block";
-
-    logoutButton.style.display =
-      "none";
-
-    adminStatus.style.display =
-      "none";
-
-    adminFolderActions.style.display =
-      "none";
-
-    publicRefreshArea.style.display =
-      "flex";
-
-    adminUploadBox.style.display =
-      "none";
-
-  }
-
-}
-
-
-supabaseClient.auth.onAuthStateChange(
-  function(event, session) {
-
-    currentUser =
-      session
-        ? session.user
-        : null;
-
-    isAdmin =
-      checkAdmin(currentUser);
-
-    updateAdminUI();
-
-    if (currentUser && !isAdmin) {
-
-      supabaseClient.auth
-        .signOut();
-
-      currentUser = null;
-      isAdmin = false;
-
-      updateAdminUI();
-
-      alert(
-        "❌ এই account-এর Admin permission নেই।"
-      );
-
-    }
-
-  }
+supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
 );
 
 
-function openLogin() {
+/* =========================
+   ELEMENTS
+========================= */
 
-  loginModal.style.display =
-    "flex";
+const photoInput =
+document.getElementById("photoInput");
 
-  loginMessage.textContent =
-    "";
+const previewArea =
+document.getElementById("previewArea");
 
-  loginEmail.value = "";
-  loginPassword.value = "";
+const uploadButton =
+document.getElementById("uploadButton");
 
-  setTimeout(
-    function() {
-      loginEmail.focus();
-    },
-    100
-  );
+const message =
+document.getElementById("message");
 
-}
+const gallery =
+document.getElementById("gallery");
 
+const folders =
+document.getElementById("folders");
 
-function closeLogin() {
+const currentFolder =
+document.getElementById("currentFolder");
 
-  loginModal.style.display =
-    "none";
+const viewer =
+document.getElementById("viewer");
 
-  loginMessage.textContent =
-    "";
+const viewerImage =
+document.getElementById("viewerImage");
 
-}
+const viewerLike =
+document.getElementById("viewerLike");
 
+const loginModal =
+document.getElementById("loginModal");
 
-async function loginAdmin() {
+const loginEmail =
+document.getElementById("loginEmail");
 
-  const email =
-    loginEmail.value.trim();
+const loginPassword =
+document.getElementById("loginPassword");
 
-  const password =
-    loginPassword.value;
+const loginSubmit =
+document.getElementById("loginSubmit");
 
-  if (!email) {
+const loginMessage =
+document.getElementById("loginMessage");
 
-    loginMessage.textContent =
-      "❌ Email দিন।";
+const loginButton =
+document.getElementById("loginButton");
 
-    return;
+const logoutButton =
+document.getElementById("logoutButton");
 
-  }
+const adminStatus =
+document.getElementById("adminStatus");
 
-  if (!password) {
+const adminFolderActions =
+document.getElementById("adminFolderActions");
 
-    loginMessage.textContent =
-      "❌ Password দিন।";
+const publicRefreshArea =
+document.getElementById("publicRefreshArea");
 
-    return;
+const adminUploadBox =
+document.getElementById("adminUploadBox");
 
-  }
 
-  if (
-    email.toLowerCase() !==
-    ADMIN_EMAIL.toLowerCase()
-  ) {
+/* =========================
+   VARIABLES
+========================= */
 
-    loginMessage.textContent =
-      "❌ এই Email Admin নয়।";
-
-    return;
-
-  }
-
-  loginSubmit.disabled = true;
-
-  loginMessage.textContent =
-    "⏳ Login হচ্ছে...";
-
-
-  const { data, error } =
-    await supabaseClient.auth
-      .signInWithPassword({
-        email: email,
-        password: password
-      });
-
-
-  if (error) {
-
-    console.error(
-      "Login error:",
-      error
-    );
-
-    loginMessage.textContent =
-      "❌ Login হয়নি: " +
-      error.message;
-
-    loginSubmit.disabled = false;
-
-    return;
-
-  }
-
-
-  currentUser = data.user;
-
-  isAdmin =
-    checkAdmin(currentUser);
-
-
-  if (!isAdmin) {
-
-    await supabaseClient.auth
-      .signOut();
-
-    currentUser = null;
-    isAdmin = false;
-
-    updateAdminUI();
-
-    loginMessage.textContent =
-      "❌ এই account Admin নয়।";
-
-    loginSubmit.disabled = false;
-
-    return;
-
-  }
-
-
-  updateAdminUI();
-
-  loginMessage.textContent =
-    "✅ Admin Login সফল হয়েছে!";
-
-
-  setTimeout(
-    function() {
-
-      closeLogin();
-
-      message.textContent =
-        "👑 Admin Mode চালু হয়েছে।";
-
-    },
-    700
-  );
-
-
-  loginSubmit.disabled = false;
-
-}
-
-
-async function logoutAdmin() {
-
-  const answer =
-    confirm(
-      "🚪 Admin Logout করবেন?"
-    );
-
-  if (!answer) {
-    return;
-  }
-
-  await supabaseClient.auth
-    .signOut();
-
-  currentUser = null;
-  isAdmin = false;
-
-  updateAdminUI();
-
-  message.textContent =
-    "✅ Admin Logout হয়েছে।";
-
-}
-
-
-function requireAdmin() {
-
-  if (!isAdmin) {
-
-    alert(
-      "🔒 এই কাজটি শুধু Admin করতে পারবেন।"
-    );
-
-    return false;
-
-  }
-
-  return true;
-
-}
-
+let currentUser = null;
+let isAdmin = false;
 
 let allFolders = [];
 let currentFolderId = null;
@@ -1290,1765 +960,2268 @@ let currentPath = [];
 let currentImages = [];
 let currentViewerIndex = 0;
 
-
 const FOLDER_STORAGE_KEY =
-  "picture_post_current_folder";
+"picture_post_current_folder";
+
+const LOCAL_LIKE_KEY =
+"picture_post_local_likes";
 
 
-function saveCurrentFolder() {
+/* =========================
+   ADMIN
+========================= */
 
-  if (currentFolderId) {
+function checkAdmin(user){
 
-    localStorage.setItem(
-      FOLDER_STORAGE_KEY,
-      String(currentFolderId)
-    );
+if(!user){
+return false;
+}
 
-  } else {
-
-    localStorage.removeItem(
-      FOLDER_STORAGE_KEY
-    );
-
-  }
+return String(
+user.email || ""
+).toLowerCase().trim()
+===
+ADMIN_EMAIL.toLowerCase().trim();
 
 }
 
 
-function restoreCurrentFolder() {
+function updateAdminUI(){
 
-  const saved =
-    localStorage.getItem(
-      FOLDER_STORAGE_KEY
-    );
+if(isAdmin){
 
-  if (!saved) {
+loginButton.style.display="none";
 
-    currentFolderId = null;
+logoutButton.style.display=
+"inline-block";
 
-    return;
+adminStatus.style.display=
+"block";
 
-  }
+adminFolderActions.style.display=
+"flex";
 
-  const id =
-    Number(saved);
+publicRefreshArea.style.display=
+"none";
 
-  const exists =
-    allFolders.some(
-      folder =>
-        folder.id === id
-    );
+adminUploadBox.style.display=
+"block";
 
-  if (exists) {
+}else{
 
-    currentFolderId = id;
+loginButton.style.display=
+"inline-block";
 
-  } else {
+logoutButton.style.display=
+"none";
 
-    currentFolderId = null;
+adminStatus.style.display=
+"none";
 
-    localStorage.removeItem(
-      FOLDER_STORAGE_KEY
-    );
+adminFolderActions.style.display=
+"none";
 
-  }
+publicRefreshArea.style.display=
+"flex";
+
+adminUploadBox.style.display=
+"none";
+
+}
 
 }
 
 
-async function loadFolders() {
+supabaseClient.auth.onAuthStateChange(
+function(event,session){
 
-  folders.innerHTML =
-    '<div class="empty">⏳ Folder লোড হচ্ছে...</div>';
+currentUser=
+session ? session.user : null;
 
+isAdmin=
+checkAdmin(currentUser);
 
-  const { data, error } =
-    await supabaseClient
-      .from("folders")
-      .select("id,name,parent_id")
-      .order(
-        "id",
-        {
-          ascending: true
-        }
-      );
+updateAdminUI();
 
+if(currentUser && !isAdmin){
 
-  if (error) {
+supabaseClient.auth.signOut();
 
-    console.error(error);
+currentUser=null;
+isAdmin=false;
 
-    folders.innerHTML =
-      '<div class="empty">❌ Folder লোড করা যায়নি।</div>';
+updateAdminUI();
 
-    return false;
+alert(
+"❌ এই account-এর Admin permission নেই।"
+);
 
-  }
+}
 
-
-  allFolders =
-    data || [];
+});
 
 
-  restoreCurrentFolder();
+/* =========================
+   LOGIN
+========================= */
 
-  renderFolders();
+function openLogin(){
 
-  return true;
+loginModal.style.display="flex";
+
+loginMessage.textContent="";
+
+loginEmail.value="";
+loginPassword.value="";
+
+setTimeout(
+function(){
+loginEmail.focus();
+},
+100
+);
 
 }
 
 
-function getCurrentPath() {
+function closeLogin(){
 
-  if (!currentFolderId) {
-    return [];
-  }
+loginModal.style.display="none";
 
-  const result = [];
-
-  let id =
-    currentFolderId;
-
-  while (id) {
-
-    const folder =
-      allFolders.find(
-        item =>
-          item.id === id
-      );
-
-    if (!folder) {
-      break;
-    }
-
-    result.unshift(
-      folder.name
-    );
-
-    id =
-      folder.parent_id;
-
-  }
-
-  return result;
+loginMessage.textContent="";
 
 }
 
 
-function getStoragePath() {
+async function loginAdmin(){
 
-  if (!currentFolderId) {
-    return "";
-  }
+const email=
+loginEmail.value.trim();
 
-  return getFolderStoragePath(
-    currentFolderId
-  );
+const password=
+loginPassword.value;
+
+if(!email){
+
+loginMessage.textContent=
+"❌ Email দিন।";
+
+return;
+}
+
+if(!password){
+
+loginMessage.textContent=
+"❌ Password দিন।";
+
+return;
+}
+
+if(
+email.toLowerCase() !==
+ADMIN_EMAIL.toLowerCase()
+){
+
+loginMessage.textContent=
+"❌ এই Email Admin নয়।";
+
+return;
+}
+
+loginSubmit.disabled=true;
+
+loginMessage.textContent=
+"⏳ Login হচ্ছে...";
+
+
+const {data,error}=
+await supabaseClient.auth
+.signInWithPassword({
+email:email,
+password:password
+});
+
+
+if(error){
+
+console.error(
+"Login error:",
+error
+);
+
+loginMessage.textContent=
+"❌ Login হয়নি: "+
+error.message;
+
+loginSubmit.disabled=false;
+
+return;
+}
+
+
+currentUser=data.user;
+
+isAdmin=
+checkAdmin(currentUser);
+
+if(!isAdmin){
+
+await supabaseClient.auth.signOut();
+
+currentUser=null;
+isAdmin=false;
+
+updateAdminUI();
+
+loginMessage.textContent=
+"❌ এই account Admin নয়।";
+
+loginSubmit.disabled=false;
+
+return;
+}
+
+
+updateAdminUI();
+
+loginMessage.textContent=
+"✅ Admin Login সফল হয়েছে!";
+
+setTimeout(
+function(){
+
+closeLogin();
+
+message.textContent=
+"👑 Admin Mode চালু হয়েছে।";
+
+loadFolders();
+
+loadPhotos();
+
+},
+700
+);
+
+loginSubmit.disabled=false;
 
 }
 
 
-function getFolderStoragePath(folderId) {
+async function logoutAdmin(){
 
-  const parts = [];
+const answer=
+confirm(
+"🚪 Admin Logout করবেন?"
+);
 
-  let id =
-    folderId;
+if(!answer){
+return;
+}
 
-  while (id) {
+await supabaseClient.auth.signOut();
 
-    const folder =
-      allFolders.find(
-        item =>
-          item.id === id
-      );
+currentUser=null;
+isAdmin=false;
 
-    if (!folder) {
-      break;
-    }
+updateAdminUI();
 
-    parts.unshift(
-      "folder_" +
-      folder.id
-    );
-
-    id =
-      folder.parent_id;
-
-  }
-
-  return parts.join("/");
+message.textContent=
+"✅ Admin Logout হয়েছে।";
 
 }
 
 
-function renderFolders() {
+/* =========================
+   ADMIN CHECK
+========================= */
 
-  folders.innerHTML = "";
+function requireAdmin(){
 
-  const path =
-    getCurrentPath();
+if(!isAdmin){
 
-  currentPath =
-    path;
+alert(
+"🔒 এই কাজটি শুধু Admin করতে পারবেন।"
+);
 
-  currentFolder.textContent =
-    path.length === 0
-      ? "📁 Home"
-      : "📁 " +
-        path.join(" / ");
+return false;
+}
 
-
-  const children =
-    allFolders.filter(
-      folder =>
-        folder.parent_id ===
-        currentFolderId
-    );
-
-
-  if (children.length === 0) {
-
-    folders.innerHTML =
-      '<div class="empty">এই Folder-এ এখনো কোনো Sub-folder নেই।</div>';
-
-    return;
-
-  }
-
-
-  children.forEach(
-    function(folder) {
-
-      const div =
-        document.createElement("div");
-
-      div.className =
-        "folder";
-
-
-      const openButton =
-        document.createElement("button");
-
-      openButton.className =
-        "folder-open";
-
-      openButton.innerHTML =
-        '<span class="folder-icon">📁</span>' +
-        '<span class="folder-name">' +
-        escapeHtml(folder.name) +
-        '</span>';
-
-
-      openButton.onclick =
-        function() {
-
-          openFolder(folder.id);
-
-        };
-
-
-      div.appendChild(
-        openButton
-      );
-
-
-      if (isAdmin) {
-
-        const manage =
-          document.createElement("div");
-
-        manage.className =
-          "folder-manage";
-
-
-        const renameButton =
-          document.createElement("button");
-
-        renameButton.className =
-          "rename-button";
-
-        renameButton.textContent =
-          "✏️ Rename";
-
-
-        renameButton.onclick =
-          function(event) {
-
-            event.stopPropagation();
-
-            renameFolder(folder);
-
-          };
-
-
-        const deleteButton =
-          document.createElement("button");
-
-        deleteButton.className =
-          "delete-button";
-
-        deleteButton.textContent =
-          "🗑️ Delete";
-
-
-        deleteButton.onclick =
-          function(event) {
-
-            event.stopPropagation();
-
-            deleteFolder(folder);
-
-          };
-
-
-        manage.appendChild(
-          renameButton
-        );
-
-        manage.appendChild(
-          deleteButton
-        );
-
-        div.appendChild(
-          manage
-        );
-
-      }
-
-
-      folders.appendChild(
-        div
-      );
-
-    }
-  );
+return true;
 
 }
 
 
-function openFolder(id) {
+/* =========================
+   FOLDER SAVE
+========================= */
 
-  currentFolderId =
-    id;
+function saveCurrentFolder(){
 
-  saveCurrentFolder();
+if(currentFolderId){
 
-  renderFolders();
+localStorage.setItem(
+FOLDER_STORAGE_KEY,
+String(currentFolderId)
+);
 
-  loadPhotos();
+}else{
+
+localStorage.removeItem(
+FOLDER_STORAGE_KEY
+);
+
+}
 
 }
 
 
-function goHome() {
+function restoreCurrentFolder(){
 
-  currentFolderId =
-    null;
+const saved=
+localStorage.getItem(
+FOLDER_STORAGE_KEY
+);
 
-  saveCurrentFolder();
+if(!saved){
 
-  renderFolders();
+currentFolderId=null;
+return;
+}
 
-  loadPhotos();
+const id=Number(saved);
+
+const exists=
+allFolders.some(
+folder=>folder.id===id
+);
+
+if(exists){
+
+currentFolderId=id;
+
+}else{
+
+currentFolderId=null;
+
+localStorage.removeItem(
+FOLDER_STORAGE_KEY
+);
+
+}
 
 }
 
 
-function goBack() {
+/* =========================
+   LOAD FOLDERS
+========================= */
 
-  if (!currentFolderId) {
-    return;
-  }
+async function loadFolders(){
 
-  const current =
-    allFolders.find(
-      folder =>
-        folder.id ===
-        currentFolderId
-    );
+folders.innerHTML=
+'<div class="empty">⏳ Folder লোড হচ্ছে...</div>';
 
-  currentFolderId =
-    current
-      ? current.parent_id
-      : null;
+const {data,error}=
+await supabaseClient
+.from("folders")
+.select("id,name,parent_id")
+.order(
+"id",
+{ascending:true}
+);
 
-  saveCurrentFolder();
+if(error){
 
-  renderFolders();
+console.error(error);
 
-  loadPhotos();
+folders.innerHTML=
+'<div class="empty">❌ Folder লোড করা যায়নি।</div>';
+
+return false;
+}
+
+allFolders=data || [];
+
+restoreCurrentFolder();
+
+renderFolders();
+
+return true;
 
 }
 
 
-async function createFolder() {
+/* =========================
+   CURRENT PATH
+========================= */
 
-  if (!requireAdmin()) {
-    return;
-  }
+function getCurrentPath(){
 
-  const folderName =
-    prompt(
-      currentFolderId
-        ? "Sub-folder-এর নাম লিখুন:"
-        : "নতুন Folder-এর নাম লিখুন:"
-    );
+if(!currentFolderId){
+return [];
+}
 
-  if (!folderName) {
-    return;
-  }
+const result=[];
 
-  const cleanName =
-    folderName.trim();
+let id=currentFolderId;
 
-  if (!cleanName) {
-    return;
-  }
+while(id){
 
-  const exists =
-    allFolders.some(
-      folder =>
-        folder.parent_id ===
-          currentFolderId &&
-        folder.name.toLowerCase() ===
-          cleanName.toLowerCase()
-    );
+const folder=
+allFolders.find(
+item=>item.id===id
+);
 
-  if (exists) {
+if(!folder){
+break;
+}
 
-    alert(
-      "এই নামে Folder আগে থেকেই আছে।"
-    );
+result.unshift(
+folder.name
+);
 
-    return;
+id=folder.parent_id;
 
-  }
+}
 
-  const { error } =
-    await supabaseClient
-      .from("folders")
-      .insert({
-        name: cleanName,
-        parent_id: currentFolderId
-      });
-
-  if (error) {
-
-    alert(
-      "❌ Folder তৈরি হয়নি: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-  await loadFolders();
+return result;
 
 }
 
 
-async function renameFolder(folder) {
+function getStoragePath(){
 
-  if (!requireAdmin()) {
-    return;
-  }
+if(!currentFolderId){
+return "";
+}
 
-  const newName =
-    prompt(
-      "নতুন Folder নাম লিখুন:",
-      folder.name
-    );
+return getFolderStoragePath(
+currentFolderId
+);
 
-  if (!newName) {
-    return;
-  }
-
-  const cleanName =
-    newName.trim();
-
-  if (!cleanName) {
-    return;
-  }
-
-  if (cleanName === folder.name) {
-    return;
-  }
-
-  const exists =
-    allFolders.some(
-      item =>
-        item.id !== folder.id &&
-        item.parent_id ===
-          folder.parent_id &&
-        item.name.toLowerCase() ===
-          cleanName.toLowerCase()
-    );
-
-  if (exists) {
-
-    alert(
-      "এই নামে Folder আগে থেকেই আছে।"
-    );
-
-    return;
-
-  }
-
-  const { error } =
-    await supabaseClient
-      .from("folders")
-      .update({
-        name: cleanName
-      })
-      .eq(
-        "id",
-        folder.id
-      );
-
-  if (error) {
-
-    alert(
-      "❌ Rename হয়নি: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-  message.textContent =
-    "✅ Folder Rename হয়েছে।";
-
-  await loadFolders();
-
-  loadPhotos();
 
 }
 
 
-function getDescendantIds(parentId) {
+function getFolderStoragePath(folderId){
 
-  const result = [];
+const parts=[];
 
-  const children =
-    allFolders.filter(
-      folder =>
-        folder.parent_id ===
-        parentId
-    );
+let id=folderId;
 
-  for (
-    const child of children
-  ) {
+while(id){
 
-    result.push(
-      child.id
-    );
+const folder=
+allFolders.find(
+item=>item.id===id
+);
 
-    result.push(
-      ...getDescendantIds(
-        child.id
-      )
-    );
+if(!folder){
+break;
+}
 
-  }
+parts.unshift(
+"folder_"+folder.id
+);
 
-  return result;
+id=folder.parent_id;
+
+}
+
+return parts.join("/");
 
 }
 
 
-async function deleteFolder(folder) {
+/* =========================
+   RENDER FOLDERS
+========================= */
 
-  if (!requireAdmin()) {
-    return;
-  }
+function renderFolders(){
 
-  const answer =
-    confirm(
-      '🗑️ "' +
-      folder.name +
-      '" Folder Delete করবেন?\n\nএই Folder-এর ভিতরের ছবি ও Sub-folder-ও মুছে যাবে।'
-    );
+folders.innerHTML="";
 
-  if (!answer) {
-    return;
-  }
+const path=getCurrentPath();
 
-  message.textContent =
-    "⏳ Folder Delete হচ্ছে...";
+currentPath=path;
 
-  const ids =
-    getDescendantIds(
-      folder.id
-    );
+currentFolder.textContent=
+path.length===0
+?
+"📁 Home"
+:
+"📁 "+path.join(" / ");
 
-  ids.push(
-    folder.id
-  );
 
-  for (
-    const id of ids
-  ) {
+const children=
+allFolders.filter(
+folder=>
+folder.parent_id===
+currentFolderId
+);
 
-    const storagePath =
-      getFolderStoragePath(id);
 
-    const removed =
-      await deleteStorageTree(
-        storagePath
-      );
+if(children.length===0){
 
-    if (!removed) {
+folders.innerHTML=
+'<div class="empty">এই Folder-এ এখনো কোনো Sub-folder নেই।</div>';
 
-      message.textContent =
-        "❌ Folder-এর ছবি Delete করা যায়নি।";
-
-      return;
-
-    }
-
-  }
-
-  const { error } =
-    await supabaseClient
-      .from("folders")
-      .delete()
-      .in("id", ids);
-
-  if (error) {
-
-    alert(
-      "❌ Folder Delete হয়নি: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-  message.textContent =
-    "✅ Folder Delete হয়েছে।";
-
-  if (
-    ids.includes(
-      currentFolderId
-    )
-  ) {
-
-    currentFolderId =
-      folder.parent_id;
-
-    saveCurrentFolder();
-
-  }
-
-  await loadFolders();
-
-  loadPhotos();
+return;
 
 }
 
 
-async function listStorageFiles(path) {
+children.forEach(
+function(folder){
 
-  const { data, error } =
-    await supabaseClient
-      .storage
-      .from("photos")
-      .list(
-        path,
-        {
-          limit: 1000
-        }
-      );
+const div=
+document.createElement("div");
 
-  if (error) {
+div.className="folder";
 
-    console.error(error);
 
-    return null;
+const openButton=
+document.createElement("button");
 
-  }
+openButton.className=
+"folder-open";
 
-  const files = [];
+openButton.innerHTML=
+'<span class="folder-icon">📁</span>'+
+'<span class="folder-name">'+
+escapeHtml(folder.name)+
+'</span>';
 
-  for (
-    const item of data || []
-  ) {
+openButton.onclick=
+function(){
 
-    const fullPath =
-      path
-        ? path + "/" + item.name
-        : item.name;
+openFolder(folder.id);
 
-    if (item.metadata) {
+};
 
-      files.push(
-        fullPath
-      );
+div.appendChild(openButton);
 
-    } else {
 
-      const childFiles =
-        await listStorageFiles(
-          fullPath
-        );
+if(isAdmin){
 
-      if (childFiles === null) {
-        return null;
-      }
+const manage=
+document.createElement("div");
 
-      files.push(
-        ...childFiles
-      );
+manage.className=
+"folder-manage";
 
-    }
 
-  }
+const renameButton=
+document.createElement("button");
 
-  return files;
+renameButton.className=
+"rename-button";
+
+renameButton.textContent=
+"✏️ Rename";
+
+renameButton.onclick=
+function(event){
+
+event.stopPropagation();
+
+renameFolder(folder);
+
+};
+
+
+const deleteButton=
+document.createElement("button");
+
+deleteButton.className=
+"delete-button";
+
+deleteButton.textContent=
+"🗑️ Delete";
+
+deleteButton.onclick=
+function(event){
+
+event.stopPropagation();
+
+deleteFolder(folder);
+
+};
+
+
+manage.appendChild(renameButton);
+manage.appendChild(deleteButton);
+
+div.appendChild(manage);
+
+}
+
+folders.appendChild(div);
+
+}
+);
 
 }
 
 
-async function deleteStorageTree(path) {
+/* =========================
+   OPEN / HOME / BACK
+========================= */
 
-  if (!isAdmin) {
-    return false;
-  }
+function openFolder(id){
 
-  const files =
-    await listStorageFiles(path);
+currentFolderId=id;
 
-  if (files === null) {
-    return false;
-  }
+saveCurrentFolder();
 
-  if (files.length === 0) {
-    return true;
-  }
+renderFolders();
 
-  const { error } =
-    await supabaseClient
-      .storage
-      .from("photos")
-      .remove(files);
-
-  if (error) {
-
-    console.error(error);
-
-    return false;
-
-  }
-
-  return true;
+loadPhotos();
 
 }
 
 
-async function deletePhoto(
-  fullPath,
-  card
-) {
+function goHome(){
 
-  if (!requireAdmin()) {
-    return;
-  }
+currentFolderId=null;
 
-  const answer =
-    confirm(
-      "🗑️ এই ছবিটি Delete করবেন?"
-    );
+saveCurrentFolder();
 
-  if (!answer) {
-    return;
-  }
+renderFolders();
 
-  const deleteButton =
-    card.querySelector(
-      ".photo-delete-button"
-    );
-
-  if (deleteButton) {
-
-    deleteButton.disabled =
-      true;
-
-    deleteButton.textContent =
-      "⏳ Delete হচ্ছে...";
-
-  }
-
-  const { error } =
-    await supabaseClient
-      .storage
-      .from("photos")
-      .remove([
-        fullPath
-      ]);
-
-  if (error) {
-
-    console.error(error);
-
-    alert(
-      "❌ ছবি Delete হয়নি: " +
-      error.message
-    );
-
-    if (deleteButton) {
-
-      deleteButton.disabled =
-        false;
-
-      deleteButton.textContent =
-        "🗑️ Delete";
-
-    }
-
-    return;
-
-  }
-
-  await supabaseClient
-    .from("photo_likes")
-    .delete()
-    .eq(
-      "photo_name",
-      fullPath
-    );
-
-  message.textContent =
-    "✅ ছবি Delete হয়েছে।";
-
-  if (
-    viewer.style.display ===
-    "flex"
-  ) {
-
-    closeViewer();
-
-  }
-
-  await loadPhotos();
+loadPhotos();
 
 }
 
 
-async function refreshFolders() {
+function goBack(){
 
-  await loadFolders();
+if(!currentFolderId){
+return;
+}
 
-  await loadPhotos();
+const current=
+allFolders.find(
+folder=>
+folder.id===
+currentFolderId
+);
+
+currentFolderId=
+current
+?
+current.parent_id
+:
+null;
+
+saveCurrentFolder();
+
+renderFolders();
+
+loadPhotos();
 
 }
 
 
-function escapeHtml(text) {
+/* =========================
+   CREATE FOLDER
+========================= */
 
-  const div =
-    document.createElement("div");
+async function createFolder(){
 
-  div.textContent =
-    text;
+if(!requireAdmin()){
+return;
+}
 
-  return div.innerHTML;
+const folderName=
+prompt(
+currentFolderId
+?
+"Sub-folder-এর নাম লিখুন:"
+:
+"নতুন Folder-এর নাম লিখুন:"
+);
+
+if(!folderName){
+return;
+}
+
+const cleanName=
+folderName.trim();
+
+if(!cleanName){
+return;
+}
+
+
+const exists=
+allFolders.some(
+folder=>
+folder.parent_id===
+currentFolderId &&
+folder.name.toLowerCase()===
+cleanName.toLowerCase()
+);
+
+if(exists){
+
+alert(
+"এই নামে Folder আগে থেকেই আছে।"
+);
+
+return;
+}
+
+
+const {error}=
+await supabaseClient
+.from("folders")
+.insert({
+name:cleanName,
+parent_id:currentFolderId
+});
+
+if(error){
+
+alert(
+"❌ Folder তৈরি হয়নি: "+
+error.message
+);
+
+return;
+}
+
+message.textContent=
+"✅ Folder তৈরি হয়েছে।";
+
+await loadFolders();
 
 }
 
 
-function getFileExtension(file) {
+/* =========================
+   RENAME
+========================= */
 
-  const originalName =
-    file.name || "";
+async function renameFolder(folder){
 
-  const dot =
-    originalName.lastIndexOf(".");
+if(!requireAdmin()){
+return;
+}
 
-  if (
-    dot !== -1 &&
-    dot <
-      originalName.length - 1
-  ) {
+const newName=
+prompt(
+"নতুন Folder নাম লিখুন:",
+folder.name
+);
 
-    const ext =
-      originalName
-        .substring(dot + 1)
-        .toLowerCase()
-        .replace(
-          /[^a-z0-9]/g,
-          ""
-        );
+if(!newName){
+return;
+}
 
-    if (ext) {
-      return ext;
-    }
+const cleanName=
+newName.trim();
 
-  }
+if(!cleanName){
+return;
+}
 
-  if (
-    file.type ===
-    "image/png"
-  ) {
-    return "png";
-  }
+if(cleanName===folder.name){
+return;
+}
 
-  if (
-    file.type ===
-    "image/webp"
-  ) {
-    return "webp";
-  }
 
-  if (
-    file.type ===
-    "image/gif"
-  ) {
-    return "gif";
-  }
+const exists=
+allFolders.some(
+item=>
+item.id!==folder.id &&
+item.parent_id===
+folder.parent_id &&
+item.name.toLowerCase()===
+cleanName.toLowerCase()
+);
 
-  return "jpg";
+if(exists){
+
+alert(
+"এই নামে Folder আগে থেকেই আছে।"
+);
+
+return;
+}
+
+
+const {error}=
+await supabaseClient
+.from("folders")
+.update({
+name:cleanName
+})
+.eq(
+"id",
+folder.id
+);
+
+if(error){
+
+alert(
+"❌ Rename হয়নি: "+
+error.message
+);
+
+return;
+}
+
+message.textContent=
+"✅ Folder Rename হয়েছে।";
+
+await loadFolders();
+
+loadPhotos();
 
 }
 
+
+/* =========================
+   DESCENDANTS
+========================= */
+
+function getDescendantIds(parentId){
+
+const result=[];
+
+const children=
+allFolders.filter(
+folder=>
+folder.parent_id===
+parentId
+);
+
+for(const child of children){
+
+result.push(child.id);
+
+result.push(
+...getDescendantIds(
+child.id
+)
+);
+
+}
+
+return result;
+
+}
+
+
+/* =========================
+   STORAGE LIST
+========================= */
+
+async function listStorageFiles(path){
+
+const {data,error}=
+await supabaseClient
+.storage
+.from("photos")
+.list(
+path,
+{limit:1000}
+);
+
+if(error){
+
+console.error(error);
+
+return null;
+}
+
+const files=[];
+
+for(const item of data || []){
+
+const fullPath=
+path
+?
+path+"/"+item.name
+:
+item.name;
+
+if(item.metadata){
+
+files.push(fullPath);
+
+}else{
+
+const childFiles=
+await listStorageFiles(
+fullPath
+);
+
+if(childFiles===null){
+return null;
+}
+
+files.push(
+...childFiles
+);
+
+}
+
+}
+
+return files;
+
+}
+
+
+async function deleteStorageTree(path){
+
+if(!isAdmin){
+return false;
+}
+
+const files=
+await listStorageFiles(path);
+
+if(files===null){
+return false;
+}
+
+if(files.length===0){
+return true;
+}
+
+const {error}=
+await supabaseClient
+.storage
+.from("photos")
+.remove(files);
+
+if(error){
+
+console.error(error);
+
+return false;
+}
+
+return true;
+
+}
+
+
+/* =========================
+   DELETE FOLDER
+========================= */
+
+async function deleteFolder(folder){
+
+if(!requireAdmin()){
+return;
+}
+
+const answer=
+confirm(
+'🗑️ "'+
+folder.name+
+'" Folder Delete করবেন?\n\nএই Folder-এর ভিতরের ছবি ও Sub-folder-ও মুছে যাবে।'
+);
+
+if(!answer){
+return;
+}
+
+message.textContent=
+"⏳ Folder Delete হচ্ছে...";
+
+
+const ids=
+getDescendantIds(
+folder.id
+);
+
+ids.push(folder.id);
+
+
+for(const id of ids){
+
+const storagePath=
+getFolderStoragePath(id);
+
+const removed=
+await deleteStorageTree(
+storagePath
+);
+
+if(!removed){
+
+message.textContent=
+"❌ Folder-এর ছবি Delete করা যায়নি।";
+
+return;
+}
+
+}
+
+
+const {error}=
+await supabaseClient
+.from("folders")
+.delete()
+.in(
+"id",
+ids
+);
+
+if(error){
+
+alert(
+"❌ Folder Delete হয়নি: "+
+error.message
+);
+
+return;
+}
+
+
+message.textContent=
+"✅ Folder Delete হয়েছে।";
+
+
+if(
+ids.includes(
+currentFolderId
+)
+){
+
+currentFolderId=
+folder.parent_id;
+
+saveCurrentFolder();
+
+}
+
+
+await loadFolders();
+
+loadPhotos();
+
+}
+
+
+/* =========================
+   REFRESH
+========================= */
+
+async function refreshFolders(){
+
+await loadFolders();
+
+await loadPhotos();
+
+}
+
+
+/* =========================
+   ESCAPE
+========================= */
+
+function escapeHtml(text){
+
+const div=
+document.createElement("div");
+
+div.textContent=text;
+
+return div.innerHTML;
+
+}
+
+
+/* =========================
+   FILE EXTENSION
+========================= */
+
+function getFileExtension(file){
+
+const originalName=
+file.name || "";
+
+const dot=
+originalName.lastIndexOf(".");
+
+if(
+dot!==-1 &&
+dot<originalName.length-1
+){
+
+const ext=
+originalName
+.substring(dot+1)
+.toLowerCase()
+.replace(
+/[^a-z0-9]/g,
+""
+);
+
+if(ext){
+return ext;
+}
+
+}
+
+if(file.type==="image/png"){
+return "png";
+}
+
+if(file.type==="image/webp"){
+return "webp";
+}
+
+if(file.type==="image/gif"){
+return "gif";
+}
+
+return "jpg";
+
+}
+
+
+/* =========================
+   IMAGE PREVIEW
+========================= */
 
 photoInput.addEventListener(
-  "change",
-  function() {
+"change",
+function(){
 
-    if (!isAdmin) {
+if(!isAdmin){
 
-      this.value = "";
+this.value="";
+return;
 
-      return;
+}
 
-    }
+previewArea.innerHTML="";
 
-    previewArea.innerHTML = "";
-
-    const files =
-      Array.from(
-        this.files || []
-      );
-
-    if (files.length === 0) {
-      return;
-    }
-
-    files.forEach(
-      function(file, index) {
-
-        const item =
-          document.createElement("div");
-
-        item.className =
-          "preview-item";
-
-        const img =
-          document.createElement("img");
-
-        img.src =
-          URL.createObjectURL(file);
-
-        const number =
-          document.createElement("div");
-
-        number.className =
-          "preview-number";
-
-        number.textContent =
-          "#" + (index + 1);
-
-        item.appendChild(img);
-        item.appendChild(number);
-
-        previewArea.appendChild(item);
-
-      }
-    );
-
-    message.textContent =
-      "📸 " +
-      files.length +
-      "টি ছবি নির্বাচিত হয়েছে.";
-
-  }
+const files=
+Array.from(
+this.files || []
 );
 
+if(files.length===0){
+return;
+}
+
+
+files.forEach(
+function(file,index){
+
+const item=
+document.createElement("div");
+
+item.className=
+"preview-item";
+
+
+const img=
+document.createElement("img");
+
+img.src=
+URL.createObjectURL(file);
+
+
+const number=
+document.createElement("div");
+
+number.className=
+"preview-number";
+
+number.textContent=
+"#"+(index+1);
+
+
+item.appendChild(img);
+item.appendChild(number);
+
+previewArea.appendChild(item);
+
+}
+);
+
+
+message.textContent=
+"📸 "+
+files.length+
+"টি ছবি নির্বাচিত হয়েছে.";
+
+}
+);
+
+
+/* =========================
+   UPLOAD
+========================= */
 
 uploadButton.addEventListener(
-  "click",
-  async function() {
+"click",
+async function(){
 
-    if (!requireAdmin()) {
-      return;
-    }
+if(!requireAdmin()){
+return;
+}
 
-    const files =
-      Array.from(
-        photoInput.files || []
-      );
+const files=
+Array.from(
+photoInput.files || []
+);
 
-    if (files.length === 0) {
+if(files.length===0){
 
-      message.textContent =
-        "❌ আগে ছবি নির্বাচন করুন।";
+message.textContent=
+"❌ আগে ছবি নির্বাচন করুন.";
 
-      return;
+return;
+}
 
-    }
 
-    uploadButton.disabled =
-      true;
+uploadButton.disabled=true;
+photoInput.disabled=true;
 
-    photoInput.disabled =
-      true;
 
-    let successCount = 0;
-    let failedCount = 0;
+let successCount=0;
+let failedCount=0;
 
-    try {
 
-      const folderPath =
-        getStoragePath();
+try{
 
-      for (
-        let i = 0;
-        i < files.length;
-        i++
-      ) {
+const folderPath=
+getStoragePath();
 
-        const file =
-          files[i];
 
-        message.textContent =
-          "⏳ ছবি " +
-          (i + 1) +
-          " / " +
-          files.length +
-          " আপলোড হচ্ছে...";
+for(
+let i=0;
+i<files.length;
+i++
+){
 
-        const extension =
-          getFileExtension(file);
+const file=files[i];
 
-        const fileName =
-          Date.now() +
-          "-" +
-          String(i + 1).padStart(3, "0") +
-          "-" +
-          Math.random()
-            .toString(36)
-            .substring(2, 8) +
-          "." +
-          extension;
+message.textContent=
+"⏳ ছবি "+
+(i+1)+
+" / "+
+files.length+
+" আপলোড হচ্ছে...";
 
-        const storagePath =
-          folderPath
-            ? folderPath + "/" + fileName
-            : fileName;
 
-        const { error } =
-          await supabaseClient
-            .storage
-            .from("photos")
-            .upload(
-              storagePath,
-              file,
-              {
-                upsert: false,
-                contentType:
-                  file.type ||
-                  "image/jpeg"
-              }
-            );
+const extension=
+getFileExtension(file);
 
-        if (error) {
 
-          console.error(
-            "Upload error:",
-            error
-          );
+const fileName=
+Date.now()+
+"-"+
+String(i+1).padStart(3,"0")+
+"-"+
+Math.random()
+.toString(36)
+.substring(2,8)+
+"."+extension;
 
-          failedCount++;
 
-        } else {
+const storagePath=
+folderPath
+?
+folderPath+"/"+fileName
+:
+fileName;
 
-          successCount++;
 
-        }
-
-      }
-
-      if (
-        successCount > 0 &&
-        failedCount === 0
-      ) {
-
-        message.textContent =
-          "✅ " +
-          successCount +
-          "টি ছবি সফলভাবে পোস্ট হয়েছে!";
-
-      } else if (
-        successCount > 0 &&
-        failedCount > 0
-      ) {
-
-        message.textContent =
-          "⚠️ " +
-          successCount +
-          "টি ছবি পোস্ট হয়েছে, " +
-          failedCount +
-          "টি হয়নি।";
-
-      } else {
-
-        message.textContent =
-          "❌ কোনো ছবি পোস্ট হয়নি।";
-
-      }
-
-      photoInput.value = "";
-
-      previewArea.innerHTML = "";
-
-      await loadPhotos();
-
-    } catch (error) {
-
-      console.error(error);
-
-      message.textContent =
-        "❌ ছবি পোস্ট হয়নি: " +
-        error.message;
-
-    }
-
-    uploadButton.disabled =
-      false;
-
-    photoInput.disabled =
-      false;
-
-  }
+const {error}=
+await supabaseClient
+.storage
+.from("photos")
+.upload(
+storagePath,
+file,
+{
+upsert:false,
+contentType:
+file.type ||
+"image/jpeg"
+}
 );
 
 
-async function loadPhotos() {
+if(error){
 
-  gallery.innerHTML =
-    '<div class="empty">⏳ ছবি লোড হচ্ছে...</div>';
+console.error(
+"Upload error:",
+error
+);
 
-  const folderPath =
-    getStoragePath();
+failedCount++;
 
-  const { data, error } =
-    await supabaseClient
-      .storage
-      .from("photos")
-      .list(
-        folderPath,
-        {
-          limit: 1000,
-          sortBy: {
-            column: "name",
-            order: "asc"
-          }
-        }
-      );
+}else{
 
-  if (error) {
-
-    console.error(error);
-
-    gallery.innerHTML =
-      '<div class="empty">❌ ছবি লোড করা যায়নি।</div>';
-
-    return;
-
-  }
-
-  const files =
-    (data || [])
-      .filter(
-        file =>
-          file.name &&
-          file.metadata
-      );
-
-  currentImages =
-    files;
-
-  if (files.length === 0) {
-
-    gallery.innerHTML =
-      '<div class="empty">এই Folder-এ এখনো কোনো ছবি নেই।</div>';
-
-    return;
-
-  }
-
-  gallery.innerHTML = "";
-
-  for (
-    let i = 0;
-    i < files.length;
-    i++
-  ) {
-
-    const file =
-      files[i];
-
-    const fullPath =
-      folderPath
-        ? folderPath + "/" + file.name
-        : file.name;
-
-    const { data: publicData } =
-      supabaseClient
-        .storage
-        .from("photos")
-        .getPublicUrl(
-          fullPath
-        );
-
-    const card =
-      document.createElement("div");
-
-    card.className =
-      "photo-card";
-
-    const number =
-      document.createElement("div");
-
-    number.className =
-      "photo-number";
-
-    number.textContent =
-      "#" + (i + 1);
-
-    const img =
-      document.createElement("img");
-
-    img.src =
-      publicData.publicUrl;
-
-    img.alt =
-      "Posted picture " +
-      (i + 1);
-
-    img.onclick =
-      function() {
-        openViewer(i);
-      };
-
-    const info =
-      document.createElement("div");
-
-    info.className =
-      "photo-info";
-
-    const likeButton =
-      document.createElement("button");
-
-    likeButton.className =
-      "like-button";
-
-    likeButton.textContent =
-      "❤️ লোড হচ্ছে...";
-
-    likeButton.onclick =
-      async function(event) {
-
-        event.stopPropagation();
-
-        await addLike(
-          fullPath,
-          likeButton
-        );
-
-      };
-
-    info.appendChild(
-      likeButton
-    );
-
-    if (isAdmin) {
-
-      const deleteButton =
-        document.createElement("button");
-
-      deleteButton.className =
-        "photo-delete-button";
-
-      deleteButton.textContent =
-        "🗑️ Delete";
-
-      deleteButton.onclick =
-        async function(event) {
-
-          event.stopPropagation();
-
-          await deletePhoto(
-            fullPath,
-            card
-          );
-
-        };
-
-      info.appendChild(
-        deleteButton
-      );
-
-    }
-
-    card.appendChild(number);
-    card.appendChild(img);
-    card.appendChild(info);
-
-    gallery.appendChild(card);
-
-    loadLikeCount(
-      fullPath,
-      likeButton
-    );
-
-  }
+successCount++;
 
 }
 
+}
+
+
+if(
+successCount>0 &&
+failedCount===0
+){
+
+message.textContent=
+"✅ "+
+successCount+
+"টি ছবি সফলভাবে পোস্ট হয়েছে!";
+
+}else if(
+successCount>0 &&
+failedCount>0
+){
+
+message.textContent=
+"⚠️ "+
+successCount+
+"টি ছবি পোস্ট হয়েছে, "+
+failedCount+
+"টি হয়নি।";
+
+}else{
+
+message.textContent=
+"❌ কোনো ছবি পোস্ট হয়নি.";
+
+}
+
+
+photoInput.value="";
+previewArea.innerHTML="";
+
+await loadPhotos();
+
+
+}catch(error){
+
+console.error(error);
+
+message.textContent=
+"❌ ছবি পোস্ট হয়নি: "+
+error.message;
+
+}
+
+
+uploadButton.disabled=false;
+photoInput.disabled=false;
+
+}
+);
+
+
+/* =========================
+   LOAD PHOTOS
+========================= */
+
+async function loadPhotos(){
+
+gallery.innerHTML=
+'<div class="empty">⏳ ছবি লোড হচ্ছে...</div>';
+
+const folderPath=
+getStoragePath();
+
+
+const {data,error}=
+await supabaseClient
+.storage
+.from("photos")
+.list(
+folderPath,
+{
+limit:1000,
+sortBy:{
+column:"name",
+order:"asc"
+}
+}
+);
+
+
+if(error){
+
+console.error(error);
+
+gallery.innerHTML=
+'<div class="empty">❌ ছবি লোড করা যায়নি।</div>';
+
+return;
+}
+
+
+const files=
+(data || [])
+.filter(
+file=>
+file.name &&
+file.metadata
+);
+
+
+currentImages=files;
+
+
+if(files.length===0){
+
+gallery.innerHTML=
+'<div class="empty">এই Folder-এ এখনো কোনো ছবি নেই।</div>';
+
+return;
+}
+
+
+gallery.innerHTML="";
+
+
+for(
+let i=0;
+i<files.length;
+i++
+){
+
+const file=files[i];
+
+
+const fullPath=
+folderPath
+?
+folderPath+"/"+file.name
+:
+file.name;
+
+
+const {data:publicData}=
+supabaseClient
+.storage
+.from("photos")
+.getPublicUrl(
+fullPath
+);
+
+
+const card=
+document.createElement("div");
+
+card.className=
+"photo-card";
+
+
+const number=
+document.createElement("div");
+
+number.className=
+"photo-number";
+
+number.textContent=
+"#"+(i+1);
+
+
+const img=
+document.createElement("img");
+
+img.src=
+publicData.publicUrl;
+
+img.alt=
+"Posted picture "+
+(i+1);
+
+img.onclick=
+function(){
+openViewer(i);
+};
+
+
+const info=
+document.createElement("div");
+
+info.className=
+"photo-info";
+
+
+const likeButton=
+document.createElement("button");
+
+likeButton.className=
+"like-button";
+
+likeButton.textContent=
+"❤️ 0";
+
+
+likeButton.onclick=
+async function(event){
+
+event.stopPropagation();
+
+await addLike(
+fullPath,
+likeButton
+);
+
+};
+
+
+info.appendChild(
+likeButton
+);
+
+
+if(isAdmin){
+
+const deleteButton=
+document.createElement("button");
+
+deleteButton.className=
+"photo-delete-button";
+
+deleteButton.textContent=
+"🗑️ Delete";
+
+
+deleteButton.onclick=
+async function(event){
+
+event.stopPropagation();
+
+await deletePhoto(
+fullPath,
+card
+);
+
+};
+
+
+info.appendChild(
+deleteButton
+);
+
+}
+
+
+card.appendChild(number);
+card.appendChild(img);
+card.appendChild(info);
+
+gallery.appendChild(card);
+
+
+loadLikeCount(
+fullPath,
+likeButton
+);
+
+}
+
+}
+
+
+/* =========================
+   LOCAL LIKE FALLBACK
+========================= */
+
+function getLocalLikes(){
+
+try{
+
+return JSON.parse(
+localStorage.getItem(
+LOCAL_LIKE_KEY
+) || "{}"
+);
+
+}catch(e){
+
+return {};
+
+}
+
+}
+
+
+function saveLocalLikes(data){
+
+try{
+
+localStorage.setItem(
+LOCAL_LIKE_KEY,
+JSON.stringify(data)
+);
+
+}catch(e){}
+
+}
+
+
+function getLocalLike(photoName){
+
+const likes=
+getLocalLikes();
+
+return Number(
+likes[photoName] || 0
+);
+
+}
+
+
+function addLocalLike(photoName){
+
+const likes=
+getLocalLikes();
+
+likes[photoName]=
+Number(likes[photoName] || 0)+1;
+
+saveLocalLikes(likes);
+
+return likes[photoName];
+
+}
+
+
+/* =========================
+   LIKE COUNT
+========================= */
 
 async function loadLikeCount(
-  photoName,
-  button
-) {
+photoName,
+button
+){
 
-  const { data, error } =
-    await supabaseClient
-      .from("photo_likes")
-      .select("like_count")
-      .eq(
-        "photo_name",
-        photoName
-      )
-      .maybeSingle();
+const {data,error}=
+await supabaseClient
+.from("photo_likes")
+.select("like_count")
+.eq(
+"photo_name",
+photoName
+)
+.maybeSingle();
 
-  if (error) {
 
-    console.error(
-      "Like load error:",
-      error
-    );
+let count=0;
 
-    button.textContent =
-      "❤️ 0";
 
-    return;
+if(!error && data){
 
-  }
+count=
+Number(
+data.like_count || 0
+);
 
-  const count =
-    data
-      ? Number(
-          data.like_count || 0
-        )
-      : 0;
+}else{
 
-  button.textContent =
-    "❤️ " + count;
+/*
+   Supabase policy error হলে
+   local count দেখাবে।
+*/
+
+count=
+getLocalLike(photoName);
 
 }
 
+
+button.textContent=
+"❤️ "+count;
+
+}
+
+
+/* =========================
+   ADD LIKE
+========================= */
 
 async function addLike(
-  photoName,
-  button
-) {
+photoName,
+button
+){
 
-  if (button.disabled) {
-    return;
-  }
+if(button.disabled){
+return;
+}
 
-  button.disabled =
-    true;
+button.disabled=true;
 
-  try {
 
-    const {
-      data: oldData,
-      error: readError
-    } =
-      await supabaseClient
-        .from("photo_likes")
-        .select("like_count")
-        .eq(
-          "photo_name",
-          photoName
-        )
-        .maybeSingle();
+try{
 
-    if (readError) {
+/*
+  প্রথমে Supabase-এ চেষ্টা।
+*/
 
-      console.error(
-        "Like read error:",
-        readError
-      );
+const {
+data:oldData,
+error:readError
+}=
+await supabaseClient
+.from("photo_likes")
+.select("like_count")
+.eq(
+"photo_name",
+photoName
+)
+.maybeSingle();
 
-      button.textContent =
-        "❌ Like হয়নি";
 
-      return;
+/*
+  যদি Supabase read policy কাজ না করে,
+  local fallback ব্যবহার হবে।
+*/
 
-    }
+if(readError){
 
-    if (!oldData) {
+console.warn(
+"Supabase Like unavailable:",
+readError
+);
 
-      const { error } =
-        await supabaseClient
-          .from("photo_likes")
-          .insert({
-            photo_name:
-              photoName,
-            like_count:
-              1
-          });
+const localCount=
+addLocalLike(photoName);
 
-      if (error) {
+button.textContent=
+"❤️ "+localCount;
 
-        console.error(
-          "Like insert error:",
-          error
-        );
+button.classList.add("liked");
 
-        button.textContent =
-          "❌ Like হয়নি";
-
-        return;
-
-      }
-
-      button.textContent =
-        "❤️ 1";
-
-      button.classList.add(
-        "liked"
-      );
-
-    } else {
-
-      const newCount =
-        Number(
-          oldData.like_count || 0
-        ) + 1;
-
-      const { error } =
-        await supabaseClient
-          .from("photo_likes")
-          .update({
-            like_count:
-              newCount
-          })
-          .eq(
-            "photo_name",
-            photoName
-          );
-
-      if (error) {
-
-        console.error(
-          "Like update error:",
-          error
-        );
-
-        button.textContent =
-          "❌ Like হয়নি";
-
-        return;
-
-      }
-
-      button.textContent =
-        "❤️ " + newCount;
-
-      button.classList.add(
-        "liked"
-      );
-
-    }
-
-  } finally {
-
-    button.disabled =
-      false;
-
-  }
+return;
 
 }
 
 
-function openViewer(index) {
+/*
+  নতুন Like row
+*/
 
-  if (!currentImages.length) {
-    return;
-  }
+if(!oldData){
 
-  currentViewerIndex =
-    index;
+const {error}=
+await supabaseClient
+.from("photo_likes")
+.insert({
+photo_name:photoName,
+like_count:1
+});
 
-  showViewerImage();
 
-  viewer.style.display =
-    "flex";
+if(error){
+
+console.warn(
+"Like insert unavailable:",
+error
+);
+
+const localCount=
+addLocalLike(photoName);
+
+button.textContent=
+"❤️ "+localCount;
+
+button.classList.add("liked");
+
+return;
+
+}
+
+
+button.textContent=
+"❤️ 1";
+
+button.classList.add("liked");
+
+
+}else{
+
+const newCount=
+Number(
+oldData.like_count || 0
+)+1;
+
+
+const {error}=
+await supabaseClient
+.from("photo_likes")
+.update({
+like_count:newCount
+})
+.eq(
+"photo_name",
+photoName
+);
+
+
+if(error){
+
+console.warn(
+"Like update unavailable:",
+error
+);
+
+const localCount=
+addLocalLike(photoName);
+
+button.textContent=
+"❤️ "+localCount;
+
+button.classList.add("liked");
+
+return;
 
 }
 
 
-function closeViewer() {
+button.textContent=
+"❤️ "+newCount;
 
-  viewer.style.display =
-    "none";
+button.classList.add("liked");
+
+}
+
+
+}catch(error){
+
+console.error(error);
+
+const localCount=
+addLocalLike(photoName);
+
+button.textContent=
+"❤️ "+localCount;
+
+button.classList.add("liked");
+
+
+}finally{
+
+button.disabled=false;
+
+}
 
 }
 
 
-async function showViewerImage() {
+/* =========================
+   DELETE PHOTO
+========================= */
 
-  const file =
-    currentImages[
-      currentViewerIndex
-    ];
+async function deletePhoto(
+fullPath,
+card
+){
 
-  if (!file) {
-    return;
-  }
+if(!requireAdmin()){
+return;
+}
 
-  const folderPath =
-    getStoragePath();
 
-  const fullPath =
-    folderPath
-      ? folderPath + "/" + file.name
-      : file.name;
+const answer=
+confirm(
+"🗑️ এই ছবিটি Delete করবেন?"
+);
 
-  const { data } =
-    supabaseClient
-      .storage
-      .from("photos")
-      .getPublicUrl(
-        fullPath
-      );
+if(!answer){
+return;
+}
 
-  viewerImage.src =
-    data.publicUrl;
 
-  loadViewerLike(
-    fullPath
-  );
+const deleteButton=
+card.querySelector(
+".photo-delete-button"
+);
+
+
+if(deleteButton){
+
+deleteButton.disabled=true;
+
+deleteButton.textContent=
+"⏳ Delete হচ্ছে...";
 
 }
 
+
+const {error}=
+await supabaseClient
+.storage
+.from("photos")
+.remove([
+fullPath
+]);
+
+
+if(error){
+
+console.error(error);
+
+alert(
+"❌ ছবি Delete হয়নি: "+
+error.message
+);
+
+
+if(deleteButton){
+
+deleteButton.disabled=false;
+
+deleteButton.textContent=
+"🗑️ Delete";
+
+}
+
+return;
+
+}
+
+
+await supabaseClient
+.from("photo_likes")
+.delete()
+.eq(
+"photo_name",
+fullPath
+);
+
+
+message.textContent=
+"✅ ছবি Delete হয়েছে.";
+
+
+if(
+viewer.style.display==="flex"
+){
+
+closeViewer();
+
+}
+
+
+await loadPhotos();
+
+}
+
+
+/* =========================
+   VIEWER
+========================= */
+
+function openViewer(index){
+
+if(!currentImages.length){
+return;
+}
+
+currentViewerIndex=index;
+
+showViewerImage();
+
+viewer.style.display="flex";
+
+}
+
+
+function closeViewer(){
+
+viewer.style.display="none";
+
+}
+
+
+async function showViewerImage(){
+
+const file=
+currentImages[
+currentViewerIndex
+];
+
+if(!file){
+return;
+}
+
+
+const folderPath=
+getStoragePath();
+
+
+const fullPath=
+folderPath
+?
+folderPath+"/"+file.name
+:
+file.name;
+
+
+const {data}=
+supabaseClient
+.storage
+.from("photos")
+.getPublicUrl(
+fullPath
+);
+
+
+viewerImage.src=
+data.publicUrl;
+
+
+loadViewerLike(
+fullPath
+);
+
+}
+
+
+/* =========================
+   VIEWER LIKE
+========================= */
 
 async function loadViewerLike(
-  photoName
-) {
+photoName
+){
 
-  const { data } =
-    await supabaseClient
-      .from("photo_likes")
-      .select("like_count")
-      .eq(
-        "photo_name",
-        photoName
-      )
-      .maybeSingle();
-
-  const count =
-    data
-      ? Number(
-          data.like_count || 0
-        )
-      : 0;
-
-  viewerLike.textContent =
-    "❤️ " + count;
-
-}
+const {data,error}=
+await supabaseClient
+.from("photo_likes")
+.select("like_count")
+.eq(
+"photo_name",
+photoName
+)
+.maybeSingle();
 
 
-async function likeCurrentImage() {
+let count=0;
 
-  const file =
-    currentImages[
-      currentViewerIndex
-    ];
 
-  if (!file) {
-    return;
-  }
+if(!error && data){
 
-  const folderPath =
-    getStoragePath();
+count=
+Number(
+data.like_count || 0
+);
 
-  const fullPath =
-    folderPath
-      ? folderPath + "/" + file.name
-      : file.name;
+}else{
 
-  await addLike(
-    fullPath,
-    viewerLike
-  );
+count=
+getLocalLike(photoName);
 
 }
 
 
-function previousImage() {
-
-  if (!currentImages.length) {
-    return;
-  }
-
-  currentViewerIndex--;
-
-  if (
-    currentViewerIndex < 0
-  ) {
-
-    currentViewerIndex =
-      currentImages.length - 1;
-
-  }
-
-  showViewerImage();
+viewerLike.textContent=
+"❤️ "+count;
 
 }
 
 
-function nextImage() {
+async function likeCurrentImage(){
 
-  if (!currentImages.length) {
-    return;
-  }
+const file=
+currentImages[
+currentViewerIndex
+];
 
-  currentViewerIndex++;
+if(!file){
+return;
+}
 
-  if (
-    currentViewerIndex >=
-    currentImages.length
-  ) {
 
-    currentViewerIndex = 0;
+const folderPath=
+getStoragePath();
 
-  }
 
-  showViewerImage();
+const fullPath=
+folderPath
+?
+folderPath+"/"+file.name
+:
+file.name;
+
+
+await addLike(
+fullPath,
+viewerLike
+);
 
 }
 
 
-let touchStartX = 0;
-let touchEndX = 0;
+/* =========================
+   PREVIOUS / NEXT
+========================= */
+
+function previousImage(){
+
+if(!currentImages.length){
+return;
+}
+
+currentViewerIndex--;
+
+if(currentViewerIndex<0){
+
+currentViewerIndex=
+currentImages.length-1;
+
+}
+
+showViewerImage();
+
+}
+
+
+function nextImage(){
+
+if(!currentImages.length){
+return;
+}
+
+currentViewerIndex++;
+
+if(
+currentViewerIndex>=
+currentImages.length
+){
+
+currentViewerIndex=0;
+
+}
+
+showViewerImage();
+
+}
+
+
+/* =========================
+   SWIPE
+========================= */
+
+let touchStartX=0;
+let touchEndX=0;
 
 
 viewerImage.addEventListener(
-  "touchstart",
-  function(event) {
+"touchstart",
+function(event){
 
-    touchStartX =
-      event.changedTouches[0]
-        .screenX;
+touchStartX=
+event.changedTouches[0].screenX;
 
-  },
-  {
-    passive: true
-  }
+},
+{
+passive:true
+}
 );
 
 
 viewerImage.addEventListener(
-  "touchend",
-  function(event) {
+"touchend",
+function(event){
 
-    touchEndX =
-      event.changedTouches[0]
-        .screenX;
+touchEndX=
+event.changedTouches[0].screenX;
 
-    const difference =
-      touchEndX -
-      touchStartX;
 
-    if (
-      Math.abs(difference) < 50
-    ) {
-      return;
-    }
+const difference=
+touchEndX-touchStartX;
 
-    if (
-      difference > 0
-    ) {
 
-      previousImage();
+if(
+Math.abs(difference)<50
+){
+return;
+}
 
-    } else {
 
-      nextImage();
+if(difference>0){
 
-    }
+previousImage();
 
-  },
-  {
-    passive: true
-  }
+}else{
+
+nextImage();
+
+}
+
+},
+{
+passive:true
+}
 );
 
 
-async function startApp() {
+/* =========================
+   START APP
+========================= */
 
-  const {
-    data: sessionData
-  } =
-    await supabaseClient
-      .auth
-      .getSession();
+async function startApp(){
 
-  currentUser =
-    sessionData.session
-      ? sessionData.session.user
-      : null;
+const {
+data:sessionData
+}=
+await supabaseClient
+.auth
+.getSession();
 
-  isAdmin =
-    checkAdmin(
-      currentUser
-    );
 
-  if (
-    currentUser &&
-    !isAdmin
-  ) {
+currentUser=
+sessionData.session
+?
+sessionData.session.user
+:
+null;
 
-    await supabaseClient.auth
-      .signOut();
 
-    currentUser = null;
-    isAdmin = false;
+isAdmin=
+checkAdmin(
+currentUser
+);
 
-  }
 
-  updateAdminUI();
+if(
+currentUser &&
+!isAdmin
+){
 
-  const foldersLoaded =
-    await loadFolders();
+await supabaseClient.auth
+.signOut();
 
-  if (foldersLoaded) {
+currentUser=null;
+isAdmin=false;
 
-    await loadPhotos();
+}
 
-  }
+
+updateAdminUI();
+
+
+const foldersLoaded=
+await loadFolders();
+
+
+if(foldersLoaded){
+
+await loadPhotos();
+
+}
 
 }
 
