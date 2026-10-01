@@ -1,673 +1,585 @@
 <style>
-  * {
-    box-sizing: border-box;
-  }
-
-  html {
-    background: #0b0b0d;
-  }
-
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background:
-      radial-gradient(circle at top, #211b0d 0%, #0d0d0f 38%, #080809 100%);
-    color: #f5f5f5;
-    min-height: 100vh;
-  }
-
-  button {
-    border: 1px solid #3d3218;
-    border-radius: 7px;
-    padding: 7px 9px;
-    font-size: 11px;
-    cursor: pointer;
-    background: #171719;
-    color: #f1d477;
-    transition: .15s;
-  }
-
-  button:active {
-    transform: scale(.97);
-  }
-
-  button:disabled {
-    opacity: .55;
-    cursor: not-allowed;
-  }
-
-
-  /* =========================
-     HEADER
-  ========================= */
-
-  header {
-    background:
-      linear-gradient(135deg, #111113, #19150c);
-    color: white;
-    text-align: center;
-    padding: 9px 8px 10px;
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    border-bottom: 1px solid #8b6b1f;
-    box-shadow: 0 3px 18px rgba(0,0,0,.45);
-  }
-
-  header h1 {
-    margin: 0;
-    font-size: 20px;
-    color: #f0cc58;
-    letter-spacing: .2px;
-  }
-
-  header p {
-    margin: 3px 0 6px;
-    color: #aaa;
-    font-size: 10px;
-  }
-
-  .auth-area {
-    display: flex;
-    justify-content: center;
-    gap: 5px;
-    flex-wrap: wrap;
-  }
-
-  .auth-button {
-    background: #181818;
-    color: #e7c85c;
-    border: 1px solid #5b4617;
-    padding: 5px 9px;
-    border-radius: 6px;
-    font-size: 10px;
-  }
-
-  .admin-status {
-    display: none;
-    color: #d9bd55;
-    font-size: 9px;
-    margin-top: 4px;
-  }
-
-
-  /* =========================
-     MAIN
-  ========================= */
-
-  .container {
-    max-width: 700px;
-    margin: auto;
-    padding: 7px;
-  }
-
-
-  /* =========================
-     HOME / BACK
-  ========================= */
-
-  .top-buttons {
-    display: flex;
-    gap: 5px;
-    margin-bottom: 6px;
-  }
-
-  .top-buttons button {
-    flex: 1;
-    background: #171719;
-    color: #e6c653;
-    border: 1px solid #514016;
-    padding: 6px 7px;
-    font-size: 10px;
-    border-radius: 7px;
-  }
-
-
-  /* =========================
-     BOX
-  ========================= */
-
-  .box {
-    background:
-      linear-gradient(145deg, #151517, #101012);
-    padding: 8px;
-    border-radius: 10px;
-    margin-bottom: 7px;
-    border: 1px solid #29240f;
-    box-shadow:
-      0 3px 14px rgba(0,0,0,.32),
-      inset 0 0 0 1px rgba(255,210,70,.025);
-  }
-
-  .box h2 {
-    margin: 0 0 6px;
-    font-size: 13px;
-    color: #e5c557;
-    font-weight: bold;
-  }
-
-  #currentFolder {
-    color: #999;
-    font-size: 9px;
-    margin-bottom: 6px;
-    word-break: break-word;
-  }
-
-
-  /* =========================
-     FOLDER ACTIONS
-  ========================= */
-
-  .folder-actions {
-    display: flex;
-    gap: 5px;
-    margin-bottom: 6px;
-  }
-
-  .folder-actions button {
-    flex: 1;
-    background: #171719;
-    color: #e4c453;
-    border: 1px solid #4a3a13;
-    padding: 5px 4px;
-    font-size: 9px;
-    border-radius: 6px;
-  }
-
-
-  /* =========================
-     FOLDER GRID
-  ========================= */
-
-  .folders {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 4px;
-  }
-
-  .folder {
-    background:
-      linear-gradient(145deg, #1c1c1e, #131315);
-    padding: 3px 2px;
-    border-radius: 7px;
-    border: 1px solid #393016;
-    min-width: 0;
-    box-shadow: 0 2px 6px rgba(0,0,0,.22);
-  }
-
-  .folder-open {
-    width: 100%;
-    background: transparent;
-    border: 0;
-    padding: 3px 1px;
-    text-align: center;
-    color: #eee;
-  }
-
-  .folder-icon {
-    display: block;
-    font-size: 17px;
-    line-height: 18px;
-    margin-bottom: 1px;
-  }
-
-  .folder-name {
-    display: block;
-    font-size: 9px;
-    line-height: 11px;
-    font-weight: bold;
-    word-break: break-word;
-    color: #ddd;
-  }
-
-  .folder-manage {
-    display: flex;
-    gap: 2px;
-    margin-top: 3px;
-  }
-
-  .folder-manage button {
-    flex: 1;
-    padding: 3px 1px;
-    font-size: 7px;
-    border-radius: 5px;
-    white-space: nowrap;
-  }
-
-  .rename-button {
-    background: #211f17;
-    color: #d9bd55;
-    border: 1px solid #55471e;
-  }
-
-  .delete-button {
-    background: #241719;
-    color: #e47b7b;
-    border: 1px solid #552628;
-  }
-
-
-  /* =========================
-     FILE INPUT
-  ========================= */
-
-  input[type="file"] {
-    width: 100%;
-    margin: 5px 0;
-    font-size: 10px;
-    color: #bbb;
-    background: #111113;
-    border: 1px solid #393016;
-    border-radius: 6px;
-    padding: 4px;
-  }
-
-
-  /* =========================
-     PREVIEW
-  ========================= */
-
-  #previewArea {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
-    margin: 5px 0;
-  }
-
-  .preview-item {
-    position: relative;
-    background: #191919;
-    border-radius: 6px;
-    overflow: hidden;
-    aspect-ratio: 1 / 1;
-    border: 1px solid #332b15;
-  }
-
-  .preview-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .preview-number {
-    position: absolute;
-    left: 3px;
-    top: 3px;
-    background: rgba(0,0,0,.78);
-    color: #e5c557;
-    padding: 1px 4px;
-    border-radius: 4px;
-    font-size: 7px;
-  }
-
-
-  /* =========================
-     UPLOAD
-  ========================= */
-
-  #uploadButton {
-    width: 100%;
-    background:
-      linear-gradient(135deg, #8d6a19, #c49a2d);
-    color: #111;
-    border: 0;
-    padding: 7px;
-    font-size: 10px;
-    font-weight: bold;
-    border-radius: 7px;
-  }
-
-  #message {
-    text-align: center;
-    margin-top: 5px;
-    font-size: 9px;
-    font-weight: bold;
-    word-break: break-word;
-    color: #d9bd55;
-  }
-
-
-  /* =========================
-     GALLERY
-  ========================= */
-
-  .gallery {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 5px;
-  }
-
-  .photo-card {
-    background: #141416;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid #302815;
-    box-shadow: 0 2px 8px rgba(0,0,0,.3);
-    position: relative;
-  }
-
-  .photo-number {
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    z-index: 5;
-    background: rgba(0,0,0,.78);
-    color: #e5c557;
-    padding: 2px 5px;
-    border-radius: 5px;
-    font-size: 8px;
-    font-weight: bold;
-  }
-
-  .photo-card img {
-    width: 100%;
-    height: 155px;
-    object-fit: cover;
-    display: block;
-    cursor: pointer;
-  }
-
-  .photo-info {
-    padding: 4px;
-  }
-
-  .like-button {
-    width: 100%;
-    background: #1c1c1e;
-    color: #bbb;
-    border: 1px solid #383838;
-    margin-bottom: 3px;
-    padding: 5px;
-    font-size: 9px;
-    border-radius: 6px;
-  }
-
-  .like-button.liked {
-    background: #2a171b;
-    color: #ff7d8d;
-    border-color: #643039;
-  }
-
-  .photo-delete-button {
-    width: 100%;
-    background: #241719;
-    color: #e47b7b;
-    border: 1px solid #552628;
-    padding: 5px;
-    font-size: 9px;
-    border-radius: 6px;
-  }
-
-
-  /* =========================
-     EMPTY
-  ========================= */
-
-  .empty {
-    text-align: center;
-    color: #777;
-    padding: 14px 6px;
-    grid-column: 1 / -1;
-    font-size: 10px;
-  }
-
-
-  /* =========================
-     ADMIN LOGIN
-  ========================= */
-
-  #loginModal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.86);
-    z-index: 200;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 12px;
-  }
-
-  .login-box {
-    width: 100%;
-    max-width: 340px;
-    background:
-      linear-gradient(145deg, #1b1b1d, #101012);
-    border: 1px solid #6a5219;
-    border-radius: 12px;
-    padding: 14px;
-    box-shadow: 0 5px 30px rgba(0,0,0,.55);
-  }
-
-  .login-box h2 {
-    margin: 0 0 10px;
-    text-align: center;
-    color: #e5c557;
-    font-size: 16px;
-  }
-
-  .login-box input {
-    width: 100%;
-    padding: 9px;
-    margin-bottom: 6px;
-    background: #0f0f11;
-    color: white;
-    border: 1px solid #393016;
-    border-radius: 7px;
-    font-size: 12px;
-    outline: none;
-  }
-
-  .login-submit {
-    width: 100%;
-    background: linear-gradient(135deg,#8d6a19,#c49a2d);
-    color: #111;
-    border: 0;
-    margin-top: 3px;
-    padding: 7px;
-    font-size: 11px;
-    font-weight: bold;
-  }
-
-  .login-close {
-    width: 100%;
-    background: #1d1d1f;
-    color: #aaa;
-    border: 1px solid #333;
-    margin-top: 5px;
-    padding: 6px;
-    font-size: 10px;
-  }
-
-  #loginMessage {
-    text-align: center;
-    font-size: 10px;
-    margin-top: 6px;
-    word-break: break-word;
-    color: #d9bd55;
-  }
-
-
-  /* =========================
-     VIEWER
-  ========================= */
-
-  #viewer {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.96);
-    z-index: 100;
-    display: none;
-    flex-direction: column;
-  }
-
-  .viewer-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 7px;
-    flex-shrink: 0;
-  }
-
-  .viewer-top button {
-    background: #191919;
-    color: #e5c557;
-    border: 1px solid #4d3c15;
-    padding: 6px 8px;
-    font-size: 10px;
-  }
-
-  .viewer-stage {
-    position: relative;
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  #viewerImage {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    min-height: 0;
-    padding: 5px 42px;
-  }
-
-  .viewer-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 5;
-    width: 34px;
-    height: 50px;
-    border-radius: 9px;
-    background: rgba(255,255,255,.13);
-    color: #e5c557;
-    border: 1px solid rgba(220,180,60,.25);
-    font-size: 22px;
-    line-height: 50px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .viewer-arrow:active {
-    background: rgba(255,255,255,.25);
-  }
-
-  .viewer-prev {
-    left: 5px;
-  }
-
-  .viewer-next {
-    right: 5px;
-  }
-
-  .viewer-bottom {
-    display: flex;
-    justify-content: center;
-    padding: 7px;
-    flex-shrink: 0;
-  }
-
-  #viewerLike {
-    background: #7d1d2b;
-    color: white;
-    border: 1px solid #a83a4a;
-    min-width: 100px;
-    padding: 7px 10px;
-    font-size: 10px;
-  }
-
-
-  /* =========================
-     MOBILE
-  ========================= */
-
-  @media (max-width: 420px) {
-
-    .container {
-      padding: 5px;
-    }
-
-    .box {
-      padding: 7px;
-      margin-bottom: 6px;
-    }
-
-    .box h2 {
-      font-size: 12px;
-      margin-bottom: 5px;
-    }
-
-    .folders {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 3px;
-    }
-
-    .folder {
-      padding: 3px 1px;
-    }
-
-    .folder-icon {
-      font-size: 16px;
-      line-height: 17px;
-    }
-
-    .folder-name {
-      font-size: 8px;
-      line-height: 10px;
-    }
-
-    .folder-manage {
-      gap: 1px;
-      margin-top: 2px;
-    }
-
-    .folder-manage button {
-      font-size: 6.5px;
-      padding: 3px 0;
-    }
-
-    .folder-actions button {
-      padding: 5px 3px;
-      font-size: 8px;
-    }
-
-    #previewArea {
-      grid-template-columns: repeat(4, 1fr);
-      gap: 3px;
-    }
-
-    .gallery {
-      gap: 4px;
-    }
-
-    .photo-card img {
-      height: 140px;
-    }
-
-    .photo-info {
-      padding: 3px;
-    }
-
-    .like-button,
-    .photo-delete-button {
-      padding: 4px;
-      font-size: 8px;
-    }
-
-    #viewerImage {
-      padding-left: 38px;
-      padding-right: 38px;
-    }
-
-    .viewer-arrow {
-      width: 31px;
-      height: 45px;
-      font-size: 19px;
-    }
-  }
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#f4f4f4;
+  color:#222;
+}
+
+button{
+  border:1px solid #d0d0d0;
+  border-radius:7px;
+  padding:7px 10px;
+  font-size:11px;
+  cursor:pointer;
+  background:#fff;
+  color:#222;
+}
+
+button:active{
+  transform:scale(.97);
+}
+
+button:disabled{
+  opacity:.55;
+}
+
+/* HEADER */
+header{
+  background:#111;
+  color:#fff;
+  text-align:center;
+  padding:10px 8px;
+  position:sticky;
+  top:0;
+  z-index:20;
+  border-bottom:2px solid #d4af37;
+}
+
+header h1{
+  margin:0;
+  font-size:20px;
+  color:#d4af37;
+}
+
+header p{
+  margin:3px 0 7px;
+  color:#ccc;
+  font-size:10px;
+}
+
+.auth-area{
+  display:flex;
+  justify-content:center;
+  gap:5px;
+  flex-wrap:wrap;
+}
+
+.auth-button{
+  background:#222;
+  color:#f0cc58;
+  border:1px solid #6d571b;
+  padding:6px 9px;
+  border-radius:6px;
+  font-size:10px;
+}
+
+.admin-status{
+  display:none;
+  color:#d4af37;
+  font-size:9px;
+  margin-top:4px;
+}
+
+/* MAIN */
+.container{
+  width:100%;
+  max-width:700px;
+  margin:auto;
+  padding:7px;
+}
+
+/* HOME / BACK */
+.top-buttons{
+  display:flex;
+  gap:5px;
+  margin-bottom:7px;
+}
+
+.top-buttons button{
+  flex:1;
+  background:#fff;
+  color:#333;
+  border:1px solid #ccc;
+  padding:7px;
+  font-size:10px;
+}
+
+/* BOX */
+.box{
+  background:#fff;
+  padding:9px;
+  border-radius:10px;
+  margin-bottom:7px;
+  border:1px solid #ddd;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.box h2{
+  margin:0 0 6px;
+  font-size:13px;
+  color:#222;
+}
+
+#currentFolder{
+  color:#777;
+  font-size:9px;
+  margin-bottom:6px;
+  word-break:break-word;
+}
+
+/* FOLDER ACTIONS */
+.folder-actions{
+  display:flex;
+  gap:5px;
+  margin-bottom:6px;
+}
+
+.folder-actions button{
+  flex:1;
+  background:#f7f7f7;
+  color:#333;
+  border:1px solid #ccc;
+  padding:6px 4px;
+  font-size:9px;
+}
+
+/* FOLDERS */
+.folders{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
+}
+
+.folder{
+  background:#fafafa;
+  padding:4px 2px;
+  border-radius:8px;
+  border:1px solid #ddd;
+  min-width:0;
+}
+
+.folder-open{
+  width:100%;
+  background:transparent;
+  border:0;
+  padding:4px 1px;
+  text-align:center;
+  color:#222;
+}
+
+.folder-icon{
+  display:block;
+  font-size:18px;
+  line-height:19px;
+  margin-bottom:1px;
+}
+
+.folder-name{
+  display:block;
+  font-size:9px;
+  line-height:11px;
+  font-weight:bold;
+  word-break:break-word;
+  color:#333;
+}
+
+.folder-manage{
+  display:flex;
+  gap:2px;
+  margin-top:3px;
+}
+
+.folder-manage button{
+  flex:1;
+  padding:3px 1px;
+  font-size:7px;
+  border-radius:5px;
+  white-space:nowrap;
+}
+
+.rename-button{
+  background:#fff8df;
+  color:#725900;
+  border:1px solid #d9bd55;
+}
+
+.delete-button{
+  background:#fff0f0;
+  color:#b22;
+  border:1px solid #e0aaaa;
+}
+
+/* FILE INPUT */
+input[type="file"]{
+  width:100%;
+  margin:5px 0;
+  font-size:10px;
+  color:#555;
+  background:#fff;
+  border:1px solid #ccc;
+  border-radius:6px;
+  padding:5px;
+}
+
+/* PREVIEW */
+#previewArea{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:4px;
+  margin:5px 0;
+}
+
+.preview-item{
+  position:relative;
+  background:#eee;
+  border-radius:6px;
+  overflow:hidden;
+  aspect-ratio:1/1;
+  border:1px solid #ddd;
+}
+
+.preview-item img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.preview-number{
+  position:absolute;
+  left:3px;
+  top:3px;
+  background:rgba(0,0,0,.75);
+  color:#fff;
+  padding:1px 4px;
+  border-radius:4px;
+  font-size:7px;
+}
+
+/* UPLOAD */
+#uploadButton{
+  width:100%;
+  background:#d4af37;
+  color:#111;
+  border:0;
+  padding:8px;
+  font-size:10px;
+  font-weight:bold;
+  border-radius:7px;
+}
+
+#message{
+  text-align:center;
+  margin-top:5px;
+  font-size:9px;
+  font-weight:bold;
+  word-break:break-word;
+  color:#8a6d00;
+}
+
+/* GALLERY */
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:5px;
+}
+
+.photo-card{
+  background:#fff;
+  border-radius:8px;
+  overflow:hidden;
+  border:1px solid #ddd;
+  box-shadow:0 2px 7px rgba(0,0,0,.08);
+  position:relative;
+}
+
+.photo-number{
+  position:absolute;
+  top:4px;
+  left:4px;
+  z-index:5;
+  background:rgba(0,0,0,.75);
+  color:#fff;
+  padding:2px 5px;
+  border-radius:5px;
+  font-size:8px;
+  font-weight:bold;
+}
+
+.photo-card img{
+  width:100%;
+  height:155px;
+  object-fit:cover;
+  display:block;
+  cursor:pointer;
+}
+
+.photo-info{
+  padding:4px;
+}
+
+.like-button{
+  width:100%;
+  background:#f7f7f7;
+  color:#555;
+  border:1px solid #ddd;
+  margin-bottom:3px;
+  padding:5px;
+  font-size:9px;
+}
+
+.like-button.liked{
+  background:#fff0f3;
+  color:#d22;
+  border-color:#e5a5ad;
+}
+
+.photo-delete-button{
+  width:100%;
+  background:#fff0f0;
+  color:#b22;
+  border:1px solid #e0aaaa;
+  padding:5px;
+  font-size:9px;
+}
+
+/* EMPTY */
+.empty{
+  text-align:center;
+  color:#777;
+  padding:14px 6px;
+  grid-column:1/-1;
+  font-size:10px;
+}
+
+/* LOGIN */
+#loginModal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.75);
+  z-index:200;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:12px;
+}
+
+.login-box{
+  width:100%;
+  max-width:340px;
+  background:#fff;
+  border:1px solid #d4af37;
+  border-radius:12px;
+  padding:14px;
+  box-shadow:0 5px 30px rgba(0,0,0,.4);
+}
+
+.login-box h2{
+  margin:0 0 10px;
+  text-align:center;
+  color:#222;
+  font-size:16px;
+}
+
+.login-box input{
+  width:100%;
+  padding:9px;
+  margin-bottom:6px;
+  background:#fff;
+  color:#222;
+  border:1px solid #ccc;
+  border-radius:7px;
+  font-size:12px;
+  outline:none;
+}
+
+.login-submit{
+  width:100%;
+  background:#d4af37;
+  color:#111;
+  border:0;
+  margin-top:3px;
+  padding:8px;
+  font-size:11px;
+  font-weight:bold;
+}
+
+.login-close{
+  width:100%;
+  background:#f3f3f3;
+  color:#555;
+  border:1px solid #ddd;
+  margin-top:5px;
+  padding:7px;
+  font-size:10px;
+}
+
+#loginMessage{
+  text-align:center;
+  font-size:10px;
+  margin-top:6px;
+  word-break:break-word;
+  color:#9a7900;
+}
+
+/* VIEWER */
+#viewer{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.96);
+  z-index:100;
+  display:none;
+  flex-direction:column;
+}
+
+.viewer-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:7px;
+  flex-shrink:0;
+}
+
+.viewer-top button{
+  background:#222;
+  color:#f0cc58;
+  border:1px solid #6d571b;
+  padding:6px 8px;
+  font-size:10px;
+}
+
+.viewer-stage{
+  position:relative;
+  flex:1;
+  min-height:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#viewerImage{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  min-height:0;
+  padding:5px 42px;
+}
+
+.viewer-arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:5;
+  width:34px;
+  height:50px;
+  border-radius:9px;
+  background:rgba(255,255,255,.15);
+  color:#f0cc58;
+  border:1px solid rgba(220,180,60,.4);
+  font-size:22px;
+  padding:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.viewer-prev{
+  left:5px;
+}
+
+.viewer-next{
+  right:5px;
+}
+
+.viewer-bottom{
+  display:flex;
+  justify-content:center;
+  padding:7px;
+  flex-shrink:0;
+}
+
+#viewerLike{
+  background:#8b1e2d;
+  color:#fff;
+  border:1px solid #b53b4d;
+  min-width:100px;
+  padding:7px 10px;
+  font-size:10px;
+}
+
+/* MOBILE */
+@media(max-width:420px){
+
+  .container{
+    padding:5px;
+  }
+
+  .box{
+    padding:7px;
+    margin-bottom:6px;
+  }
+
+  .box h2{
+    font-size:12px;
+  }
+
+  .folders{
+    grid-template-columns:repeat(3,1fr);
+    gap:3px;
+  }
+
+  .folder{
+    padding:3px 1px;
+  }
+
+  .folder-icon{
+    font-size:16px;
+    line-height:17px;
+  }
+
+  .folder-name{
+    font-size:8px;
+    line-height:10px;
+  }
+
+  .folder-manage button{
+    font-size:6.5px;
+    padding:3px 0;
+  }
+
+  .folder-actions button{
+    padding:5px 3px;
+    font-size:8px;
+  }
+
+  #previewArea{
+    grid-template-columns:repeat(4,1fr);
+    gap:3px;
+  }
+
+  .gallery{
+    gap:4px;
+  }
+
+  .photo-card img{
+    height:140px;
+  }
+
+  .like-button,
+  .photo-delete-button{
+    padding:4px;
+    font-size:8px;
+  }
+
+  #viewerImage{
+    padding-left:38px;
+    padding-right:38px;
+  }
+
+  .viewer-arrow{
+    width:31px;
+    height:45px;
+    font-size:19px;
+  }
+}
 </style>
