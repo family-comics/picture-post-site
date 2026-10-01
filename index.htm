@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Picture Post</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
+
+    header {
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 20px 10px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      color: #ccc;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 15px;
+    }
+
+    .post-box {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    input[type="file"] {
+      width: 100%;
+      margin: 10px 0;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #111;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #preview {
+      width: 100%;
+      margin-top: 15px;
+      border-radius: 12px;
+      display: none;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 15px;
+      color: #555;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>📸 Picture Post</h1>
+    <p>ছবি শেয়ার করার সহজ জায়গা</p>
+  </header>
+
+  <div class="container">
+
+    <div class="post-box">
+      <h2>ছবি পোস্ট করুন</h2>
+
+      <input type="file" id="photoInput" accept="image/*">
+
+      <img id="preview">
+
+      <button onclick="showMessage()">ছবি পোস্ট করুন</button>
+
+      <div class="message" id="message"></div>
+    </div>
+
+  </div>
+
+  <script>
+    const photoInput = document.getElementById("photoInput");
+    const preview = document.getElementById("preview");
+    const message = document.getElementById("message");
+
+    photoInput.addEventListener("change", function () {
+      const file = this.files[0];
+
+      if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+        message.textContent = "";
+      }
+    });
+
+    function showMessage() {
+      if (!photoInput.files[0]) {
+        message.textContent = "আগে একটি ছবি নির্বাচন করুন।";
+        return;
+      }
+
+      message.textContent = "ছবিটি প্রস্তুত হয়েছে।";
+    }
+  </script>
+
+</body>
+</html>
