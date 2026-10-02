@@ -305,6 +305,49 @@ header p{
 
 
 /* =========================
+   JOIN LOCK
+========================= */
+
+.join-lock{
+  text-align:center;
+  padding:18px 8px;
+  border:1px solid #4d411d;
+  border-radius:7px;
+  background:
+    linear-gradient(145deg,#181818,#101010);
+}
+
+.join-lock-icon{
+  font-size:25px;
+  margin-bottom:5px;
+}
+
+.join-lock-title{
+  color:#e1c45b;
+  font-size:12px;
+  font-weight:bold;
+  margin-bottom:4px;
+}
+
+.join-lock-text{
+  color:#999;
+  font-size:9px;
+  line-height:14px;
+  margin-bottom:8px;
+}
+
+.join-lock-button{
+  background:
+    linear-gradient(135deg,#92701b,#d6b33e);
+  color:#111;
+  border:0;
+  font-size:9px;
+  font-weight:bold;
+  padding:7px 13px;
+}
+
+
+/* =========================
    FILE INPUT
 ========================= */
 
@@ -663,9 +706,6 @@ input[type=file]{
     min-width:82px;
   }
 
-
-  /* Home + Back */
-
   .top-buttons{
     justify-content:center;
     gap:5px;
@@ -677,9 +717,6 @@ input[type=file]{
     font-size:9px;
   }
 
-
-  /* Folder buttons */
-
   .folder-actions{
     justify-content:center;
     gap:5px;
@@ -690,7 +727,6 @@ input[type=file]{
     padding:5px 10px;
     font-size:8px;
   }
-
 
   .folders{
     grid-template-columns:repeat(3,1fr);
@@ -721,24 +757,17 @@ input[type=file]{
     padding:2px 0;
   }
 
-
-  /* File chooser */
-
   input[type=file]{
     max-width:100%;
     font-size:8px;
     padding:4px 6px;
   }
 
-
-  /* Upload */
-
   #uploadButton{
     min-width:120px;
     padding:6px 13px;
     font-size:9px;
   }
-
 
   #previewArea{
     grid-template-columns:repeat(4,1fr);
@@ -770,12 +799,12 @@ input[type=file]{
     font-size:18px;
   }
 
+  .join-lock{
+    padding:15px 6px;
+  }
+
 }
 
-
-/* =========================
-   EXTRA COMPACT BUTTON FIX
-========================= */
 
 @media(max-width:360px){
 
@@ -841,9 +870,6 @@ class="admin-status">
 👑 Admin Mode চালু
 </div>
 
-
-<!-- JOIN AREA -->
-
 <div class="member-area">
 
 <div
@@ -886,7 +912,6 @@ onclick="joinWebsite()">
 <div id="currentFolder">
 📁 Home
 </div>
-
 
 <div
 id="adminFolderActions"
@@ -1154,11 +1179,6 @@ document.getElementById("publicRefreshArea");
 const adminUploadBox =
 document.getElementById("adminUploadBox");
 
-
-/* =========================
-   JOIN ELEMENTS
-========================= */
-
 const memberCount =
 document.getElementById("memberCount");
 
@@ -1172,6 +1192,7 @@ document.getElementById("joinButton");
 
 let currentUser = null;
 let isAdmin = false;
+let isMember = false;
 
 let allFolders = [];
 let currentFolderId = null;
@@ -1187,6 +1208,9 @@ const LOCAL_LIKE_KEY =
 
 const MEMBER_KEY =
 "picture_post_member_key";
+
+const MEMBER_JOINED_KEY =
+"picture_post_joined";
 
 
 /* =========================
@@ -1478,12 +1502,6 @@ return true;
    JOIN SYSTEM
 ========================= */
 
-
-/*
-   একই browser/device-এর জন্য
-   একটি আলাদা Member Key তৈরি হবে।
-*/
-
 function getMemberKey(){
 
 let key="";
@@ -1543,29 +1561,44 @@ return key;
 }
 
 
-/*
-   আগে Join করেছে কি না
-*/
+/* =========================
+   MEMBER STATUS
+========================= */
 
-function updateJoinButton(){
+function saveJoinedStatus(){
 
-let key="";
+isMember=true;
 
 try{
 
-key=
-localStorage.getItem(
-MEMBER_KEY
-) || "";
+localStorage.setItem(
+MEMBER_JOINED_KEY,
+"yes"
+);
 
-}catch(error){
-
-key="";
+}catch(error){}
 
 }
 
 
-if(key){
+function clearJoinedStatus(){
+
+isMember=false;
+
+try{
+
+localStorage.removeItem(
+MEMBER_JOINED_KEY
+);
+
+}catch(error){}
+
+}
+
+
+function updateJoinButton(){
+
+if(isMember){
 
 joinButton.textContent=
 "✅ Joined";
@@ -1593,7 +1626,99 @@ joinButton.disabled=false;
 
 
 /*
-   Member Count লোড
+   Database থেকে Member status যাচাই
+*/
+
+async function checkMemberStatus(){
+
+if(isAdmin){
+
+isMember=true;
+
+updateJoinButton();
+
+return true;
+
+}
+
+
+let key="";
+
+try{
+
+key=
+localStorage.getItem(
+MEMBER_KEY
+) || "";
+
+}catch(error){
+
+key="";
+
+}
+
+
+if(!key){
+
+clearJoinedStatus();
+
+updateJoinButton();
+
+return false;
+
+}
+
+
+try{
+
+const {
+data,
+error
+}=
+await supabaseClient
+.from("members")
+.select("id")
+.eq(
+"member_key",
+key
+)
+.maybeSingle();
+
+
+if(
+!error &&
+data
+){
+
+saveJoinedStatus();
+
+}else{
+
+clearJoinedStatus();
+
+}
+
+}catch(error){
+
+console.error(
+"Member status error:",
+error
+);
+
+clearJoinedStatus();
+
+}
+
+
+updateJoinButton();
+
+return isMember;
+
+}
+
+
+/*
+   Member Count
 */
 
 async function loadMemberCount(){
@@ -1676,11 +1801,6 @@ return;
 
 try{
 
-/*
-   একই key আগে থেকেই database-এ থাকলে
-   নতুন row তৈরি হবে না।
-*/
-
 const {
 data:existing,
 error:checkError
@@ -1708,7 +1828,7 @@ joinButton.textContent=
 "🤝 Join করুন";
 
 alert(
-"❌ Join করা যায়নি।\n"+
+"❌ Join করা যায়নি.\n"+
 checkError.message
 );
 
@@ -1719,18 +1839,18 @@ return;
 
 if(existing){
 
+saveJoinedStatus();
+
 updateJoinButton();
 
 await loadMemberCount();
+
+await loadPhotos();
 
 return;
 
 }
 
-
-/*
-   নতুন Member insert
-*/
 
 const {
 error:insertError
@@ -1749,12 +1869,6 @@ console.error(
 insertError
 );
 
-
-/*
-   Unique constraint-এর কারণে
-   আগে থেকেই থাকলে Joined হিসেবে ধরা হবে।
-*/
-
 if(
 String(
 insertError.message || ""
@@ -1769,9 +1883,13 @@ insertError.message || ""
 .includes("unique")
 ){
 
+saveJoinedStatus();
+
 updateJoinButton();
 
 await loadMemberCount();
+
+await loadPhotos();
 
 return;
 
@@ -1784,7 +1902,7 @@ joinButton.textContent=
 "🤝 Join করুন";
 
 alert(
-"❌ Join করা যায়নি।\n"+
+"❌ Join করা যায়নি.\n"+
 insertError.message
 );
 
@@ -1793,9 +1911,13 @@ return;
 }
 
 
+saveJoinedStatus();
+
 updateJoinButton();
 
 await loadMemberCount();
+
+await loadPhotos();
 
 
 }catch(error){
@@ -1811,11 +1933,49 @@ joinButton.textContent=
 "🤝 Join করুন";
 
 alert(
-"❌ Join করা যায়নি।\n"+
+"❌ Join করা যায়নি.\n"+
 error.message
 );
 
 }
+
+}
+
+
+/* =========================
+   JOIN LOCK UI
+========================= */
+
+function showJoinLock(){
+
+gallery.innerHTML="";
+
+const lock=
+document.createElement("div");
+
+lock.className=
+"join-lock";
+
+lock.innerHTML=
+'<div class="join-lock-icon">🔒</div>'+
+'<div class="join-lock-title">'+
+'ছবি দেখতে Join করুন'+
+'</div>'+
+'<div class="join-lock-text">'+
+'এই ওয়েবসাইটের ছবি দেখতে আগে ফ্রি Join করতে হবে।'+
+'</div>'+
+'<button class="join-lock-button" onclick="joinWebsite()">'+
+'🤝 এখনই Join করুন'+
+'</button>';
+
+gallery.appendChild(lock);
+
+}
+
+
+function canViewPhotos(){
+
+return isAdmin || isMember;
 
 }
 
@@ -2583,6 +2743,8 @@ loadPhotos();
 
 async function refreshFolders(){
 
+await checkMemberStatus();
+
 await loadFolders();
 
 await loadPhotos();
@@ -2902,6 +3064,29 @@ photoInput.disabled=false;
 
 async function loadPhotos(){
 
+/*
+   Admin হলে সবসময় দেখতে পারবে।
+   Guest হলে Join ছাড়া কোনো ছবি load হবে না।
+*/
+
+if(!isAdmin){
+
+const memberOK=
+await checkMemberStatus();
+
+if(!memberOK){
+
+currentImages=[];
+
+showJoinLock();
+
+return;
+
+}
+
+}
+
+
 gallery.innerHTML=
 '<div class="empty">⏳ ছবি লোড হচ্ছে...</div>';
 
@@ -2989,15 +3174,13 @@ fullPath
 const card=
 document.createElement("div");
 
-card.className=
-"photo-card";
+card.className="photo-card";
 
 
 const number=
 document.createElement("div");
 
-number.className=
-"photo-number";
+number.className="photo-number";
 
 number.textContent=
 "#"+(i+1);
@@ -3219,6 +3402,24 @@ async function addLike(
 photoName,
 button
 ){
+
+if(!isAdmin){
+
+const memberOK=
+await checkMemberStatus();
+
+if(!memberOK){
+
+alert(
+"🔒 Like দিতে আগে Join করুন।"
+);
+
+return;
+
+}
+
+}
+
 
 if(button.disabled){
 return;
@@ -3474,7 +3675,25 @@ await loadPhotos();
    VIEWER
 ========================= */
 
-function openViewer(index){
+async function openViewer(index){
+
+if(!isAdmin){
+
+const memberOK=
+await checkMemberStatus();
+
+if(!memberOK){
+
+alert(
+"🔒 ছবি দেখতে আগে Join করুন।"
+);
+
+return;
+
+}
+
+}
+
 
 if(!currentImages.length){
 return;
@@ -3497,6 +3716,22 @@ viewer.style.display="none";
 
 
 async function showViewerImage(){
+
+if(!isAdmin){
+
+const memberOK=
+await checkMemberStatus();
+
+if(!memberOK){
+
+closeViewer();
+
+return;
+
+}
+
+}
+
 
 const file=
 currentImages[
@@ -3584,6 +3819,24 @@ viewerLike.textContent=
 
 
 async function likeCurrentImage(){
+
+if(!isAdmin){
+
+const memberOK=
+await checkMemberStatus();
+
+if(!memberOK){
+
+alert(
+"🔒 Like দিতে আগে Join করুন।"
+);
+
+return;
+
+}
+
+}
+
 
 const file=
 currentImages[
@@ -3725,16 +3978,7 @@ passive:true
 
 async function startApp(){
 
-/*
-   Join button-এর আগের অবস্থা দেখানো
-*/
-
 updateJoinButton();
-
-
-/*
-   Member count লোড
-*/
 
 loadMemberCount();
 
@@ -3742,8 +3986,7 @@ loadMemberCount();
 const {
 data:sessionData
 }=
-await supabaseClient
-.auth
+await supabaseClient.auth
 .getSession();
 
 
@@ -3776,6 +4019,13 @@ isAdmin=false;
 
 
 updateAdminUI();
+
+
+/*
+   প্রথমে Member status যাচাই
+*/
+
+await checkMemberStatus();
 
 
 const foldersLoaded=
