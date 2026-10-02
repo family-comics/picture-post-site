@@ -10,11 +10,13 @@
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;min-height:100%}
+
 body{
   font-family:Arial,sans-serif;
   background:radial-gradient(circle at top,#29230f 0%,#111 38%,#070707 100%);
   color:#eee;
 }
+
 button{
   box-sizing:border-box;
   border:1px solid #806719;
@@ -26,6 +28,7 @@ button{
   color:#e8c957;
   transition:.15s;
 }
+
 button:active{transform:scale(.96)}
 button:disabled{opacity:.55;cursor:not-allowed}
 
@@ -40,8 +43,18 @@ header{
   border-bottom:1px solid #b89529;
   box-shadow:0 3px 18px rgba(0,0,0,.55);
 }
-header h1{margin:0;font-size:18px;color:#e5c557}
-header p{margin:2px 0 5px;color:#aaa;font-size:9px}
+
+header h1{
+  margin:0;
+  font-size:18px;
+  color:#e5c557;
+}
+
+header p{
+  margin:2px 0 5px;
+  color:#aaa;
+  font-size:9px;
+}
 
 .auth-area{
   display:flex;
@@ -49,6 +62,7 @@ header p{margin:2px 0 5px;color:#aaa;font-size:9px}
   gap:4px;
   flex-wrap:wrap;
 }
+
 .auth-button{
   background:#141414;
   color:#e7c650;
@@ -59,6 +73,7 @@ header p{margin:2px 0 5px;color:#aaa;font-size:9px}
   width:auto;
   min-width:100px;
 }
+
 .admin-status{
   display:none;
   color:#d4af37;
@@ -73,6 +88,7 @@ header p{margin:2px 0 5px;color:#aaa;font-size:9px}
   gap:5px;
   margin-top:5px;
 }
+
 .member-count{
   background:#151515;
   color:#d8c36b;
@@ -83,6 +99,7 @@ header p{margin:2px 0 5px;color:#aaa;font-size:9px}
   min-width:90px;
   text-align:center;
 }
+
 .join-button{
   background:linear-gradient(135deg,#8e6d18,#d4af37);
   color:#111;
@@ -92,6 +109,7 @@ header p{margin:2px 0 5px;color:#aaa;font-size:9px}
   font-size:9px;
   font-weight:bold;
 }
+
 .join-button.joined{
   background:#18351f;
   color:#79dc91;
@@ -112,6 +130,7 @@ header p{margin:2px 0 5px;color:#aaa;font-size:9px}
   gap:6px;
   margin-bottom:5px;
 }
+
 .top-buttons button{
   flex:0 0 auto;
   width:auto;
@@ -133,11 +152,13 @@ header p{margin:2px 0 5px;color:#aaa;font-size:9px}
   border:1px solid #3d341c;
   box-shadow:0 2px 12px rgba(0,0,0,.35);
 }
+
 .box h2{
   margin:0 0 5px;
   font-size:12px;
   color:#e0c45a;
 }
+
 #currentFolder{
   color:#999;
   font-size:8px;
@@ -149,34 +170,41 @@ header p{margin:2px 0 5px;color:#aaa;font-size:9px}
   display:flex;
   justify-content:center;
   align-items:center;
-  gap:6px;
+  gap:5px;
   margin-bottom:5px;
 }
+
 .folder-actions button{
   flex:0 0 auto;
   width:auto;
-  min-width:115px;
+  min-width:105px;
   background:#171717;
   color:#d7ba4f;
   border:1px solid #5d4d19;
-  padding:6px 12px;
-  font-size:9px;
-  border-radius:6px;
+  padding:5px 9px;
+  font-size:8px;
+  border-radius:5px;
 }
+
+/* =========================
+   COMPACT FOLDER DESIGN
+========================= */
 
 .folders{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(4,1fr);
   gap:3px;
 }
+
 .folder{
-  background:linear-gradient(145deg,#1d1d1d,#111);
+  background:linear-gradient(145deg,#1b1b1b,#101010);
   padding:2px;
-  border-radius:6px;
-  border:1px solid #4b401e;
+  border-radius:5px;
+  border:1px solid #40371b;
   min-width:0;
-  box-shadow:0 2px 6px rgba(0,0,0,.3);
+  box-shadow:0 1px 4px rgba(0,0,0,.3);
 }
+
 .folder-open{
   width:100%;
   background:transparent;
@@ -185,37 +213,45 @@ header p{margin:2px 0 5px;color:#aaa;font-size:9px}
   text-align:center;
   color:#ddd;
 }
+
 .folder-icon{
   display:block;
-  font-size:15px;
-  line-height:16px;
+  font-size:13px;
+  line-height:14px;
   margin-bottom:1px;
 }
+
 .folder-name{
   display:block;
-  font-size:8px;
-  line-height:10px;
+  font-size:7px;
+  line-height:9px;
   font-weight:bold;
   word-break:break-word;
   color:#d8c77c;
+  min-height:9px;
 }
+
 .folder-manage{
   display:flex;
-  gap:2px;
+  gap:1px;
   margin-top:2px;
 }
+
 .folder-manage button{
   flex:1;
   padding:2px 0;
-  font-size:6px;
-  border-radius:4px;
+  font-size:5px;
+  line-height:7px;
+  border-radius:3px;
   white-space:nowrap;
 }
+
 .rename-button{
   background:#211e12;
   color:#d7bb54;
   border:1px solid #6b591d;
 }
+
 .delete-button{
   background:#251313;
   color:#ef7777;
@@ -230,19 +266,26 @@ header p{margin:2px 0 5px;color:#aaa;font-size:9px}
   background:linear-gradient(145deg,#181818,#101010);
   grid-column:1/-1;
 }
-.join-lock-icon{font-size:25px;margin-bottom:5px}
+
+.join-lock-icon{
+  font-size:25px;
+  margin-bottom:5px;
+}
+
 .join-lock-title{
   color:#e1c45b;
   font-size:12px;
   font-weight:bold;
   margin-bottom:4px;
 }
+
 .join-lock-text{
   color:#999;
   font-size:9px;
   line-height:14px;
   margin-bottom:8px;
 }
+
 .join-lock-button{
   background:linear-gradient(135deg,#92701b,#d6b33e);
   color:#111;
@@ -271,6 +314,7 @@ input[type=file]{
   gap:3px;
   margin:4px 0;
 }
+
 .preview-item{
   position:relative;
   background:#111;
@@ -279,12 +323,14 @@ input[type=file]{
   aspect-ratio:1/1;
   border:1px solid #443b20;
 }
+
 .preview-item img{
   width:100%;
   height:100%;
   object-fit:cover;
   display:block;
 }
+
 .preview-number{
   position:absolute;
   left:2px;
@@ -309,6 +355,7 @@ input[type=file]{
   font-weight:bold;
   border-radius:6px;
 }
+
 #message{
   text-align:center;
   margin-top:4px;
@@ -323,6 +370,7 @@ input[type=file]{
   grid-template-columns:repeat(2,1fr);
   gap:4px;
 }
+
 .photo-card{
   background:#111;
   border-radius:7px;
@@ -331,6 +379,7 @@ input[type=file]{
   box-shadow:0 2px 8px rgba(0,0,0,.4);
   position:relative;
 }
+
 .photo-number{
   position:absolute;
   top:3px;
@@ -343,6 +392,7 @@ input[type=file]{
   font-size:7px;
   font-weight:bold;
 }
+
 .photo-card img{
   width:100%;
   height:145px;
@@ -350,7 +400,11 @@ input[type=file]{
   display:block;
   cursor:pointer;
 }
-.photo-info{padding:3px}
+
+.photo-info{
+  padding:3px;
+}
+
 .like-button{
   width:100%;
   background:#171717;
@@ -360,11 +414,13 @@ input[type=file]{
   padding:4px;
   font-size:8px;
 }
+
 .like-button.liked{
   background:#32151c;
   color:#ff6575;
   border-color:#803746;
 }
+
 .photo-delete-button{
   width:100%;
   background:#291313;
@@ -392,6 +448,7 @@ input[type=file]{
   justify-content:center;
   padding:10px;
 }
+
 .login-box{
   width:100%;
   max-width:330px;
@@ -401,12 +458,14 @@ input[type=file]{
   padding:12px;
   box-shadow:0 5px 30px rgba(0,0,0,.7);
 }
+
 .login-box h2{
   margin:0 0 9px;
   text-align:center;
   color:#e2c454;
   font-size:15px;
 }
+
 .login-box input{
   width:100%;
   padding:8px;
@@ -418,6 +477,7 @@ input[type=file]{
   font-size:11px;
   outline:none;
 }
+
 .login-submit{
   width:100%;
   background:#d4af37;
@@ -428,6 +488,7 @@ input[type=file]{
   font-size:10px;
   font-weight:bold;
 }
+
 .login-close{
   width:100%;
   background:#222;
@@ -437,6 +498,7 @@ input[type=file]{
   padding:6px;
   font-size:9px;
 }
+
 #loginMessage{
   text-align:center;
   font-size:9px;
@@ -453,6 +515,7 @@ input[type=file]{
   display:none;
   flex-direction:column;
 }
+
 .viewer-top{
   display:flex;
   justify-content:space-between;
@@ -460,6 +523,7 @@ input[type=file]{
   padding:6px;
   flex-shrink:0;
 }
+
 .viewer-top button{
   background:#191919;
   color:#e8c957;
@@ -467,6 +531,7 @@ input[type=file]{
   padding:5px 7px;
   font-size:9px;
 }
+
 .viewer-stage{
   position:relative;
   flex:1;
@@ -475,6 +540,7 @@ input[type=file]{
   align-items:center;
   justify-content:center;
 }
+
 #viewerImage{
   width:100%;
   height:100%;
@@ -482,6 +548,7 @@ input[type=file]{
   min-height:0;
   padding:5px 38px;
 }
+
 .viewer-arrow{
   position:absolute;
   top:50%;
@@ -499,14 +566,17 @@ input[type=file]{
   align-items:center;
   justify-content:center;
 }
+
 .viewer-prev{left:4px}
 .viewer-next{right:4px}
+
 .viewer-bottom{
   display:flex;
   justify-content:center;
   padding:6px;
   flex-shrink:0;
 }
+
 #viewerLike{
   background:#751c2c;
   color:#fff;
@@ -517,65 +587,179 @@ input[type=file]{
 }
 
 @media(max-width:420px){
-  .container{padding:4px}
-  .box{padding:6px;margin-bottom:5px}
-  .box h2{font-size:11px;margin-bottom:4px}
-  .member-area{gap:4px;margin-top:4px}
-  .member-count,.join-button{
+
+  .container{
+    padding:4px;
+  }
+
+  .box{
+    padding:6px;
+    margin-bottom:5px;
+  }
+
+  .box h2{
+    font-size:11px;
+    margin-bottom:4px;
+  }
+
+  .member-area{
+    gap:4px;
+    margin-top:4px;
+  }
+
+  .member-count,
+  .join-button{
     font-size:8px;
     padding:5px 8px;
     min-width:82px;
   }
-  .top-buttons{justify-content:center;gap:5px}
+
+  .top-buttons{
+    justify-content:center;
+    gap:5px;
+  }
+
   .top-buttons button{
     min-width:100px;
     padding:6px 12px;
     font-size:9px;
   }
-  .folder-actions{justify-content:center;gap:5px}
+
+  .folder-actions{
+    justify-content:center;
+    gap:4px;
+  }
+
   .folder-actions button{
-    min-width:105px;
-    padding:5px 10px;
+    min-width:100px;
+    padding:5px 8px;
     font-size:8px;
   }
-  .folders{grid-template-columns:repeat(3,1fr);gap:2px}
-  .folder{padding:2px 1px}
-  .folder-icon{font-size:14px;line-height:15px}
-  .folder-name{font-size:7px;line-height:9px}
-  .folder-manage{gap:1px;margin-top:2px}
-  .folder-manage button{font-size:5.5px;padding:2px 0}
-  input[type=file]{max-width:100%;font-size:8px;padding:4px 6px}
-  #uploadButton{min-width:120px;padding:6px 13px;font-size:9px}
-  #previewArea{grid-template-columns:repeat(4,1fr);gap:2px}
-  .gallery{gap:3px}
-  .photo-card img{height:130px}
-  .like-button,.photo-delete-button{padding:3px;font-size:7px}
-  #viewerImage{padding-left:35px;padding-right:35px}
-  .viewer-arrow{width:29px;height:42px;font-size:18px}
-  .join-lock{padding:15px 6px}
+
+  /* ছোট মোবাইল Folder */
+  .folders{
+    grid-template-columns:repeat(4,1fr);
+    gap:2px;
+  }
+
+  .folder{
+    padding:2px 1px;
+  }
+
+  .folder-icon{
+    font-size:13px;
+    line-height:14px;
+  }
+
+  .folder-name{
+    font-size:6.5px;
+    line-height:8px;
+  }
+
+  .folder-manage{
+    gap:1px;
+    margin-top:1px;
+  }
+
+  .folder-manage button{
+    font-size:5px;
+    padding:2px 0;
+  }
+
+  input[type=file]{
+    max-width:100%;
+    font-size:8px;
+    padding:4px 6px;
+  }
+
+  #uploadButton{
+    min-width:120px;
+    padding:6px 13px;
+    font-size:9px;
+  }
+
+  #previewArea{
+    grid-template-columns:repeat(4,1fr);
+    gap:2px;
+  }
+
+  .gallery{
+    gap:3px;
+  }
+
+  .photo-card img{
+    height:130px;
+  }
+
+  .like-button,
+  .photo-delete-button{
+    padding:3px;
+    font-size:7px;
+  }
+
+  #viewerImage{
+    padding-left:35px;
+    padding-right:35px;
+  }
+
+  .viewer-arrow{
+    width:29px;
+    height:42px;
+    font-size:18px;
+  }
+
+  .join-lock{
+    padding:15px 6px;
+  }
+
 }
 
 @media(max-width:360px){
+
   .top-buttons button{
     min-width:90px;
     padding:5px 10px;
     font-size:8px;
   }
+
   .folder-actions button{
     min-width:95px;
     padding:5px 8px;
     font-size:7px;
   }
+
   #uploadButton{
     min-width:110px;
     padding:6px 10px;
     font-size:8px;
   }
-  .member-count,.join-button{
+
+  .member-count,
+  .join-button{
     min-width:75px;
     font-size:7px;
     padding:5px 6px;
   }
+
+  .folders{
+    grid-template-columns:repeat(4,1fr);
+    gap:2px;
+  }
+
+  .folder-icon{
+    font-size:12px;
+    line-height:13px;
+  }
+
+  .folder-name{
+    font-size:6px;
+    line-height:7px;
+  }
+
+  .folder-manage button{
+    font-size:4.5px;
+  }
+
 }
 </style>
 </head>
@@ -583,75 +767,126 @@ input[type=file]{
 <body>
 
 <header>
+
 <h1>📸 Picture Post</h1>
+
 <p>ছবি শেয়ার করার সহজ জায়গা</p>
 
 <div class="auth-area">
-<button id="loginButton" class="auth-button" onclick="openLogin()">
+
+<button
+id="loginButton"
+class="auth-button"
+onclick="openLogin()">
 🔐 Admin Login
 </button>
 
-<button id="logoutButton" class="auth-button"
-onclick="logoutAdmin()" style="display:none;">
+<button
+id="logoutButton"
+class="auth-button"
+onclick="logoutAdmin()"
+style="display:none;">
 🚪 Logout
 </button>
+
 </div>
 
-<div id="adminStatus" class="admin-status">
+<div
+id="adminStatus"
+class="admin-status">
 👑 Admin Mode চালু
 </div>
 
 <div class="member-area">
-<div id="memberCount" class="member-count">
+
+<div
+id="memberCount"
+class="member-count">
 👥 Member: ...
 </div>
 
-<button id="joinButton" class="join-button"
+<button
+id="joinButton"
+class="join-button"
 onclick="joinWebsite()">
 🤝 Join করুন
 </button>
+
 </div>
+
 </header>
+
 
 <div class="container">
 
 <div class="top-buttons">
-<button onclick="goHome()">🏠 Home</button>
-<button onclick="goBack()">⬅️ Back</button>
+
+<button onclick="goHome()">
+🏠 Home
+</button>
+
+<button onclick="goBack()">
+⬅️ Back
+</button>
+
 </div>
+
 
 <div class="box">
 
 <h2>📁 Picture Folder</h2>
 
-<div id="currentFolder">📁 Home</div>
+<div id="currentFolder">
+📁 Home
+</div>
 
-<div id="adminFolderActions"
+<div
+id="adminFolderActions"
 class="folder-actions"
 style="display:none;">
 
-<button onclick="createFolder()">➕ নতুন Folder</button>
-<button onclick="refreshFolders()">🔄 Refresh</button>
+<button onclick="createFolder()">
+➕ নতুন Folder
+</button>
+
+<button onclick="refreshFolders()">
+🔄 Refresh
+</button>
 
 </div>
 
-<div id="publicRefreshArea" class="folder-actions">
-<button onclick="refreshFolders()">🔄 Refresh</button>
+<div
+id="publicRefreshArea"
+class="folder-actions">
+
+<button onclick="refreshFolders()">
+🔄 Refresh
+</button>
+
 </div>
 
-<div id="folders" class="folders">
-<div class="empty">⏳ Folder লোড হচ্ছে...</div>
+<div
+id="folders"
+class="folders">
+
+<div class="empty">
+⏳ Folder লোড হচ্ছে...
 </div>
 
 </div>
 
-<div id="adminUploadBox"
+</div>
+
+
+<div
+id="adminUploadBox"
 class="box"
 style="display:none;">
 
 <h2>📤 ছবি পোস্ট করুন</h2>
 
-<input type="file"
+<input
+type="file"
 id="photoInput"
 accept="image/*"
 multiple>
@@ -666,17 +901,25 @@ multiple>
 
 </div>
 
+
 <div class="box">
 
 <h2>🖼️ পোস্ট করা ছবি</h2>
 
-<div id="gallery" class="gallery">
-<div class="empty">ছবি লোড হচ্ছে...</div>
+<div
+id="gallery"
+class="gallery">
+
+<div class="empty">
+ছবি লোড হচ্ছে...
 </div>
 
 </div>
 
 </div>
+
+</div>
+
 
 <div id="loginModal">
 
@@ -684,23 +927,27 @@ multiple>
 
 <h2>🔐 Admin Login</h2>
 
-<input type="email"
+<input
+type="email"
 id="loginEmail"
 placeholder="Admin Email"
 autocomplete="off">
 
-<input type="password"
+<input
+type="password"
 id="loginPassword"
 placeholder="Password"
 autocomplete="current-password">
 
-<button id="loginSubmit"
+<button
+id="loginSubmit"
 class="login-submit"
 onclick="loginAdmin()">
 🔐 Login
 </button>
 
-<button class="login-close"
+<button
+class="login-close"
 onclick="closeLogin()">
 ✕ বন্ধ
 </button>
@@ -708,13 +955,17 @@ onclick="closeLogin()">
 <div id="loginMessage"></div>
 
 </div>
+
 </div>
+
 
 <div id="viewer">
 
 <div class="viewer-top">
 
-<button onclick="closeViewer()">✕ বন্ধ</button>
+<button onclick="closeViewer()">
+✕ বন্ধ
+</button>
 
 <button onclick="goHome();closeViewer();">
 🏠 Home
@@ -724,19 +975,28 @@ onclick="closeLogin()">
 
 <div class="viewer-stage">
 
-<button class="viewer-arrow viewer-prev"
-onclick="previousImage()">‹</button>
+<button
+class="viewer-arrow viewer-prev"
+onclick="previousImage()">
+‹
+</button>
 
-<img id="viewerImage" alt="Picture">
+<img
+id="viewerImage"
+alt="Picture">
 
-<button class="viewer-arrow viewer-next"
-onclick="nextImage()">›</button>
+<button
+class="viewer-arrow viewer-next"
+onclick="nextImage()">
+›
+</button>
 
 </div>
 
 <div class="viewer-bottom">
 
-<button id="viewerLike"
+<button
+id="viewerLike"
 onclick="likeCurrentImage()">
 ❤️ 0
 </button>
@@ -1015,9 +1275,7 @@ return;
 }
 
 if(!data){
-
 return;
-
 }
 
 isMember=true;
@@ -1096,7 +1354,8 @@ return;
 }
 
 loginSubmit.disabled=true;
-loginMessage.textContent=
+
+loginMessage.textContent =
 "⏳ Admin Login হচ্ছে...";
 
 await supabaseClient.auth.signOut();
@@ -1330,6 +1589,7 @@ return;
 }
 
 joinButton.disabled=true;
+
 joinButton.textContent =
 "⏳ Joining...";
 
@@ -1404,6 +1664,12 @@ message.textContent =
 
 await loadMemberCount();
 
+/*
+   Join করার পর Folder ও Photo
+   আবার নতুন করে load হবে।
+*/
+await loadFolders();
+
 await loadPhotos();
 
 }catch(error){
@@ -1427,9 +1693,9 @@ error.message
 }
 
 
-/* =================================
+/* ================================
    MEMBER COUNT - RPC
-================================= */
+================================ */
 
 async function loadMemberCount(){
 
@@ -1809,7 +2075,9 @@ manage
 
 }
 
-folders.appendChild(div);
+folders.appendChild(
+div
+);
 
 }
 );
@@ -1974,8 +2242,10 @@ return;
 const cleanName =
 newName.trim();
 
-if(!cleanName ||
-cleanName===folder.name){
+if(
+!cleanName ||
+cleanName===folder.name
+){
 
 return;
 
