@@ -186,9 +186,7 @@ header p{
   border-radius:5px;
 }
 
-/* =========================
-   COMPACT FOLDER DESIGN
-========================= */
+/* COMPACT FOLDER DESIGN */
 
 .folders{
   display:grid;
@@ -636,7 +634,6 @@ input[type=file]{
     font-size:8px;
   }
 
-  /* ছোট মোবাইল Folder */
   .folders{
     grid-template-columns:repeat(4,1fr);
     gap:2px;
@@ -1103,6 +1100,9 @@ let currentFolderId = null;
 let currentPath = [];
 let currentImages = [];
 let currentViewerIndex = 0;
+
+/* Photo loading guard */
+let photoLoadRequestId = 0;
 
 const FOLDER_STORAGE_KEY =
 "picture_post_current_folder";
@@ -1664,10 +1664,6 @@ message.textContent =
 
 await loadMemberCount();
 
-/*
-   Join করার পর Folder ও Photo
-   আবার নতুন করে load হবে।
-*/
 await loadFolders();
 
 await loadPhotos();
@@ -1693,9 +1689,7 @@ error.message
 }
 
 
-/* ================================
-   MEMBER COUNT - RPC
-================================ */
+/* MEMBER COUNT - RPC */
 
 async function loadMemberCount(){
 
@@ -2216,7 +2210,7 @@ return;
 
 
 message.textContent =
-"✅ Folder তৈরি হয়েছে।";
+"✅ Folder তৈরি হয়েছে.";
 
 await loadFolders();
 
@@ -2895,7 +2889,15 @@ return data?.signedUrl || null;
 }
 
 
+/* =====================================
+   FIXED PHOTO LOADING
+   ===================================== */
+
 async function loadPhotos(){
+
+const requestId =
+++photoLoadRequestId;
+
 
 if(!isAdmin){
 
@@ -2903,6 +2905,10 @@ const memberOK =
 await checkMemberStatus();
 
 if(!memberOK){
+
+if(requestId !== photoLoadRequestId){
+return;
+}
 
 currentImages=[];
 
@@ -2912,6 +2918,11 @@ return;
 
 }
 
+}
+
+
+if(requestId !== photoLoadRequestId){
+return;
 }
 
 
@@ -2942,6 +2953,11 @@ order:"asc"
 );
 
 
+if(requestId !== photoLoadRequestId){
+return;
+}
+
+
 if(error){
 
 console.error(
@@ -2966,6 +2982,16 @@ file.metadata
 );
 
 
+if(requestId !== photoLoadRequestId){
+return;
+}
+
+
+/*
+   Important:
+   currentImages শুধুমাত্র latest request-এর
+   files দিয়ে সেট হবে।
+*/
 currentImages =
 files;
 
@@ -2980,7 +3006,16 @@ return;
 }
 
 
-gallery.innerHTML="";
+/*
+   পুরোনো gallery content সরিয়ে
+   latest request-এর content-এর জন্য
+   আলাদা fragment তৈরি করা হচ্ছে।
+*/
+const fragment =
+document.createDocumentFragment();
+
+
+const photoData=[];
 
 
 for(
@@ -2988,6 +3023,11 @@ let i=0;
 i<files.length;
 i++
 ){
+
+if(requestId !== photoLoadRequestId){
+return;
+}
+
 
 const file =
 files[i];
@@ -3007,9 +3047,48 @@ fullPath
 );
 
 
+if(requestId !== photoLoadRequestId){
+return;
+}
+
+
 if(!signedUrl){
 continue;
 }
+
+
+photoData.push({
+
+file:file,
+fullPath:fullPath,
+signedUrl:signedUrl,
+index:i
+
+});
+
+}
+
+
+if(requestId !== photoLoadRequestId){
+return;
+}
+
+
+for(
+const item of photoData
+){
+
+const file =
+item.file;
+
+const fullPath =
+item.fullPath;
+
+const signedUrl =
+item.signedUrl;
+
+const i =
+item.index;
 
 
 const card =
@@ -3117,7 +3196,7 @@ card.appendChild(number);
 card.appendChild(img);
 card.appendChild(info);
 
-gallery.appendChild(card);
+fragment.appendChild(card);
 
 
 loadLikeCount(
@@ -3126,6 +3205,18 @@ likeButton
 );
 
 }
+
+
+if(requestId !== photoLoadRequestId){
+return;
+}
+
+
+/*
+   একবারেই latest gallery বসানো হচ্ছে।
+*/
+gallery.innerHTML="";
+gallery.appendChild(fragment);
 
 }
 
