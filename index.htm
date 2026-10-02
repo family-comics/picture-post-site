@@ -45,7 +45,10 @@ button:disabled{
   cursor:not-allowed;
 }
 
-/* HEADER */
+
+/* =========================
+   HEADER
+========================= */
 
 header{
   background:
@@ -83,9 +86,11 @@ header p{
   background:#141414;
   color:#e7c650;
   border:1px solid #6d571b;
-  padding:5px 8px;
-  border-radius:5px;
-  font-size:9px;
+  padding:6px 12px;
+  border-radius:6px;
+  font-size:10px;
+  width:auto;
+  min-width:100px;
 }
 
 .admin-status{
@@ -95,7 +100,10 @@ header p{
   margin-top:3px;
 }
 
-/* MAIN */
+
+/* =========================
+   MAIN
+========================= */
 
 .container{
   width:100%;
@@ -104,26 +112,36 @@ header p{
   padding:5px;
 }
 
-/* TOP BUTTONS */
+
+/* =========================
+   TOP BUTTONS
+========================= */
 
 .top-buttons{
   display:flex;
-  gap:4px;
+  justify-content:center;
+  align-items:center;
+  gap:6px;
   margin-bottom:5px;
 }
 
 .top-buttons button{
-  flex:1;
+  flex:0 0 auto;
+  width:auto;
+  min-width:105px;
   background:#171717;
   color:#d9bd55;
   border:1px solid #6d571b;
-  padding:5px 6px;
-  font-size:9px;
-  border-radius:5px;
+  padding:6px 14px;
+  font-size:10px;
+  border-radius:6px;
   box-shadow:0 2px 7px rgba(0,0,0,.3);
 }
 
-/* BOX */
+
+/* =========================
+   BOX
+========================= */
 
 .box{
   background:rgba(20,20,20,.96);
@@ -147,25 +165,35 @@ header p{
   word-break:break-word;
 }
 
-/* FOLDER ACTIONS */
+
+/* =========================
+   FOLDER ACTIONS
+========================= */
 
 .folder-actions{
   display:flex;
-  gap:4px;
+  justify-content:center;
+  align-items:center;
+  gap:6px;
   margin-bottom:5px;
 }
 
 .folder-actions button{
-  flex:1;
+  flex:0 0 auto;
+  width:auto;
+  min-width:115px;
   background:#171717;
   color:#d7ba4f;
   border:1px solid #5d4d19;
-  padding:4px 3px;
-  font-size:8px;
-  border-radius:5px;
+  padding:6px 12px;
+  font-size:9px;
+  border-radius:6px;
 }
 
-/* FOLDERS */
+
+/* =========================
+   FOLDERS
+========================= */
 
 .folders{
   display:grid;
@@ -234,20 +262,28 @@ header p{
   border:1px solid #713434;
 }
 
-/* FILE INPUT */
+
+/* =========================
+   FILE INPUT
+========================= */
 
 input[type=file]{
-  width:100%;
-  margin:4px 0;
+  width:auto;
+  max-width:100%;
+  display:block;
+  margin:5px 0;
   font-size:9px;
   color:#aaa;
   background:#111;
   border:1px solid #4b4328;
-  border-radius:5px;
-  padding:4px;
+  border-radius:6px;
+  padding:5px 7px;
 }
 
-/* PREVIEW */
+
+/* =========================
+   PREVIEW
+========================= */
 
 #previewArea{
   display:grid;
@@ -283,18 +319,24 @@ input[type=file]{
   font-size:6px;
 }
 
-/* UPLOAD */
+
+/* =========================
+   UPLOAD
+========================= */
 
 #uploadButton{
-  width:100%;
+  width:auto;
+  min-width:125px;
+  display:block;
+  margin:7px auto 2px;
   background:
     linear-gradient(135deg,#9a7617,#d7b53d);
   color:#0c0c0c;
   border:0;
-  padding:6px;
-  font-size:9px;
+  padding:7px 15px;
+  font-size:10px;
   font-weight:bold;
-  border-radius:5px;
+  border-radius:6px;
 }
 
 #message{
@@ -306,7 +348,10 @@ input[type=file]{
   color:#d3b94e;
 }
 
-/* GALLERY */
+
+/* =========================
+   GALLERY
+========================= */
 
 .gallery{
   display:grid;
@@ -373,7 +418,10 @@ input[type=file]{
   font-size:8px;
 }
 
-/* EMPTY */
+
+/* =========================
+   EMPTY
+========================= */
 
 .empty{
   text-align:center;
@@ -383,7 +431,10 @@ input[type=file]{
   font-size:9px;
 }
 
-/* LOGIN */
+
+/* =========================
+   LOGIN
+========================= */
 
 #loginModal{
   position:fixed;
@@ -454,7 +505,10 @@ input[type=file]{
   color:#d2b54c;
 }
 
-/* VIEWER */
+
+/* =========================
+   VIEWER
+========================= */
 
 #viewer{
   position:fixed;
@@ -535,7 +589,10 @@ input[type=file]{
   font-size:9px;
 }
 
-/* MOBILE */
+
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:420px){
 
@@ -552,6 +609,35 @@ input[type=file]{
     font-size:11px;
     margin-bottom:4px;
   }
+
+
+  /* Home + Back */
+
+  .top-buttons{
+    justify-content:center;
+    gap:5px;
+  }
+
+  .top-buttons button{
+    min-width:100px;
+    padding:6px 12px;
+    font-size:9px;
+  }
+
+
+  /* Folder buttons */
+
+  .folder-actions{
+    justify-content:center;
+    gap:5px;
+  }
+
+  .folder-actions button{
+    min-width:105px;
+    padding:5px 10px;
+    font-size:8px;
+  }
+
 
   .folders{
     grid-template-columns:repeat(3,1fr);
@@ -582,10 +668,24 @@ input[type=file]{
     padding:2px 0;
   }
 
-  .folder-actions button{
-    padding:4px 2px;
-    font-size:7px;
+
+  /* File chooser */
+
+  input[type=file]{
+    max-width:100%;
+    font-size:8px;
+    padding:4px 6px;
   }
+
+
+  /* Upload */
+
+  #uploadButton{
+    min-width:120px;
+    padding:6px 13px;
+    font-size:9px;
+  }
+
 
   #previewArea{
     grid-template-columns:repeat(4,1fr);
@@ -616,6 +716,34 @@ input[type=file]{
     height:42px;
     font-size:18px;
   }
+
+}
+
+
+/* =========================
+   EXTRA COMPACT BUTTON FIX
+========================= */
+
+@media(max-width:360px){
+
+  .top-buttons button{
+    min-width:90px;
+    padding:5px 10px;
+    font-size:8px;
+  }
+
+  .folder-actions button{
+    min-width:95px;
+    padding:5px 8px;
+    font-size:7px;
+  }
+
+  #uploadButton{
+    min-width:110px;
+    padding:6px 10px;
+    font-size:8px;
+  }
+
 }
 </style>
 </head>
@@ -2630,11 +2758,6 @@ data.like_count || 0
 
 }else{
 
-/*
-   Supabase policy error হলে
-   local count দেখাবে।
-*/
-
 count=
 getLocalLike(photoName);
 
@@ -2665,10 +2788,6 @@ button.disabled=true;
 
 try{
 
-/*
-  প্রথমে Supabase-এ চেষ্টা।
-*/
-
 const {
 data:oldData,
 error:readError
@@ -2682,11 +2801,6 @@ photoName
 )
 .maybeSingle();
 
-
-/*
-  যদি Supabase read policy কাজ না করে,
-  local fallback ব্যবহার হবে।
-*/
 
 if(readError){
 
@@ -2707,10 +2821,6 @@ return;
 
 }
 
-
-/*
-  নতুন Like row
-*/
 
 if(!oldData){
 
