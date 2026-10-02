@@ -102,6 +102,47 @@ header p{
 
 
 /* =========================
+   MEMBER / JOIN
+========================= */
+
+.member-area{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:5px;
+  margin-top:5px;
+}
+
+.member-count{
+  background:#151515;
+  color:#d8c36b;
+  border:1px solid #5c4c1c;
+  border-radius:6px;
+  padding:5px 9px;
+  font-size:9px;
+  min-width:90px;
+  text-align:center;
+}
+
+.join-button{
+  background:
+    linear-gradient(135deg,#8e6d18,#d4af37);
+  color:#111;
+  border:0;
+  padding:5px 11px;
+  min-width:90px;
+  font-size:9px;
+  font-weight:bold;
+}
+
+.join-button.joined{
+  background:#18351f;
+  color:#79dc91;
+  border:1px solid #3e7d4d;
+}
+
+
+/* =========================
    MAIN
 ========================= */
 
@@ -610,6 +651,18 @@ input[type=file]{
     margin-bottom:4px;
   }
 
+  .member-area{
+    gap:4px;
+    margin-top:4px;
+  }
+
+  .member-count,
+  .join-button{
+    font-size:8px;
+    padding:5px 8px;
+    min-width:82px;
+  }
+
 
   /* Home + Back */
 
@@ -744,6 +797,13 @@ input[type=file]{
     font-size:8px;
   }
 
+  .member-count,
+  .join-button{
+    min-width:75px;
+    font-size:7px;
+    padding:5px 6px;
+  }
+
 }
 </style>
 </head>
@@ -779,6 +839,26 @@ style="display:none;">
 id="adminStatus"
 class="admin-status">
 👑 Admin Mode চালু
+</div>
+
+
+<!-- JOIN AREA -->
+
+<div class="member-area">
+
+<div
+id="memberCount"
+class="member-count">
+👥 Member: 0
+</div>
+
+<button
+id="joinButton"
+class="join-button"
+onclick="joinWebsite()">
+🤝 Join করুন
+</button>
+
 </div>
 
 </header>
@@ -1076,6 +1156,17 @@ document.getElementById("adminUploadBox");
 
 
 /* =========================
+   JOIN ELEMENTS
+========================= */
+
+const memberCount =
+document.getElementById("memberCount");
+
+const joinButton =
+document.getElementById("joinButton");
+
+
+/* =========================
    VARIABLES
 ========================= */
 
@@ -1093,6 +1184,9 @@ const FOLDER_STORAGE_KEY =
 
 const LOCAL_LIKE_KEY =
 "picture_post_local_likes";
+
+const MEMBER_KEY =
+"picture_post_member_key";
 
 
 /* =========================
@@ -1381,6 +1475,352 @@ return true;
 
 
 /* =========================
+   JOIN SYSTEM
+========================= */
+
+
+/*
+   একই browser/device-এর জন্য
+   একটি আলাদা Member Key তৈরি হবে।
+*/
+
+function getMemberKey(){
+
+let key="";
+
+try{
+
+key=
+localStorage.getItem(
+MEMBER_KEY
+) || "";
+
+}catch(error){
+
+key="";
+
+}
+
+
+if(!key){
+
+if(
+window.crypto &&
+typeof window.crypto.randomUUID===
+"function"
+){
+
+key=
+window.crypto.randomUUID();
+
+}else{
+
+key=
+"member_"+
+Date.now()+
+"_"+
+Math.random()
+.toString(36)
+.substring(2,12);
+
+}
+
+
+try{
+
+localStorage.setItem(
+MEMBER_KEY,
+key
+);
+
+}catch(error){}
+
+}
+
+
+return key;
+
+}
+
+
+/*
+   আগে Join করেছে কি না
+*/
+
+function updateJoinButton(){
+
+let key="";
+
+try{
+
+key=
+localStorage.getItem(
+MEMBER_KEY
+) || "";
+
+}catch(error){
+
+key="";
+
+}
+
+
+if(key){
+
+joinButton.textContent=
+"✅ Joined";
+
+joinButton.classList.add(
+"joined"
+);
+
+joinButton.disabled=true;
+
+}else{
+
+joinButton.textContent=
+"🤝 Join করুন";
+
+joinButton.classList.remove(
+"joined"
+);
+
+joinButton.disabled=false;
+
+}
+
+}
+
+
+/*
+   Member Count লোড
+*/
+
+async function loadMemberCount(){
+
+memberCount.textContent=
+"👥 Member: ...";
+
+
+const {
+count,
+error
+}=
+await supabaseClient
+.from("members")
+.select(
+"id",
+{
+count:"exact",
+head:true
+}
+);
+
+
+if(error){
+
+console.error(
+"Member count error:",
+error
+);
+
+memberCount.textContent=
+"👥 Member: 0";
+
+return;
+}
+
+
+memberCount.textContent=
+"👥 Member: "+
+Number(count || 0);
+
+}
+
+
+/*
+   Join
+*/
+
+async function joinWebsite(){
+
+if(joinButton.disabled){
+return;
+}
+
+
+joinButton.disabled=true;
+
+joinButton.textContent=
+"⏳ Joining...";
+
+
+const memberKey=
+getMemberKey();
+
+
+if(!memberKey){
+
+joinButton.disabled=false;
+
+joinButton.textContent=
+"🤝 Join করুন";
+
+alert(
+"❌ Member ID তৈরি করা যায়নি।"
+);
+
+return;
+}
+
+
+try{
+
+/*
+   একই key আগে থেকেই database-এ থাকলে
+   নতুন row তৈরি হবে না।
+*/
+
+const {
+data:existing,
+error:checkError
+}=
+await supabaseClient
+.from("members")
+.select("id")
+.eq(
+"member_key",
+memberKey
+)
+.maybeSingle();
+
+
+if(checkError){
+
+console.error(
+"Member check error:",
+checkError
+);
+
+joinButton.disabled=false;
+
+joinButton.textContent=
+"🤝 Join করুন";
+
+alert(
+"❌ Join করা যায়নি।\n"+
+checkError.message
+);
+
+return;
+
+}
+
+
+if(existing){
+
+updateJoinButton();
+
+await loadMemberCount();
+
+return;
+
+}
+
+
+/*
+   নতুন Member insert
+*/
+
+const {
+error:insertError
+}=
+await supabaseClient
+.from("members")
+.insert({
+member_key:memberKey
+});
+
+
+if(insertError){
+
+console.error(
+"Member insert error:",
+insertError
+);
+
+
+/*
+   Unique constraint-এর কারণে
+   আগে থেকেই থাকলে Joined হিসেবে ধরা হবে।
+*/
+
+if(
+String(
+insertError.message || ""
+)
+.toLowerCase()
+.includes("duplicate")
+||
+String(
+insertError.message || ""
+)
+.toLowerCase()
+.includes("unique")
+){
+
+updateJoinButton();
+
+await loadMemberCount();
+
+return;
+
+}
+
+
+joinButton.disabled=false;
+
+joinButton.textContent=
+"🤝 Join করুন";
+
+alert(
+"❌ Join করা যায়নি।\n"+
+insertError.message
+);
+
+return;
+
+}
+
+
+updateJoinButton();
+
+await loadMemberCount();
+
+
+}catch(error){
+
+console.error(
+"Join error:",
+error
+);
+
+joinButton.disabled=false;
+
+joinButton.textContent=
+"🤝 Join করুন";
+
+alert(
+"❌ Join করা যায়নি।\n"+
+error.message
+);
+
+}
+
+}
+
+
+/* =========================
    FOLDER SAVE
 ========================= */
 
@@ -1527,7 +1967,6 @@ return "";
 return getFolderStoragePath(
 currentFolderId
 );
-
 
 }
 
@@ -2114,7 +2553,7 @@ return;
 
 
 message.textContent=
-"✅ Folder Delete হয়েছে।";
+"✅ Folder Delete হয়েছে.";
 
 
 if(
@@ -2147,6 +2586,8 @@ async function refreshFolders(){
 await loadFolders();
 
 await loadPhotos();
+
+await loadMemberCount();
 
 }
 
@@ -3283,6 +3724,20 @@ passive:true
 ========================= */
 
 async function startApp(){
+
+/*
+   Join button-এর আগের অবস্থা দেখানো
+*/
+
+updateJoinButton();
+
+
+/*
+   Member count লোড
+*/
+
+loadMemberCount();
+
 
 const {
 data:sessionData
