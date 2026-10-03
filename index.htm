@@ -1,10 +1,25 @@
-<!DOCTYPE html><html lang="bn">
+<!DOCTYPE html>
+<html lang="bn">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Picture Post</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;min-height:100%}
+
+<title>Picture Post</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+}
 
 body{
   font-family:Arial,sans-serif;
@@ -24,8 +39,14 @@ button{
   transition:.15s;
 }
 
-button:active{transform:scale(.96)}
-button:disabled{opacity:.55;cursor:not-allowed}
+button:active{
+  transform:scale(.96);
+}
+
+button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
 
 header{
   background:linear-gradient(135deg,#080808,#211b0b);
@@ -390,6 +411,7 @@ input[type=file]{
   object-fit:cover;
   display:block;
   cursor:pointer;
+  background:#151515;
 }
 
 .photo-info{
@@ -419,6 +441,17 @@ input[type=file]{
   border:1px solid #713535;
   padding:4px;
   font-size:8px;
+}
+
+.photo-loading{
+  width:100%;
+  height:145px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#777;
+  font-size:8px;
+  background:#151515;
 }
 
 .empty{
@@ -558,8 +591,13 @@ input[type=file]{
   justify-content:center;
 }
 
-.viewer-prev{left:4px}
-.viewer-next{right:4px}
+.viewer-prev{
+  left:4px;
+}
+
+.viewer-next{
+  right:4px;
+}
 
 .viewer-bottom{
   display:flex;
@@ -677,7 +715,8 @@ input[type=file]{
     gap:3px;
   }
 
-  .photo-card img{
+  .photo-card img,
+  .photo-loading{
     height:130px;
   }
 
@@ -751,7 +790,21 @@ input[type=file]{
   }
 
 }
-</style></head><body><header><h1>📸 Picture Post</h1><p>ছবি শেয়ার করার সহজ জায়গা</p><div class="auth-area"><button
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<h1>📸 Picture Post</h1>
+
+<p>ছবি শেয়ার করার সহজ জায়গা</p>
+
+<div class="auth-area">
+
+<button
 id="loginButton"
 class="auth-button"
 onclick="openLogin()">
@@ -766,58 +819,145 @@ style="display:none;">
 🚪 Logout
 </button>
 
-</div><div
+</div>
+
+<div
 id="adminStatus"
 class="admin-status">
 👑 Admin Mode চালু
-</div><div class="member-area"><div
+</div>
+
+<div class="member-area">
+
+<div
 id="memberCount"
 class="member-count">
 👥 Member: ...
-</div><button
+</div>
+
+<button
 id="joinButton"
 class="join-button"
 onclick="joinWebsite()">
 🤝 Join করুন
 </button>
 
-</div></header><div class="container"><div class="top-buttons"><button onclick="goHome()">
+</div>
+
+</header>
+
+
+<div class="container">
+
+<div class="top-buttons">
+
+<button onclick="goHome()">
 🏠 Home
-</button><button onclick="goBack()">
+</button>
+
+<button onclick="goBack()">
 ⬅️ Back
-</button></div><div class="box"><h2>📁 Picture Folder</h2><div id="currentFolder">
+</button>
+
+</div>
+
+
+<div class="box">
+
+<h2>📁 Picture Folder</h2>
+
+<div id="currentFolder">
 📁 Home
-</div><div
+</div>
+
+<div
 id="adminFolderActions"
 class="folder-actions"
-style="display:none;"><button onclick="createFolder()">
+style="display:none;">
+
+<button onclick="createFolder()">
 ➕ নতুন Folder
-</button><button onclick="refreshFolders()">
+</button>
+
+<button onclick="refreshFolders()">
 🔄 Refresh
-</button></div><div
+</button>
+
+</div>
+
+<div
 id="publicRefreshArea"
-class="folder-actions"><button onclick="refreshFolders()">
+class="folder-actions">
+
+<button onclick="refreshFolders()">
 🔄 Refresh
-</button></div><div
+</button>
+
+</div>
+
+<div
 id="folders"
-class="folders"><div class="empty">
+class="folders">
+
+<div class="empty">
 ⏳ Folder লোড হচ্ছে...
-</div></div></div><div
+</div>
+
+</div>
+
+</div>
+
+
+<div
 id="adminUploadBox"
 class="box"
-style="display:none;"><h2>📤 ছবি পোস্ট করুন</h2><input
+style="display:none;">
+
+<h2>📤 ছবি পোস্ট করুন</h2>
+
+<input
 type="file"
 id="photoInput"
 accept="image/*"
 multiple>
 
-<div id="previewArea"></div><button id="uploadButton">
+<div id="previewArea"></div>
+
+<button id="uploadButton">
 📤 ছবি পোস্ট করুন
-</button><div id="message"></div></div><div class="box"><h2>🖼️ পোস্ট করা ছবি</h2><div
+</button>
+
+<div id="message"></div>
+
+</div>
+
+
+<div class="box">
+
+<h2>🖼️ পোস্ট করা ছবি</h2>
+
+<div
 id="gallery"
-class="gallery"><div class="empty">
+class="gallery">
+
+<div class="empty">
 ছবি লোড হচ্ছে...
-</div></div></div></div><div id="loginModal"><div class="login-box"><h2>🔐 Admin Login</h2><input
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div id="loginModal">
+
+<div class="login-box">
+
+<h2>🔐 Admin Login</h2>
+
+<input
 type="email"
 id="loginEmail"
 placeholder="Admin Email"
@@ -842,11 +982,31 @@ onclick="closeLogin()">
 ✕ বন্ধ
 </button>
 
-<div id="loginMessage"></div></div></div><div id="viewer"><div class="viewer-top"><button onclick="closeViewer()">
+<div id="loginMessage"></div>
+
+</div>
+
+</div>
+
+
+<div id="viewer">
+
+<div class="viewer-top">
+
+<button onclick="closeViewer()">
 ✕ বন্ধ
-</button><button onclick="goHome();closeViewer();">
+</button>
+
+<button onclick="goHome();closeViewer();">
 🏠 Home
-</button></div><div class="viewer-stage"><button
+</button>
+
+</div>
+
+
+<div class="viewer-stage">
+
+<button
 class="viewer-arrow viewer-prev"
 onclick="previousImage()">
 ‹
@@ -854,7 +1014,8 @@ onclick="previousImage()">
 
 <img
 id="viewerImage"
-alt="Picture">
+alt="Picture"
+decoding="async">
 
 <button
 class="viewer-arrow viewer-next"
@@ -862,13 +1023,27 @@ onclick="nextImage()">
 ›
 </button>
 
-</div><div class="viewer-bottom"><button
+</div>
+
+
+<div class="viewer-bottom">
+
+<button
 id="viewerLike"
 onclick="likeCurrentImage()">
 ❤️ 0
 </button>
 
-</div></div><script>
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   SUPABASE
+========================================= */
 
 const SUPABASE_URL =
 "https://vhqiqbapbxwmvycxrsvc.supabase.co";
@@ -885,6 +1060,10 @@ SUPABASE_URL,
 SUPABASE_KEY
 );
 
+
+/* =========================================
+   ELEMENTS
+========================================= */
 
 const photoInput =
 document.getElementById("photoInput");
@@ -956,17 +1135,31 @@ const joinButton =
 document.getElementById("joinButton");
 
 
+/* =========================================
+   STATE
+========================================= */
+
 let currentUser = null;
 let isAdmin = false;
 let isMember = false;
 
 let allFolders = [];
+
 let currentFolderId = null;
+
 let currentPath = [];
+
 let currentImages = [];
+
 let currentViewerIndex = 0;
 
 let photoLoadRequestId = 0;
+
+let appStarted = false;
+
+let photoUrlCache = new Map();
+
+let photoLikeCache = new Map();
 
 const FOLDER_STORAGE_KEY =
 "picture_post_current_folder";
@@ -975,3087 +1168,3341 @@ const LOCAL_LIKE_KEY =
 "picture_post_local_likes";
 
 
+/* =========================================
+   ADMIN
+========================================= */
+
 function checkAdmin(user){
 
-if(!user){
-return false;
-}
+  if(!user){
+    return false;
+  }
 
-return String(
-user.email || ""
-).toLowerCase().trim()
-===
-ADMIN_EMAIL.toLowerCase().trim();
+  return String(
+    user.email || ""
+  ).toLowerCase().trim()
+  ===
+  ADMIN_EMAIL.toLowerCase().trim();
 
 }
 
 
 function updateAdminUI(){
 
-if(isAdmin){
+  if(isAdmin){
 
-loginButton.style.display="none";
-logoutButton.style.display="inline-block";
-adminStatus.style.display="block";
-adminFolderActions.style.display="flex";
-publicRefreshArea.style.display="none";
-adminUploadBox.style.display="block";
+    loginButton.style.display="none";
 
-}else{
+    logoutButton.style.display="inline-block";
 
-loginButton.style.display="inline-block";
-logoutButton.style.display="none";
-adminStatus.style.display="none";
-adminFolderActions.style.display="none";
-publicRefreshArea.style.display="flex";
-adminUploadBox.style.display="none";
+    adminStatus.style.display="block";
+
+    adminFolderActions.style.display="flex";
+
+    publicRefreshArea.style.display="none";
+
+    adminUploadBox.style.display="block";
+
+  }else{
+
+    loginButton.style.display="inline-block";
+
+    logoutButton.style.display="none";
+
+    adminStatus.style.display="none";
+
+    adminFolderActions.style.display="none";
+
+    publicRefreshArea.style.display="flex";
+
+    adminUploadBox.style.display="none";
+
+  }
 
 }
 
-}
 
+/* =========================================
+   AUTH STATE
+========================================= */
 
 supabaseClient.auth.onAuthStateChange(
-async function(event,session){
+  async function(event,session){
 
-currentUser =
-session ? session.user : null;
+    currentUser =
+      session ? session.user : null;
 
-isAdmin =
-checkAdmin(currentUser);
+    isAdmin =
+      checkAdmin(currentUser);
 
-updateAdminUI();
+    updateAdminUI();
 
-if(event === "SIGNED_IN"){
+    if(
+      event==="SIGNED_IN" &&
+      appStarted
+    ){
 
-await ensureMemberRecord();
+      await ensureMemberRecord();
 
-await checkMemberStatus();
+      await checkMemberStatus();
 
-await loadFolders();
+      await loadFolders();
 
-await loadPhotos();
+      await loadPhotos();
 
-}
+    }
 
-}
+  }
 );
 
+
+/* =========================================
+   ANONYMOUS SESSION
+========================================= */
 
 async function ensureAnonymousSession(){
 
-const {
-data,
-error
-} =
-await supabaseClient.auth.getSession();
+  const {
+    data,
+    error
+  } =
+  await supabaseClient.auth.getSession();
 
-if(error){
+  if(error){
 
-console.error(
-"Session error:",
-error
-);
+    console.error(
+      "Session error:",
+      error
+    );
 
-return false;
+    return false;
+
+  }
+
+  if(data.session){
+
+    currentUser =
+      data.session.user;
+
+    isAdmin =
+      checkAdmin(currentUser);
+
+    return true;
+
+  }
+
+  const {
+    data:authData,
+    error:authError
+  } =
+  await supabaseClient.auth
+  .signInAnonymously();
+
+  if(authError){
+
+    console.error(
+      "Anonymous login error:",
+      authError
+    );
+
+    message.textContent =
+      "❌ Member system চালু করা যায়নি: "+
+      authError.message;
+
+    return false;
+
+  }
+
+  currentUser =
+    authData.user;
+
+  isAdmin =
+    checkAdmin(currentUser);
+
+  return true;
 
 }
 
-if(data.session){
 
-currentUser =
-data.session.user;
-
-isAdmin =
-checkAdmin(currentUser);
-
-return true;
-
-}
-
-const {
-data:authData,
-error:authError
-} =
-await supabaseClient.auth
-.signInAnonymously();
-
-if(authError){
-
-console.error(
-"Anonymous login error:",
-authError
-);
-
-message.textContent =
-"❌ Member system চালু করা যায়নি: "+
-authError.message;
-
-return false;
-
-}
-
-currentUser =
-authData.user;
-
-isAdmin =
-checkAdmin(currentUser);
-
-return true;
-
-}
-
+/* =========================================
+   MEMBER
+========================================= */
 
 async function ensureMemberRecord(){
 
-if(!currentUser || isAdmin){
-return;
-}
+  if(!currentUser || isAdmin){
+    return;
+  }
 
-try{
+  try{
 
-const {
-data,
-error
-} =
-await supabaseClient
-.from("members")
-.select("id,user_id")
-.eq(
-"user_id",
-currentUser.id
-)
-.maybeSingle();
+    const {
+      data,
+      error
+    } =
+    await supabaseClient
+    .from("members")
+    .select("id,user_id")
+    .eq(
+      "user_id",
+      currentUser.id
+    )
+    .maybeSingle();
 
-if(error){
+    if(error){
 
-console.warn(
-"Member lookup:",
-error.message
-);
+      console.warn(
+        "Member lookup:",
+        error.message
+      );
 
-return;
+      return;
 
-}
+    }
 
-if(!data){
-return;
-}
+    if(data){
+      isMember=true;
+    }
 
-isMember=true;
+  }catch(error){
 
-}catch(error){
+    console.error(error);
 
-console.error(error);
-
-}
-
-}
-
-
-function openLogin(){
-
-loginModal.style.display="flex";
-
-loginMessage.textContent="";
-loginEmail.value="";
-loginPassword.value="";
-
-setTimeout(
-function(){
-loginEmail.focus();
-},
-100
-);
-
-}
-
-
-function closeLogin(){
-
-loginModal.style.display="none";
-loginMessage.textContent="";
-
-}
-
-
-async function loginAdmin(){
-
-const email =
-loginEmail.value.trim();
-
-const password =
-loginPassword.value;
-
-if(!email){
-
-loginMessage.textContent =
-"❌ Email দিন.";
-
-return;
-
-}
-
-if(!password){
-
-loginMessage.textContent =
-"❌ Password দিন.";
-
-return;
-
-}
-
-if(
-email.toLowerCase() !==
-ADMIN_EMAIL.toLowerCase()
-){
-
-loginMessage.textContent =
-"❌ এই Email Admin নয়.";
-
-return;
-
-}
-
-loginSubmit.disabled=true;
-
-loginMessage.textContent =
-"⏳ Admin Login হচ্ছে...";
-
-await supabaseClient.auth.signOut();
-
-const {
-data,
-error
-} =
-await supabaseClient.auth
-.signInWithPassword({
-email:email,
-password:password
-});
-
-
-if(error){
-
-console.error(
-"Admin login error:",
-error
-);
-
-loginMessage.textContent =
-"❌ Login হয়নি: "+
-error.message;
-
-loginSubmit.disabled=false;
-
-await ensureAnonymousSession();
-
-return;
-
-}
-
-
-currentUser =
-data.user;
-
-isAdmin =
-checkAdmin(currentUser);
-
-if(!isAdmin){
-
-await supabaseClient.auth.signOut();
-
-await ensureAnonymousSession();
-
-loginMessage.textContent =
-"❌ এই account Admin নয়.";
-
-loginSubmit.disabled=false;
-
-return;
-
-}
-
-
-updateAdminUI();
-
-loginMessage.textContent =
-"✅ Admin Login সফল হয়েছে!";
-
-setTimeout(
-async function(){
-
-closeLogin();
-
-message.textContent =
-"👑 Admin Mode চালু হয়েছে.";
-
-await loadFolders();
-await loadPhotos();
-
-},
-500
-);
-
-loginSubmit.disabled=false;
-
-}
-
-
-async function logoutAdmin(){
-
-const answer =
-confirm(
-"🚪 Admin Logout করবেন?"
-);
-
-if(!answer){
-return;
-}
-
-await supabaseClient.auth.signOut();
-
-currentUser=null;
-isAdmin=false;
-isMember=false;
-
-updateAdminUI();
-
-await ensureAnonymousSession();
-
-await checkMemberStatus();
-
-message.textContent =
-"✅ Admin Logout হয়েছে.";
-
-await loadFolders();
-
-await loadPhotos();
-
-}
-
-
-function requireAdmin(){
-
-if(!isAdmin){
-
-alert(
-"🔒 এই কাজটি শুধু Admin করতে পারবেন."
-);
-
-return false;
-
-}
-
-return true;
+  }
 
 }
 
 
 async function checkMemberStatus(){
 
-if(isAdmin){
+  if(isAdmin){
 
-isMember=true;
-updateJoinButton();
+    isMember=true;
 
-return true;
+    updateJoinButton();
 
-}
+    return true;
 
-if(!currentUser){
+  }
 
-isMember=false;
-updateJoinButton();
+  if(!currentUser){
 
-return false;
+    isMember=false;
 
-}
+    updateJoinButton();
 
-try{
+    return false;
 
-const {
-data,
-error
-} =
-await supabaseClient
-.from("members")
-.select("id")
-.eq(
-"user_id",
-currentUser.id
-)
-.maybeSingle();
+  }
 
-if(!error && data){
+  try{
 
-isMember=true;
+    const {
+      data,
+      error
+    } =
+    await supabaseClient
+    .from("members")
+    .select("id")
+    .eq(
+      "user_id",
+      currentUser.id
+    )
+    .maybeSingle();
 
-}else{
+    if(!error && data){
 
-isMember=false;
+      isMember=true;
 
-}
+    }else{
 
-}catch(error){
+      isMember=false;
 
-console.error(
-"Member status:",
-error
-);
+    }
 
-isMember=false;
+  }catch(error){
 
-}
+    console.error(
+      "Member status:",
+      error
+    );
 
-updateJoinButton();
+    isMember=false;
 
-return isMember;
+  }
+
+  updateJoinButton();
+
+  return isMember;
 
 }
 
 
 function updateJoinButton(){
 
-if(isMember || isAdmin){
+  if(isMember || isAdmin){
 
-joinButton.textContent =
-isAdmin
-?
-"👑 Admin"
-:
-"✅ Joined";
+    joinButton.textContent =
+      isAdmin
+      ?
+      "👑 Admin"
+      :
+      "✅ Joined";
 
-joinButton.classList.add("joined");
-joinButton.disabled=true;
+    joinButton.classList.add("joined");
 
-}else{
+    joinButton.disabled=true;
 
-joinButton.textContent =
-"🤝 Join করুন";
+  }else{
 
-joinButton.classList.remove("joined");
-joinButton.disabled=false;
+    joinButton.textContent =
+      "🤝 Join করুন";
 
-}
+    joinButton.classList.remove("joined");
+
+    joinButton.disabled=false;
+
+  }
 
 }
 
 
 async function joinWebsite(){
 
-if(isAdmin){
-return;
-}
+  if(isAdmin || isMember){
+    return;
+  }
 
-if(isMember){
-return;
-}
+  joinButton.disabled=true;
 
-joinButton.disabled=true;
+  joinButton.textContent =
+    "⏳ Joining...";
 
-joinButton.textContent =
-"⏳ Joining...";
+  try{
 
+    const sessionOK =
+      await ensureAnonymousSession();
 
-try{
+    if(!sessionOK){
 
-const sessionOK =
-await ensureAnonymousSession();
+      throw new Error(
+        "Anonymous session তৈরি হয়নি."
+      );
 
-if(!sessionOK){
+    }
 
-throw new Error(
-"Anonymous session তৈরি হয়নি."
-);
+    const {
+      data:existing,
+      error:checkError
+    } =
+    await supabaseClient
+    .from("members")
+    .select("id")
+    .eq(
+      "user_id",
+      currentUser.id
+    )
+    .maybeSingle();
 
-}
+    if(checkError){
+      throw checkError;
+    }
 
+    if(existing){
 
-const {
-data:existing,
-error:checkError
-} =
-await supabaseClient
-.from("members")
-.select("id")
-.eq(
-"user_id",
-currentUser.id
-)
-.maybeSingle();
+      isMember=true;
 
+    }else{
 
-if(checkError){
-throw checkError;
-}
+      const {
+        error:insertError
+      } =
+      await supabaseClient
+      .from("members")
+      .insert({
 
+        user_id:
+          currentUser.id,
 
-if(existing){
+        member_key:
+          currentUser.id
 
-isMember=true;
+      });
 
-}else{
+      if(insertError){
+        throw insertError;
+      }
 
-const {
-error:insertError
-} =
-await supabaseClient
-.from("members")
-.insert({
+      isMember=true;
 
-user_id:
-currentUser.id,
+    }
 
-member_key:
-currentUser.id
+    updateJoinButton();
 
-});
+    message.textContent =
+      "✅ আপনি সফলভাবে Member হয়েছেন!";
 
-if(insertError){
-throw insertError;
-}
+    await loadMemberCount();
 
-isMember=true;
+    await loadFolders();
 
-}
+    await loadPhotos();
 
+  }catch(error){
 
-updateJoinButton();
+    console.error(
+      "Join error:",
+      error
+    );
 
-message.textContent =
-"✅ আপনি সফলভাবে Member হয়েছেন!";
+    isMember=false;
 
-await loadMemberCount();
+    updateJoinButton();
 
-await loadFolders();
+    alert(
+      "❌ Join করা যায়নি.\n"+
+      error.message
+    );
 
-await loadPhotos();
-
-}catch(error){
-
-console.error(
-"Join error:",
-error
-);
-
-isMember=false;
-
-updateJoinButton();
-
-alert(
-"❌ Join করা যায়নি.\n"+
-error.message
-);
-
-}
+  }
 
 }
 
 
 async function loadMemberCount(){
 
-memberCount.textContent =
-"👥 Member: ...";
+  memberCount.textContent =
+    "👥 Member: ...";
 
-const {
-data,
-error
-} =
-await supabaseClient
-.rpc("get_member_count");
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+  .rpc("get_member_count");
 
-if(error){
+  if(error){
 
-console.warn(
-"Member count:",
-error.message
-);
+    console.warn(
+      "Member count:",
+      error.message
+    );
 
-memberCount.textContent =
-"👥 Member";
+    memberCount.textContent =
+      "👥 Member";
 
-return;
+    return;
 
-}
+  }
 
-memberCount.textContent =
-"👥 Member: "+
-Number(data || 0);
+  memberCount.textContent =
+    "👥 Member: "+
+    Number(data || 0);
 
 }
 
 
 function showJoinLock(){
 
-gallery.innerHTML="";
+  gallery.innerHTML="";
 
-const lock =
-document.createElement("div");
+  const lock =
+    document.createElement("div");
 
-lock.className =
-"join-lock";
+  lock.className =
+    "join-lock";
 
-lock.innerHTML =
-'<div class="join-lock-icon">🔒</div>'+
-'<div class="join-lock-title">'+
-'ছবি দেখতে Join করুন'+
-'</div>'+
-'<div class="join-lock-text">'+
-'এই ওয়েবসাইটের ছবি দেখতে আগে ফ্রি Join করতে হবে।'+
-'</div>'+
-'<button class="join-lock-button" onclick="joinWebsite()">'+
-'🤝 এখনই Join করুন'+
-'</button>';
+  lock.innerHTML =
+    '<div class="join-lock-icon">🔒</div>'+
+    '<div class="join-lock-title">'+
+    'ছবি দেখতে Join করুন'+
+    '</div>'+
+    '<div class="join-lock-text">'+
+    'এই ওয়েবসাইটের ছবি দেখতে আগে ফ্রি Join করতে হবে।'+
+    '</div>'+
+    '<button class="join-lock-button" onclick="joinWebsite()">'+
+    '🤝 এখনই Join করুন'+
+    '</button>';
 
-gallery.appendChild(lock);
+  gallery.appendChild(lock);
 
 }
 
+
+/* =========================================
+   LOGIN
+========================================= */
+
+function openLogin(){
+
+  loginModal.style.display="flex";
+
+  loginMessage.textContent="";
+
+  loginEmail.value="";
+
+  loginPassword.value="";
+
+  setTimeout(
+    function(){
+      loginEmail.focus();
+    },
+    100
+  );
+
+}
+
+
+function closeLogin(){
+
+  loginModal.style.display="none";
+
+  loginMessage.textContent="";
+
+}
+
+
+async function loginAdmin(){
+
+  const email =
+    loginEmail.value.trim();
+
+  const password =
+    loginPassword.value;
+
+  if(!email){
+
+    loginMessage.textContent =
+      "❌ Email দিন.";
+
+    return;
+
+  }
+
+  if(!password){
+
+    loginMessage.textContent =
+      "❌ Password দিন.";
+
+    return;
+
+  }
+
+  if(
+    email.toLowerCase() !==
+    ADMIN_EMAIL.toLowerCase()
+  ){
+
+    loginMessage.textContent =
+      "❌ এই Email Admin নয়.";
+
+    return;
+
+  }
+
+  loginSubmit.disabled=true;
+
+  loginMessage.textContent =
+    "⏳ Admin Login হচ্ছে...";
+
+  await supabaseClient.auth.signOut();
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient.auth
+  .signInWithPassword({
+
+    email:email,
+
+    password:password
+
+  });
+
+  if(error){
+
+    console.error(
+      "Admin login error:",
+      error
+    );
+
+    loginMessage.textContent =
+      "❌ Login হয়নি: "+
+      error.message;
+
+    loginSubmit.disabled=false;
+
+    await ensureAnonymousSession();
+
+    return;
+
+  }
+
+  currentUser =
+    data.user;
+
+  isAdmin =
+    checkAdmin(currentUser);
+
+  if(!isAdmin){
+
+    await supabaseClient.auth.signOut();
+
+    await ensureAnonymousSession();
+
+    loginMessage.textContent =
+      "❌ এই account Admin নয়.";
+
+    loginSubmit.disabled=false;
+
+    return;
+
+  }
+
+  updateAdminUI();
+
+  loginMessage.textContent =
+    "✅ Admin Login সফল হয়েছে!";
+
+  setTimeout(
+    async function(){
+
+      closeLogin();
+
+      message.textContent =
+        "👑 Admin Mode চালু হয়েছে.";
+
+      await loadFolders();
+
+      await loadPhotos();
+
+    },
+    500
+  );
+
+  loginSubmit.disabled=false;
+
+}
+
+
+async function logoutAdmin(){
+
+  const answer =
+    confirm(
+      "🚪 Admin Logout করবেন?"
+    );
+
+  if(!answer){
+    return;
+  }
+
+  await supabaseClient.auth.signOut();
+
+  currentUser=null;
+
+  isAdmin=false;
+
+  isMember=false;
+
+  updateAdminUI();
+
+  await ensureAnonymousSession();
+
+  await checkMemberStatus();
+
+  message.textContent =
+    "✅ Admin Logout হয়েছে.";
+
+  await loadFolders();
+
+  await loadPhotos();
+
+}
+
+
+function requireAdmin(){
+
+  if(!isAdmin){
+
+    alert(
+      "🔒 এই কাজটি শুধু Admin করতে পারবেন."
+    );
+
+    return false;
+
+  }
+
+  return true;
+
+}
+
+
+/* =========================================
+   FOLDER STORAGE
+========================================= */
 
 function saveCurrentFolder(){
 
-if(currentFolderId){
+  if(currentFolderId){
 
-localStorage.setItem(
-FOLDER_STORAGE_KEY,
-String(currentFolderId)
-);
+    localStorage.setItem(
+      FOLDER_STORAGE_KEY,
+      String(currentFolderId)
+    );
 
-}else{
+  }else{
 
-localStorage.removeItem(
-FOLDER_STORAGE_KEY
-);
+    localStorage.removeItem(
+      FOLDER_STORAGE_KEY
+    );
 
-}
+  }
 
 }
 
 
 function restoreCurrentFolder(){
 
-const saved =
-localStorage.getItem(
-FOLDER_STORAGE_KEY
-);
+  const saved =
+    localStorage.getItem(
+      FOLDER_STORAGE_KEY
+    );
 
-if(!saved){
+  if(!saved){
 
-currentFolderId=null;
-return;
+    currentFolderId=null;
+
+    return;
+
+  }
+
+  const id =
+    Number(saved);
+
+  const exists =
+    allFolders.some(
+      folder =>
+        folder.id===id
+    );
+
+  if(exists){
+
+    currentFolderId=id;
+
+  }else{
+
+    currentFolderId=null;
+
+    localStorage.removeItem(
+      FOLDER_STORAGE_KEY
+    );
+
+  }
 
 }
 
-const id =
-Number(saved);
 
-const exists =
-allFolders.some(
-folder=>folder.id===id
-);
-
-if(exists){
-
-currentFolderId=id;
-
-}else{
-
-currentFolderId=null;
-
-localStorage.removeItem(
-FOLDER_STORAGE_KEY
-);
-
-}
-
-}
-
+/* =========================================
+   FOLDERS
+========================================= */
 
 async function loadFolders(){
 
-folders.innerHTML =
-'<div class="empty">⏳ Folder লোড হচ্ছে...</div>';
+  folders.innerHTML =
+    '<div class="empty">⏳ Folder লোড হচ্ছে...</div>';
 
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+  .from("folders")
+  .select(
+    "id,name,parent_id"
+  )
+  .order(
+    "id",
+    {
+      ascending:true
+    }
+  );
 
-const {
-data,
-error
-} =
-await supabaseClient
-.from("folders")
-.select(
-"id,name,parent_id"
-)
-.order(
-"id",
-{ascending:true}
-);
+  if(error){
 
+    console.error(
+      "Folder error:",
+      error
+    );
 
-if(error){
+    folders.innerHTML =
+      '<div class="empty">❌ Folder লোড করা যায়নি।</div>';
 
-console.error(
-"Folder error:",
-error
-);
+    return false;
 
-folders.innerHTML =
-'<div class="empty">❌ Folder লোড করা যায়নি।</div>';
+  }
 
-return false;
+  allFolders =
+    data || [];
 
-}
+  restoreCurrentFolder();
 
+  renderFolders();
 
-allFolders =
-data || [];
-
-restoreCurrentFolder();
-
-renderFolders();
-
-return true;
+  return true;
 
 }
 
 
 function getCurrentPath(){
 
-if(!currentFolderId){
-return [];
-}
+  if(!currentFolderId){
+    return [];
+  }
 
-const result=[];
+  const result=[];
 
-let id =
-currentFolderId;
+  let id =
+    currentFolderId;
 
-while(id){
+  while(id){
 
-const folder =
-allFolders.find(
-item=>item.id===id
-);
+    const folder =
+      allFolders.find(
+        item =>
+          item.id===id
+      );
 
-if(!folder){
-break;
-}
+    if(!folder){
+      break;
+    }
 
-result.unshift(
-folder.name
-);
+    result.unshift(
+      folder.name
+    );
 
-id =
-folder.parent_id;
+    id =
+      folder.parent_id;
 
-}
+  }
 
-return result;
+  return result;
 
 }
 
 
 function getFolderStoragePath(folderId){
 
-const parts=[];
+  const parts=[];
 
-let id =
-folderId;
+  let id =
+    folderId;
 
-while(id){
+  while(id){
 
-const folder =
-allFolders.find(
-item=>item.id===id
-);
+    const folder =
+      allFolders.find(
+        item =>
+          item.id===id
+      );
 
-if(!folder){
-break;
-}
+    if(!folder){
+      break;
+    }
 
-parts.unshift(
-"folder_"+folder.id
-);
+    parts.unshift(
+      "folder_"+folder.id
+    );
 
-id =
-folder.parent_id;
+    id =
+      folder.parent_id;
 
-}
+  }
 
-return parts.join("/");
+  return parts.join("/");
 
 }
 
 
 function getStoragePath(){
 
-if(!currentFolderId){
-return "";
-}
+  if(!currentFolderId){
+    return "";
+  }
 
-return getFolderStoragePath(
-currentFolderId
-);
+  return getFolderStoragePath(
+    currentFolderId
+  );
 
 }
 
 
 function renderFolders(){
 
-folders.innerHTML="";
+  folders.innerHTML="";
 
-const path =
-getCurrentPath();
+  const path =
+    getCurrentPath();
 
-currentPath =
-path;
+  currentPath =
+    path;
 
-currentFolder.textContent =
-path.length===0
-?
-"📁 Home"
-:
-"📁 "+path.join(" / ");
+  currentFolder.textContent =
+    path.length===0
+    ?
+    "📁 Home"
+    :
+    "📁 "+path.join(" / ");
 
+  const children =
+    allFolders.filter(
+      folder =>
+        folder.parent_id ===
+        currentFolderId
+    );
 
-const children =
-allFolders.filter(
-folder =>
-folder.parent_id ===
-currentFolderId
-);
+  if(children.length===0){
 
+    folders.innerHTML =
+      '<div class="empty">এই Folder-এ কোনো Sub-folder নেই।</div>';
 
-if(children.length===0){
+    return;
 
-folders.innerHTML =
-'<div class="empty">এই Folder-এ কোনো Sub-folder নেই।</div>';
+  }
 
-return;
+  children.forEach(
+    function(folder){
 
-}
+      const div =
+        document.createElement("div");
 
+      div.className="folder";
 
-children.forEach(
-function(folder){
+      const openButton =
+        document.createElement("button");
 
-const div =
-document.createElement("div");
+      openButton.className =
+        "folder-open";
 
-div.className="folder";
+      openButton.innerHTML =
+        '<span class="folder-icon">📁</span>'+
+        '<span class="folder-name">'+
+        escapeHtml(folder.name)+
+        '</span>';
 
+      openButton.onclick =
+        function(){
 
-const openButton =
-document.createElement("button");
+          openFolder(
+            folder.id
+          );
 
-openButton.className =
-"folder-open";
+        };
 
-openButton.innerHTML =
-'<span class="folder-icon">📁</span>'+
-'<span class="folder-name">'+
-escapeHtml(folder.name)+
-'</span>';
+      div.appendChild(
+        openButton
+      );
 
-openButton.onclick =
-function(){
+      if(isAdmin){
 
-openFolder(folder.id);
+        const manage =
+          document.createElement("div");
 
-};
+        manage.className =
+          "folder-manage";
 
-div.appendChild(
-openButton
-);
+        const renameButton =
+          document.createElement("button");
 
+        renameButton.className =
+          "rename-button";
 
-if(isAdmin){
+        renameButton.textContent =
+          "✏️ Rename";
 
-const manage =
-document.createElement("div");
+        renameButton.onclick =
+          function(event){
 
-manage.className =
-"folder-manage";
+            event.stopPropagation();
 
+            renameFolder(
+              folder
+            );
 
-const renameButton =
-document.createElement("button");
+          };
 
-renameButton.className =
-"rename-button";
+        const deleteButton =
+          document.createElement("button");
 
-renameButton.textContent =
-"✏️ Rename";
+        deleteButton.className =
+          "delete-button";
 
-renameButton.onclick =
-function(event){
+        deleteButton.textContent =
+          "🗑️ Delete";
 
-event.stopPropagation();
+        deleteButton.onclick =
+          function(event){
 
-renameFolder(folder);
+            event.stopPropagation();
 
-};
+            deleteFolder(
+              folder
+            );
 
+          };
 
-const deleteButton =
-document.createElement("button");
+        manage.appendChild(
+          renameButton
+        );
 
-deleteButton.className =
-"delete-button";
+        manage.appendChild(
+          deleteButton
+        );
 
-deleteButton.textContent =
-"🗑️ Delete";
+        div.appendChild(
+          manage
+        );
 
-deleteButton.onclick =
-function(event){
+      }
 
-event.stopPropagation();
+      folders.appendChild(
+        div
+      );
 
-deleteFolder(folder);
-
-};
-
-
-manage.appendChild(
-renameButton
-);
-
-manage.appendChild(
-deleteButton
-);
-
-div.appendChild(
-manage
-);
-
-}
-
-folders.appendChild(
-div
-);
-
-}
-);
+    }
+  );
 
 }
 
 
 function openFolder(id){
 
-currentFolderId =
-id;
+  currentFolderId =
+    id;
 
-saveCurrentFolder();
+  saveCurrentFolder();
 
-renderFolders();
+  renderFolders();
 
-loadPhotos();
+  loadPhotos();
 
 }
 
 
 function goHome(){
 
-currentFolderId=null;
+  currentFolderId=null;
 
-saveCurrentFolder();
+  saveCurrentFolder();
 
-renderFolders();
+  renderFolders();
 
-loadPhotos();
+  loadPhotos();
 
 }
 
 
 function goBack(){
 
-if(!currentFolderId){
-return;
-}
+  if(!currentFolderId){
+    return;
+  }
 
-const current =
-allFolders.find(
-folder =>
-folder.id ===
-currentFolderId
-);
+  const current =
+    allFolders.find(
+      folder =>
+        folder.id ===
+        currentFolderId
+    );
 
-currentFolderId =
-current
-?
-current.parent_id
-:
-null;
+  currentFolderId =
+    current
+    ?
+    current.parent_id
+    :
+    null;
 
-saveCurrentFolder();
+  saveCurrentFolder();
 
-renderFolders();
+  renderFolders();
 
-loadPhotos();
+  loadPhotos();
 
 }
 
 
 async function createFolder(){
 
-if(!requireAdmin()){
-return;
-}
+  if(!requireAdmin()){
+    return;
+  }
 
-const folderName =
-prompt(
-currentFolderId
-?
-"Sub-folder-এর নাম লিখুন:"
-:
-"নতুন Folder-এর নাম লিখুন:"
-);
+  const folderName =
+    prompt(
+      currentFolderId
+      ?
+      "Sub-folder-এর নাম লিখুন:"
+      :
+      "নতুন Folder-এর নাম লিখুন:"
+    );
 
-if(!folderName){
-return;
-}
+  if(!folderName){
+    return;
+  }
 
-const cleanName =
-folderName.trim();
+  const cleanName =
+    folderName.trim();
 
-if(!cleanName){
-return;
-}
+  if(!cleanName){
+    return;
+  }
 
+  const exists =
+    allFolders.some(
+      folder =>
+        folder.parent_id ===
+        currentFolderId &&
+        folder.name.toLowerCase() ===
+        cleanName.toLowerCase()
+    );
 
-const exists =
-allFolders.some(
-folder =>
-folder.parent_id ===
-currentFolderId &&
-folder.name.toLowerCase() ===
-cleanName.toLowerCase()
-);
+  if(exists){
 
-if(exists){
+    alert(
+      "এই নামে Folder আগে থেকেই আছে।"
+    );
 
-alert(
-"এই নামে Folder আগে থেকেই আছে।"
-);
+    return;
 
-return;
+  }
 
-}
+  const {
+    error
+  } =
+  await supabaseClient
+  .from("folders")
+  .insert({
 
+    name:cleanName,
 
-const {
-error
-} =
-await supabaseClient
-.from("folders")
-.insert({
+    parent_id:
+      currentFolderId
 
-name:cleanName,
+  });
 
-parent_id:
-currentFolderId
+  if(error){
 
-});
+    alert(
+      "❌ Folder তৈরি হয়নি: "+
+      error.message
+    );
 
+    return;
 
-if(error){
+  }
 
-alert(
-"❌ Folder তৈরি হয়নি: "+
-error.message
-);
+  message.textContent =
+    "✅ Folder তৈরি হয়েছে.";
 
-return;
-
-}
-
-
-message.textContent =
-"✅ Folder তৈরি হয়েছে.";
-
-await loadFolders();
+  await loadFolders();
 
 }
 
 
 async function renameFolder(folder){
 
-if(!requireAdmin()){
-return;
-}
+  if(!requireAdmin()){
+    return;
+  }
 
-const newName =
-prompt(
-"নতুন Folder নাম লিখুন:",
-folder.name
-);
+  const newName =
+    prompt(
+      "নতুন Folder নাম লিখুন:",
+      folder.name
+    );
 
-if(!newName){
-return;
-}
+  if(!newName){
+    return;
+  }
 
-const cleanName =
-newName.trim();
+  const cleanName =
+    newName.trim();
 
-if(
-!cleanName ||
-cleanName===folder.name
-){
+  if(
+    !cleanName ||
+    cleanName===folder.name
+  ){
 
-return;
+    return;
 
-}
+  }
 
+  const exists =
+    allFolders.some(
+      item =>
+        item.id!==folder.id &&
+        item.parent_id===
+        folder.parent_id &&
+        item.name.toLowerCase()===
+        cleanName.toLowerCase()
+    );
 
-const exists =
-allFolders.some(
-item =>
-item.id!==folder.id &&
-item.parent_id===
-folder.parent_id &&
-item.name.toLowerCase()===
-cleanName.toLowerCase()
-);
+  if(exists){
 
-if(exists){
+    alert(
+      "এই নামে Folder আগে থেকেই আছে।"
+    );
 
-alert(
-"এই নামে Folder আগে থেকেই আছে।"
-);
+    return;
 
-return;
+  }
 
-}
+  const {
+    error
+  } =
+  await supabaseClient
+  .from("folders")
+  .update({
+    name:cleanName
+  })
+  .eq(
+    "id",
+    folder.id
+  );
 
+  if(error){
 
-const {
-error
-} =
-await supabaseClient
-.from("folders")
-.update({
-name:cleanName
-})
-.eq(
-"id",
-folder.id
-);
+    alert(
+      "❌ Rename হয়নি: "+
+      error.message
+    );
 
+    return;
 
-if(error){
+  }
 
-alert(
-"❌ Rename হয়নি: "+
-error.message
-);
+  message.textContent =
+    "✅ Folder Rename হয়েছে.";
 
-return;
+  await loadFolders();
 
-}
-
-
-message.textContent =
-"✅ Folder Rename হয়েছে.";
-
-await loadFolders();
-
-loadPhotos();
+  await loadPhotos();
 
 }
 
 
 function getDescendantIds(parentId){
 
-const result=[];
+  const result=[];
 
-const children =
-allFolders.filter(
-folder =>
-folder.parent_id===
-parentId
-);
+  const children =
+    allFolders.filter(
+      folder =>
+        folder.parent_id===
+        parentId
+    );
 
-for(const child of children){
+  for(
+    const child of children
+  ){
 
-result.push(
-child.id
-);
+    result.push(
+      child.id
+    );
 
-result.push(
-...getDescendantIds(
-child.id
-)
-);
+    result.push(
+      ...getDescendantIds(
+        child.id
+      )
+    );
+
+  }
+
+  return result;
 
 }
 
-return result;
 
-}
-
+/* =========================================
+   STORAGE DELETE
+========================================= */
 
 async function listStorageFiles(path){
 
-const {
-data,
-error
-} =
-await supabaseClient
-.storage
-.from("photos")
-.list(
-path,
-{limit:1000}
-);
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+  .storage
+  .from("photos")
+  .list(
+    path,
+    {
+      limit:1000
+    }
+  );
 
+  if(error){
 
-if(error){
+    console.error(
+      "Storage list error:",
+      error
+    );
 
-console.error(
-"Storage list error:",
-error
-);
+    return null;
 
-return null;
+  }
 
-}
+  const files=[];
 
+  for(
+    const item of data || []
+  ){
 
-const files=[];
+    const fullPath =
+      path
+      ?
+      path+"/"+item.name
+      :
+      item.name;
 
-for(const item of data || []){
+    if(item.metadata){
 
-const fullPath =
-path
-?
-path+"/"+item.name
-:
-item.name;
+      files.push(
+        fullPath
+      );
 
+    }else{
 
-if(item.metadata){
+      const childFiles =
+        await listStorageFiles(
+          fullPath
+        );
 
-files.push(
-fullPath
-);
+      if(childFiles===null){
+        return null;
+      }
 
-}else{
+      files.push(
+        ...childFiles
+      );
 
-const childFiles =
-await listStorageFiles(
-fullPath
-);
+    }
 
-if(childFiles===null){
-return null;
-}
+  }
 
-files.push(
-...childFiles
-);
-
-}
-
-}
-
-return files;
+  return files;
 
 }
 
 
 async function deleteStorageTree(path){
 
-if(!isAdmin){
-return false;
-}
+  if(!isAdmin){
+    return false;
+  }
 
-const files =
-await listStorageFiles(
-path
-);
+  const files =
+    await listStorageFiles(
+      path
+    );
 
-if(files===null){
-return false;
-}
+  if(files===null){
+    return false;
+  }
 
-if(files.length===0){
-return true;
-}
+  if(files.length===0){
+    return true;
+  }
 
+  const {
+    error
+  } =
+  await supabaseClient
+  .storage
+  .from("photos")
+  .remove(files);
 
-const {
-error
-} =
-await supabaseClient
-.storage
-.from("photos")
-.remove(files);
+  if(error){
 
+    console.error(
+      "Storage delete:",
+      error
+    );
 
-if(error){
+    return false;
 
-console.error(
-"Storage delete:",
-error
-);
+  }
 
-return false;
-
-}
-
-return true;
+  return true;
 
 }
 
 
 async function deleteFolder(folder){
 
-if(!requireAdmin()){
-return;
-}
+  if(!requireAdmin()){
+    return;
+  }
 
-const answer =
-confirm(
-'🗑️ "'+
-folder.name+
-'" Folder Delete করবেন?\n\nএই Folder-এর ভিতরের ছবি ও Sub-folder-ও মুছে যাবে।'
-);
+  const answer =
+    confirm(
+      '🗑️ "'+
+      folder.name+
+      '" Folder Delete করবেন?\n\nএই Folder-এর ভিতরের ছবি ও Sub-folder-ও মুছে যাবে।'
+    );
 
-if(!answer){
-return;
-}
+  if(!answer){
+    return;
+  }
 
-message.textContent =
-"⏳ Folder Delete হচ্ছে...";
+  message.textContent =
+    "⏳ Folder Delete হচ্ছে...";
 
+  const ids =
+    getDescendantIds(
+      folder.id
+    );
 
-const ids =
-getDescendantIds(
-folder.id
-);
+  ids.push(
+    folder.id
+  );
 
-ids.push(
-folder.id
-);
+  for(
+    const id of ids
+  ){
 
+    const storagePath =
+      getFolderStoragePath(
+        id
+      );
 
-for(const id of ids){
+    const removed =
+      await deleteStorageTree(
+        storagePath
+      );
 
-const storagePath =
-getFolderStoragePath(id);
+    if(!removed){
 
-const removed =
-await deleteStorageTree(
-storagePath
-);
+      message.textContent =
+        "❌ Folder-এর ছবি Delete করা যায়নি।";
 
-if(!removed){
+      return;
 
-message.textContent =
-"❌ Folder-এর ছবি Delete করা যায়নি।";
+    }
 
-return;
+  }
 
-}
+  const {
+    error
+  } =
+  await supabaseClient
+  .from("folders")
+  .delete()
+  .in(
+    "id",
+    ids
+  );
 
-}
+  if(error){
 
+    alert(
+      "❌ Folder Delete হয়নি: "+
+      error.message
+    );
 
-const {
-error
-} =
-await supabaseClient
-.from("folders")
-.delete()
-.in(
-"id",
-ids
-);
+    return;
 
+  }
 
-if(error){
+  if(
+    ids.includes(
+      currentFolderId
+    )
+  ){
 
-alert(
-"❌ Folder Delete হয়নি: "+
-error.message
-);
+    currentFolderId =
+      folder.parent_id;
 
-return;
+    saveCurrentFolder();
 
-}
+  }
 
+  message.textContent =
+    "✅ Folder Delete হয়েছে.";
 
-if(
-ids.includes(
-currentFolderId
-)
-){
+  await loadFolders();
 
-currentFolderId =
-folder.parent_id;
-
-saveCurrentFolder();
-
-}
-
-
-message.textContent =
-"✅ Folder Delete হয়েছে.";
-
-await loadFolders();
-
-loadPhotos();
+  await loadPhotos();
 
 }
 
 
 async function refreshFolders(){
 
-await checkMemberStatus();
+  await checkMemberStatus();
 
-await loadFolders();
+  await loadFolders();
 
-await loadPhotos();
+  await loadPhotos();
 
-await loadMemberCount();
+  await loadMemberCount();
 
 }
 
 
+/* =========================================
+   HELPERS
+========================================= */
+
 function escapeHtml(text){
 
-const div =
-document.createElement("div");
+  const div =
+    document.createElement("div");
 
-div.textContent =
-text;
+  div.textContent =
+    text;
 
-return div.innerHTML;
+  return div.innerHTML;
 
 }
 
 
 function getFileExtension(file){
 
-const originalName =
-file.name || "";
+  const originalName =
+    file.name || "";
 
-const dot =
-originalName.lastIndexOf(".");
+  const dot =
+    originalName.lastIndexOf(".");
 
+  if(
+    dot!==-1 &&
+    dot<originalName.length-1
+  ){
 
-if(
-dot!==-1 &&
-dot<originalName.length-1
-){
+    const ext =
+      originalName
+      .substring(dot+1)
+      .toLowerCase()
+      .replace(
+        /[^a-z0-9]/g,
+        ""
+      );
 
-const ext =
-originalName
-.substring(dot+1)
-.toLowerCase()
-.replace(
-/[^a-z0-9]/g,
-""
-);
+    if(ext){
+      return ext;
+    }
 
-if(ext){
-return ext;
-}
+  }
 
-}
+  if(file.type==="image/png"){
+    return "png";
+  }
 
+  if(file.type==="image/webp"){
+    return "webp";
+  }
 
-if(file.type==="image/png"){
-return "png";
-}
+  if(file.type==="image/gif"){
+    return "gif";
+  }
 
-if(file.type==="image/webp"){
-return "webp";
-}
-
-if(file.type==="image/gif"){
-return "gif";
-}
-
-return "jpg";
+  return "jpg";
 
 }
 
 
-/* =====================================
-   WATERMARK SYSTEM
-   © Picture Post
-   ===================================== */
+/* =========================================
+   WATERMARK
+========================================= */
 
 async function addWatermark(file){
 
-return new Promise(function(resolve,reject){
+  return new Promise(
+    function(resolve,reject){
 
-const reader =
-new FileReader();
+      const reader =
+        new FileReader();
 
-reader.onload =
-function(event){
+      reader.onload =
+        function(event){
 
-const img =
-new Image();
+          const img =
+            new Image();
 
-img.onload =
-function(){
+          img.onload =
+            function(){
 
-const canvas =
-document.createElement("canvas");
+              const canvas =
+                document.createElement(
+                  "canvas"
+                );
 
-const ctx =
-canvas.getContext("2d");
+              const ctx =
+                canvas.getContext(
+                  "2d"
+                );
 
-canvas.width =
-img.naturalWidth;
+              canvas.width =
+                img.naturalWidth;
 
-canvas.height =
-img.naturalHeight;
+              canvas.height =
+                img.naturalHeight;
 
+              ctx.drawImage(
+                img,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+              );
 
-/* Original picture */
+              const baseSize =
+                Math.min(
+                  canvas.width,
+                  canvas.height
+                );
 
-ctx.drawImage(
-img,
-0,
-0,
-canvas.width,
-canvas.height
-);
+              const fontSize =
+                Math.max(
+                  24,
+                  Math.round(
+                    baseSize*0.055
+                  )
+                );
 
+              ctx.save();
 
-/* Watermark size */
+              ctx.font =
+                "bold "+
+                fontSize+
+                "px Arial";
 
-const baseSize =
-Math.min(
-canvas.width,
-canvas.height
-);
+              ctx.textAlign =
+                "center";
 
-const fontSize =
-Math.max(
-24,
-Math.round(
-baseSize * 0.055
-)
-);
+              ctx.textBaseline =
+                "middle";
 
+              const text =
+                "© Picture Post";
 
-ctx.save();
+              const metrics =
+                ctx.measureText(
+                  text
+                );
 
+              const paddingX =
+                fontSize*0.45;
 
-ctx.font =
-"bold "+
-fontSize+
-"px Arial";
+              const paddingY =
+                fontSize*0.25;
 
-ctx.textAlign =
-"center";
+              const boxWidth =
+                metrics.width+
+                paddingX*2;
 
-ctx.textBaseline =
-"middle";
+              const boxHeight =
+                fontSize+
+                paddingY*2;
 
+              const centerX =
+                canvas.width/2;
 
-const text =
-"© Picture Post";
+              const centerY =
+                canvas.height/2;
 
+              ctx.fillStyle =
+                "rgba(0,0,0,0.28)";
 
-const metrics =
-ctx.measureText(text);
+              ctx.fillRect(
+                centerX-boxWidth/2,
+                centerY-boxHeight/2,
+                boxWidth,
+                boxHeight
+              );
 
+              ctx.fillStyle =
+                "rgba(231,197,80,0.68)";
 
-const paddingX =
-fontSize * 0.45;
+              ctx.strokeStyle =
+                "rgba(0,0,0,0.45)";
 
-const paddingY =
-fontSize * 0.25;
+              ctx.lineWidth =
+                Math.max(
+                  1,
+                  fontSize*0.04
+                );
 
+              ctx.strokeText(
+                text,
+                centerX,
+                centerY
+              );
 
-const boxWidth =
-metrics.width+
-paddingX*2;
+              ctx.fillText(
+                text,
+                centerX,
+                centerY
+              );
 
-const boxHeight =
-fontSize+
-paddingY*2;
+              ctx.restore();
 
+              canvas.toBlob(
+                function(blob){
 
-const centerX =
-canvas.width/2;
+                  if(!blob){
 
-const centerY =
-canvas.height/2;
+                    reject(
+                      new Error(
+                        "Watermark তৈরি করা যায়নি।"
+                      )
+                    );
 
+                    return;
 
-/* Soft transparent background */
+                  }
 
-ctx.fillStyle =
-"rgba(0,0,0,0.28)";
+                  const watermarkedFile =
+                    new File(
+                      [blob],
+                      file.name.replace(
+                        /\.[^/.]+$/,
+                        ""
+                      )+".jpg",
+                      {
+                        type:"image/jpeg",
+                        lastModified:
+                          Date.now()
+                      }
+                    );
 
-ctx.fillRect(
-centerX-boxWidth/2,
-centerY-boxHeight/2,
-boxWidth,
-boxHeight
-);
+                  resolve(
+                    watermarkedFile
+                  );
 
+                },
+                "image/jpeg",
+                0.92
+              );
 
-/* Gold watermark */
+            };
 
-ctx.fillStyle =
-"rgba(231,197,80,0.68)";
+          img.onerror =
+            function(){
 
-ctx.strokeStyle =
-"rgba(0,0,0,0.45)";
+              reject(
+                new Error(
+                  "ছবিটি পড়া যায়নি।"
+                )
+              );
 
-ctx.lineWidth =
-Math.max(
-1,
-fontSize*0.04
-);
+            };
 
+          img.src =
+            event.target.result;
 
-ctx.strokeText(
-text,
-centerX,
-centerY
-);
+        };
 
-ctx.fillText(
-text,
-centerX,
-centerY
-);
+      reader.onerror =
+        function(){
 
+          reject(
+            new Error(
+              "ছবি পড়া যায়নি।"
+            )
+          );
 
-ctx.restore();
+        };
 
+      reader.readAsDataURL(
+        file
+      );
 
-canvas.toBlob(
-function(blob){
-
-if(!blob){
-
-reject(
-new Error(
-"Watermark তৈরি করা যায়নি।"
-)
-);
-
-return;
+    }
+  );
 
 }
 
 
-const watermarkedFile =
-new File(
-[blob],
-file.name.replace(
-/\.[^/.]+$/,
-""
-)+".jpg",
-{
-type:"image/jpeg",
-lastModified:Date.now()
-}
-);
-
-
-resolve(
-watermarkedFile
-);
-
-},
-"image/jpeg",
-0.92
-);
-
-};
-
-
-img.onerror =
-function(){
-
-reject(
-new Error(
-"ছবিটি পড়া যায়নি।"
-)
-);
-
-};
-
-
-img.src =
-event.target.result;
-
-};
-
-
-reader.onerror =
-function(){
-
-reject(
-new Error(
-"ছবি পড়া যায়নি।"
-)
-);
-
-};
-
-
-reader.readAsDataURL(file);
-
-});
-
-}
-
+/* =========================================
+   PHOTO PREVIEW
+========================================= */
 
 photoInput.addEventListener(
-"change",
-function(){
+  "change",
+  function(){
 
-if(!isAdmin){
+    if(!isAdmin){
 
-this.value="";
-return;
+      this.value="";
 
-}
+      return;
 
-previewArea.innerHTML="";
+    }
 
-const files =
-Array.from(
-this.files || []
+    previewArea.innerHTML="";
+
+    const files =
+      Array.from(
+        this.files || []
+      );
+
+    files.forEach(
+      function(file,index){
+
+        const item =
+          document.createElement(
+            "div"
+          );
+
+        item.className =
+          "preview-item";
+
+        const img =
+          document.createElement(
+            "img"
+          );
+
+        img.src =
+          URL.createObjectURL(
+            file
+          );
+
+        img.loading="lazy";
+
+        const number =
+          document.createElement(
+            "div"
+          );
+
+        number.className =
+          "preview-number";
+
+        number.textContent =
+          "#"+(index+1);
+
+        item.appendChild(img);
+
+        item.appendChild(number);
+
+        previewArea.appendChild(
+          item
+        );
+
+      }
+    );
+
+    message.textContent =
+      "📸 "+
+      files.length+
+      "টি ছবি নির্বাচিত হয়েছে.";
+
+  }
 );
 
 
-files.forEach(
-function(file,index){
-
-const item =
-document.createElement("div");
-
-item.className =
-"preview-item";
-
-
-const img =
-document.createElement("img");
-
-img.src =
-URL.createObjectURL(
-file
-);
-
-
-const number =
-document.createElement("div");
-
-number.className =
-"preview-number";
-
-number.textContent =
-"#"+(index+1);
-
-
-item.appendChild(img);
-
-item.appendChild(number);
-
-previewArea.appendChild(item);
-
-}
-);
-
-
-message.textContent =
-"📸 "+
-files.length+
-"টি ছবি নির্বাচিত হয়েছে.";
-
-}
-);
-
+/* =========================================
+   PHOTO UPLOAD
+========================================= */
 
 uploadButton.addEventListener(
-"click",
-async function(){
+  "click",
+  async function(){
 
-if(!requireAdmin()){
-return;
-}
+    if(!requireAdmin()){
+      return;
+    }
 
-const files =
-Array.from(
-photoInput.files || []
+    const files =
+      Array.from(
+        photoInput.files || []
+      );
+
+    if(files.length===0){
+
+      message.textContent =
+        "❌ আগে ছবি নির্বাচন করুন.";
+
+      return;
+
+    }
+
+    uploadButton.disabled=true;
+
+    photoInput.disabled=true;
+
+    let successCount=0;
+
+    let failedCount=0;
+
+    try{
+
+      const folderPath =
+        getStoragePath();
+
+      for(
+        let i=0;
+        i<files.length;
+        i++
+      ){
+
+        const file =
+          files[i];
+
+        message.textContent =
+          "🎨 ছবি "+
+          (i+1)+
+          " / "+
+          files.length+
+          " এ Watermark বসানো হচ্ছে...";
+
+        let uploadFile;
+
+        try{
+
+          uploadFile =
+            await addWatermark(
+              file
+            );
+
+        }catch(error){
+
+          console.error(
+            "Watermark error:",
+            error
+          );
+
+          failedCount++;
+
+          continue;
+
+        }
+
+        message.textContent =
+          "⏳ ছবি "+
+          (i+1)+
+          " / "+
+          files.length+
+          " আপলোড হচ্ছে...";
+
+        const fileName =
+          Date.now()+
+          "-"+
+          String(i+1).padStart(3,"0")+
+          "-"+
+          Math.random()
+          .toString(36)
+          .substring(2,8)+
+          ".jpg";
+
+        const storagePath =
+          folderPath
+          ?
+          folderPath+"/"+fileName
+          :
+          fileName;
+
+        const {
+          error
+        } =
+        await supabaseClient
+        .storage
+        .from("photos")
+        .upload(
+          storagePath,
+          uploadFile,
+          {
+            upsert:false,
+            contentType:"image/jpeg"
+          }
+        );
+
+        if(error){
+
+          console.error(
+            "Upload:",
+            error
+          );
+
+          failedCount++;
+
+        }else{
+
+          successCount++;
+
+          photoUrlCache.delete(
+            storagePath
+          );
+
+        }
+
+      }
+
+      if(
+        successCount>0 &&
+        failedCount===0
+      ){
+
+        message.textContent =
+          "✅ "+
+          successCount+
+          "টি ছবি Watermark সহ সফলভাবে পোস্ট হয়েছে!";
+
+      }else if(
+        successCount>0
+      ){
+
+        message.textContent =
+          "⚠️ "+
+          successCount+
+          "টি ছবি Watermark সহ পোস্ট হয়েছে, "+
+          failedCount+
+          "টি হয়নি.";
+
+      }else{
+
+        message.textContent =
+          "❌ কোনো ছবি পোস্ট হয়নি.";
+
+      }
+
+      photoInput.value="";
+
+      previewArea.innerHTML="";
+
+      await loadPhotos();
+
+    }catch(error){
+
+      console.error(error);
+
+      message.textContent =
+        "❌ ছবি পোস্ট হয়নি: "+
+        error.message;
+
+    }
+
+    uploadButton.disabled=false;
+
+    photoInput.disabled=false;
+
+  }
 );
 
 
-if(files.length===0){
-
-message.textContent =
-"❌ আগে ছবি নির্বাচন করুন.";
-
-return;
-
-}
-
-
-uploadButton.disabled=true;
-photoInput.disabled=true;
-
-
-let successCount=0;
-let failedCount=0;
-
-
-try{
-
-const folderPath =
-getStoragePath();
-
-
-for(
-let i=0;
-i<files.length;
-i++
-){
-
-const file =
-files[i];
-
-
-message.textContent =
-"🎨 ছবি "+
-(i+1)+
-" / "+
-files.length+
-" এ Watermark বসানো হচ্ছে...";
-
-
-let uploadFile;
-
-
-try{
-
-uploadFile =
-await addWatermark(file);
-
-}catch(error){
-
-console.error(
-"Watermark error:",
-error
-);
-
-failedCount++;
-
-continue;
-
-}
-
-
-message.textContent =
-"⏳ ছবি "+
-(i+1)+
-" / "+
-files.length+
-" আপলোড হচ্ছে...";
-
-
-const fileName =
-Date.now()+
-"-"+
-String(i+1).padStart(3,"0")+
-"-"+
-Math.random()
-.toString(36)
-.substring(2,8)+
-".jpg";
-
-
-const storagePath =
-folderPath
-?
-folderPath+"/"+fileName
-:
-fileName;
-
-
-const {
-error
-} =
-await supabaseClient
-.storage
-.from("photos")
-.upload(
-storagePath,
-uploadFile,
-{
-upsert:false,
-contentType:
-"image/jpeg"
-}
-);
-
-
-if(error){
-
-console.error(
-"Upload:",
-error
-);
-
-failedCount++;
-
-}else{
-
-successCount++;
-
-}
-
-}
-
-
-if(
-successCount>0 &&
-failedCount===0
-){
-
-message.textContent =
-"✅ "+
-successCount+
-"টি ছবি Watermark সহ সফলভাবে পোস্ট হয়েছে!";
-
-}else if(
-successCount>0
-){
-
-message.textContent =
-"⚠️ "+
-successCount+
-"টি ছবি Watermark সহ পোস্ট হয়েছে, "+
-failedCount+
-"টি হয়নি.";
-
-}else{
-
-message.textContent =
-"❌ কোনো ছবি পোস্ট হয়নি.";
-
-}
-
-
-photoInput.value="";
-previewArea.innerHTML="";
-
-await loadPhotos();
-
-
-}catch(error){
-
-console.error(error);
-
-message.textContent =
-"❌ ছবি পোস্ট হয়নি: "+
-error.message;
-
-}
-
-
-uploadButton.disabled=false;
-photoInput.disabled=false;
-
-}
-);
-
+/* =========================================
+   FAST SIGNED URL CACHE
+========================================= */
 
 async function getSignedUrl(path){
 
-const {
-data,
-error
-} =
-await supabaseClient
-.storage
-.from("photos")
-.createSignedUrl(
-path,
-3600
-);
+  if(
+    photoUrlCache.has(path)
+  ){
 
+    return photoUrlCache.get(path);
 
-if(error){
+  }
 
-console.error(
-"Signed URL error:",
-error
-);
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+  .storage
+  .from("photos")
+  .createSignedUrl(
+    path,
+    3600
+  );
 
-return null;
+  if(error){
 
-}
+    console.error(
+      "Signed URL error:",
+      error
+    );
 
+    return null;
 
-return data?.signedUrl || null;
+  }
 
-}
+  const url =
+    data?.signedUrl || null;
 
+  if(url){
 
-async function loadPhotos(){
+    photoUrlCache.set(
+      path,
+      url
+    );
 
-const requestId =
-++photoLoadRequestId;
+  }
 
-
-if(!isAdmin){
-
-const memberOK =
-await checkMemberStatus();
-
-if(!memberOK){
-
-if(requestId !== photoLoadRequestId){
-return;
-}
-
-currentImages=[];
-
-showJoinLock();
-
-return;
-
-}
+  return url;
 
 }
 
 
-if(requestId !== photoLoadRequestId){
-return;
-}
-
-
-gallery.innerHTML =
-'<div class="empty">⏳ ছবি লোড হচ্ছে...</div>';
-
-
-const folderPath =
-getStoragePath();
-
-
-const {
-data,
-error
-} =
-await supabaseClient
-.storage
-.from("photos")
-.list(
-folderPath,
-{
-limit:1000,
-sortBy:{
-column:"name",
-order:"asc"
-}
-}
-);
-
-
-if(requestId !== photoLoadRequestId){
-return;
-}
-
-
-if(error){
-
-console.error(
-"Photo list:",
-error
-);
-
-gallery.innerHTML =
-'<div class="empty">❌ ছবি লোড করা যায়নি।</div>';
-
-return;
-
-}
-
-
-const files =
-(data || [])
-.filter(
-file =>
-file.name &&
-file.metadata
-);
-
-
-if(requestId !== photoLoadRequestId){
-return;
-}
-
-
-currentImages =
-files;
-
-
-if(files.length===0){
-
-gallery.innerHTML =
-'<div class="empty">এই Folder-এ এখনো কোনো ছবি নেই।</div>';
-
-return;
-
-}
-
-
-const fragment =
-document.createDocumentFragment();
-
-
-const photoData=[];
-
-
-for(
-let i=0;
-i<files.length;
-i++
-){
-
-if(requestId !== photoLoadRequestId){
-return;
-}
-
-
-const file =
-files[i];
-
-
-const fullPath =
-folderPath
-?
-folderPath+"/"+file.name
-:
-file.name;
-
-
-const signedUrl =
-await getSignedUrl(
-fullPath
-);
-
-
-if(requestId !== photoLoadRequestId){
-return;
-}
-
-
-if(!signedUrl){
-continue;
-}
-
-
-photoData.push({
-
-file:file,
-fullPath:fullPath,
-signedUrl:signedUrl,
-index:i
-
-});
-
-}
-
-
-if(requestId !== photoLoadRequestId){
-return;
-}
-
-
-for(
-const item of photoData
-){
-
-const file =
-item.file;
-
-const fullPath =
-item.fullPath;
-
-const signedUrl =
-item.signedUrl;
-
-const i =
-item.index;
-
-
-const card =
-document.createElement("div");
-
-card.className =
-"photo-card";
-
-
-const number =
-document.createElement("div");
-
-number.className =
-"photo-number";
-
-number.textContent =
-"#"+(i+1);
-
-
-const img =
-document.createElement("img");
-
-img.src =
-signedUrl;
-
-img.alt =
-"Posted picture "+(i+1);
-
-img.onclick =
-function(){
-
-openViewer(i);
-
-};
-
-
-const info =
-document.createElement("div");
-
-info.className =
-"photo-info";
-
-
-const likeButton =
-document.createElement("button");
-
-likeButton.className =
-"like-button";
-
-likeButton.textContent =
-"❤️ 0";
-
-
-likeButton.onclick =
-async function(event){
-
-event.stopPropagation();
-
-await addLike(
-fullPath,
-likeButton
-);
-
-};
-
-
-info.appendChild(
-likeButton
-);
-
-
-if(isAdmin){
-
-const deleteButton =
-document.createElement("button");
-
-deleteButton.className =
-"photo-delete-button";
-
-deleteButton.textContent =
-"🗑️ Delete";
-
-
-deleteButton.onclick =
-async function(event){
-
-event.stopPropagation();
-
-await deletePhoto(
-fullPath,
-card
-);
-
-};
-
-
-info.appendChild(
-deleteButton
-);
-
-}
-
-
-card.appendChild(number);
-card.appendChild(img);
-card.appendChild(info);
-
-fragment.appendChild(card);
-
-
-loadLikeCount(
-fullPath,
-likeButton
-);
-
-}
-
-
-if(requestId !== photoLoadRequestId){
-return;
-}
-
-
-gallery.innerHTML="";
-gallery.appendChild(fragment);
-
-}
-
+/* =========================================
+   LOCAL LIKE
+========================================= */
 
 function getLocalLikes(){
 
-try{
+  try{
 
-return JSON.parse(
-localStorage.getItem(
-LOCAL_LIKE_KEY
-) || "{}"
-);
+    return JSON.parse(
+      localStorage.getItem(
+        LOCAL_LIKE_KEY
+      ) || "{}"
+    );
 
-}catch(error){
+  }catch(error){
 
-return {};
+    return {};
 
-}
+  }
 
 }
 
 
 function saveLocalLikes(data){
 
-try{
+  try{
 
-localStorage.setItem(
-LOCAL_LIKE_KEY,
-JSON.stringify(data)
-);
+    localStorage.setItem(
+      LOCAL_LIKE_KEY,
+      JSON.stringify(data)
+    );
 
-}catch(error){}
+  }catch(error){}
 
 }
 
 
 function getLocalLike(photoName){
 
-const likes =
-getLocalLikes();
+  const likes =
+    getLocalLikes();
 
-return Number(
-likes[photoName] || 0
-);
+  return Number(
+    likes[photoName] || 0
+  );
 
 }
 
 
 function addLocalLike(photoName){
 
-const likes =
-getLocalLikes();
+  const likes =
+    getLocalLikes();
 
-likes[photoName] =
-Number(
-likes[photoName] || 0
-)+1;
+  likes[photoName] =
+    Number(
+      likes[photoName] || 0
+    )+1;
 
-saveLocalLikes(likes);
+  saveLocalLikes(
+    likes
+  );
 
-return likes[photoName];
+  return likes[photoName];
 
 }
 
 
-async function loadLikeCount(
-photoName,
-button
+/* =========================================
+   FAST BATCH LIKE COUNTS
+========================================= */
+
+async function loadLikeCountsBatch(
+  photoNames
 ){
 
-const {
-data,
-error
-} =
-await supabaseClient
-.from("photo_likes")
-.select("like_count")
-.eq(
-"photo_name",
-photoName
-)
-.maybeSingle();
+  const result =
+    new Map();
 
+  if(!photoNames.length){
+    return result;
+  }
 
-let count=0;
+  try{
 
+    const {
+      data,
+      error
+    } =
+    await supabaseClient
+    .from("photo_likes")
+    .select(
+      "photo_name,like_count"
+    )
+    .in(
+      "photo_name",
+      photoNames
+    );
 
-if(!error && data){
+    if(!error){
 
-count =
-Number(
-data.like_count || 0
-);
+      for(
+        const row of data || []
+      ){
 
-}else{
+        result.set(
+          row.photo_name,
+          Number(
+            row.like_count || 0
+          )
+        );
 
-count =
-getLocalLike(
-photoName
-);
+      }
+
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Batch like count:",
+      error
+    );
+
+  }
+
+  for(
+    const name of photoNames
+  ){
+
+    if(!result.has(name)){
+
+      result.set(
+        name,
+        getLocalLike(name)
+      );
+
+    }
+
+  }
+
+  return result;
 
 }
 
 
-button.textContent =
-"❤️ "+count;
+/* =========================================
+   FAST PHOTO LOADING
+========================================= */
+
+async function loadPhotos(){
+
+  const requestId =
+    ++photoLoadRequestId;
+
+  if(!isAdmin){
+
+    const memberOK =
+      await checkMemberStatus();
+
+    if(!memberOK){
+
+      if(
+        requestId !==
+        photoLoadRequestId
+      ){
+        return;
+      }
+
+      currentImages=[];
+
+      showJoinLock();
+
+      return;
+
+    }
+
+  }
+
+  if(
+    requestId !==
+    photoLoadRequestId
+  ){
+    return;
+  }
+
+  gallery.innerHTML =
+    '<div class="empty">⏳ ছবি লোড হচ্ছে...</div>';
+
+  const folderPath =
+    getStoragePath();
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+  .storage
+  .from("photos")
+  .list(
+    folderPath,
+    {
+      limit:1000,
+      sortBy:{
+        column:"name",
+        order:"asc"
+      }
+    }
+  );
+
+  if(
+    requestId !==
+    photoLoadRequestId
+  ){
+    return;
+  }
+
+  if(error){
+
+    console.error(
+      "Photo list:",
+      error
+    );
+
+    gallery.innerHTML =
+      '<div class="empty">❌ ছবি লোড করা যায়নি।</div>';
+
+    return;
+
+  }
+
+  const files =
+    (data || [])
+    .filter(
+      file =>
+        file.name &&
+        file.metadata
+    );
+
+  currentImages =
+    files;
+
+  if(files.length===0){
+
+    gallery.innerHTML =
+      '<div class="empty">এই Folder-এ এখনো কোনো ছবি নেই।</div>';
+
+    return;
+
+  }
+
+
+  /*
+     আগে সব card তৈরি করা হচ্ছে।
+     Signed URL আর Like count পরে parallel-এ আসবে।
+  */
+
+  gallery.innerHTML="";
+
+  const fragment =
+    document.createDocumentFragment();
+
+  const photoItems=[];
+
+  for(
+    let i=0;
+    i<files.length;
+    i++
+  ){
+
+    const file =
+      files[i];
+
+    const fullPath =
+      folderPath
+      ?
+      folderPath+"/"+file.name
+      :
+      file.name;
+
+    const card =
+      document.createElement(
+        "div"
+      );
+
+    card.className =
+      "photo-card";
+
+    const number =
+      document.createElement(
+        "div"
+      );
+
+    number.className =
+      "photo-number";
+
+    number.textContent =
+      "#"+(i+1);
+
+    const loading =
+      document.createElement(
+        "div"
+      );
+
+    loading.className =
+      "photo-loading";
+
+    loading.textContent =
+      "⏳";
+
+    const img =
+      document.createElement(
+        "img"
+      );
+
+    img.alt =
+      "Posted picture "+(i+1);
+
+    img.decoding="async";
+
+    img.loading =
+      i<4
+      ?
+      "eager"
+      :
+      "lazy";
+
+    img.style.display="none";
+
+    img.onclick =
+      function(){
+
+        openViewer(i);
+
+      };
+
+    const info =
+      document.createElement(
+        "div"
+      );
+
+    info.className =
+      "photo-info";
+
+    const likeButton =
+      document.createElement(
+        "button"
+      );
+
+    likeButton.className =
+      "like-button";
+
+    likeButton.textContent =
+      "❤️ ...";
+
+    likeButton.onclick =
+      async function(event){
+
+        event.stopPropagation();
+
+        await addLike(
+          fullPath,
+          likeButton
+        );
+
+      };
+
+    info.appendChild(
+      likeButton
+    );
+
+    if(isAdmin){
+
+      const deleteButton =
+        document.createElement(
+          "button"
+        );
+
+      deleteButton.className =
+        "photo-delete-button";
+
+      deleteButton.textContent =
+        "🗑️ Delete";
+
+      deleteButton.onclick =
+        async function(event){
+
+          event.stopPropagation();
+
+          await deletePhoto(
+            fullPath,
+            card
+          );
+
+        };
+
+      info.appendChild(
+        deleteButton
+      );
+
+    }
+
+    card.appendChild(
+      number
+    );
+
+    card.appendChild(
+      loading
+    );
+
+    card.appendChild(
+      img
+    );
+
+    card.appendChild(
+      info
+    );
+
+    fragment.appendChild(
+      card
+    );
+
+    photoItems.push({
+
+      file:file,
+
+      fullPath:fullPath,
+
+      card:card,
+
+      loading:loading,
+
+      img:img,
+
+      likeButton:likeButton,
+
+      index:i
+
+    });
+
+  }
+
+  gallery.appendChild(
+    fragment
+  );
+
+
+  /*
+     Signed URL সবগুলো একসাথে।
+     আগের মতো একটার পর একটা নয়।
+  */
+
+  const urlPromises =
+    photoItems.map(
+      item =>
+        getSignedUrl(
+          item.fullPath
+        )
+    );
+
+
+  /*
+     Like count-ও একবারে।
+  */
+
+  const likePromise =
+    loadLikeCountsBatch(
+      photoItems.map(
+        item =>
+          item.fullPath
+      )
+    );
+
+
+  const urls =
+    await Promise.all(
+      urlPromises
+    );
+
+  const likeCounts =
+    await likePromise;
+
+
+  if(
+    requestId !==
+    photoLoadRequestId
+  ){
+    return;
+  }
+
+
+  for(
+    let i=0;
+    i<photoItems.length;
+    i++
+  ){
+
+    const item =
+      photoItems[i];
+
+    const signedUrl =
+      urls[i];
+
+    if(signedUrl){
+
+      item.img.src =
+        signedUrl;
+
+      item.img.style.display =
+        "block";
+
+      item.loading.remove();
+
+    }else{
+
+      item.loading.textContent =
+        "❌";
+
+    }
+
+    const count =
+      likeCounts.get(
+        item.fullPath
+      ) || 0;
+
+    item.likeButton.textContent =
+      "❤️ "+count;
+
+  }
 
 }
 
+
+/* =========================================
+   ADD LIKE
+========================================= */
 
 async function addLike(
-photoName,
-button
+  photoName,
+  button
 ){
 
-if(!isAdmin){
+  if(!isAdmin){
 
-const memberOK =
-await checkMemberStatus();
+    const memberOK =
+      await checkMemberStatus();
 
-if(!memberOK){
+    if(!memberOK){
 
-alert(
-"🔒 Like দিতে আগে Join করুন."
-);
+      alert(
+        "🔒 Like দিতে আগে Join করুন."
+      );
 
-return;
+      return;
+
+    }
+
+  }
+
+  if(button.disabled){
+    return;
+  }
+
+  button.disabled=true;
+
+  try{
+
+    const {
+      data:oldData,
+      error:readError
+    } =
+    await supabaseClient
+    .from("photo_likes")
+    .select(
+      "like_count"
+    )
+    .eq(
+      "photo_name",
+      photoName
+    )
+    .maybeSingle();
+
+    if(readError){
+
+      const localCount =
+        addLocalLike(
+          photoName
+        );
+
+      button.textContent =
+        "❤️ "+localCount;
+
+      button.classList.add(
+        "liked"
+      );
+
+      photoLikeCache.set(
+        photoName,
+        localCount
+      );
+
+      return;
+
+    }
+
+    if(!oldData){
+
+      const {
+        error
+      } =
+      await supabaseClient
+      .from("photo_likes")
+      .insert({
+
+        photo_name:
+          photoName,
+
+        like_count:1
+
+      });
+
+      if(error){
+
+        const localCount =
+          addLocalLike(
+            photoName
+          );
+
+        button.textContent =
+          "❤️ "+localCount;
+
+        button.classList.add(
+          "liked"
+        );
+
+        return;
+
+      }
+
+      button.textContent =
+        "❤️ 1";
+
+      button.classList.add(
+        "liked"
+      );
+
+      photoLikeCache.set(
+        photoName,
+        1
+      );
+
+    }else{
+
+      const newCount =
+        Number(
+          oldData.like_count || 0
+        )+1;
+
+      const {
+        error
+      } =
+      await supabaseClient
+      .from("photo_likes")
+      .update({
+
+        like_count:
+          newCount
+
+      })
+      .eq(
+        "photo_name",
+        photoName
+      );
+
+      if(error){
+
+        const localCount =
+          addLocalLike(
+            photoName
+          );
+
+        button.textContent =
+          "❤️ "+localCount;
+
+        button.classList.add(
+          "liked"
+        );
+
+        return;
+
+      }
+
+      button.textContent =
+        "❤️ "+newCount;
+
+      button.classList.add(
+        "liked"
+      );
+
+      photoLikeCache.set(
+        photoName,
+        newCount
+      );
+
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+    const localCount =
+      addLocalLike(
+        photoName
+      );
+
+    button.textContent =
+      "❤️ "+localCount;
+
+    button.classList.add(
+      "liked"
+    );
+
+  }finally{
+
+    button.disabled=false;
+
+  }
 
 }
 
-}
 
-
-if(button.disabled){
-return;
-}
-
-button.disabled=true;
-
-
-try{
-
-const {
-data:oldData,
-error:readError
-} =
-await supabaseClient
-.from("photo_likes")
-.select("like_count")
-.eq(
-"photo_name",
-photoName
-)
-.maybeSingle();
-
-
-if(readError){
-
-const localCount =
-addLocalLike(
-photoName
-);
-
-button.textContent =
-"❤️ "+localCount;
-
-button.classList.add(
-"liked"
-);
-
-return;
-
-}
-
-
-if(!oldData){
-
-const {
-error
-} =
-await supabaseClient
-.from("photo_likes")
-.insert({
-photo_name:photoName,
-like_count:1
-});
-
-
-if(error){
-
-const localCount =
-addLocalLike(
-photoName
-);
-
-button.textContent =
-"❤️ "+localCount;
-
-button.classList.add(
-"liked"
-);
-
-return;
-
-}
-
-
-button.textContent =
-"❤️ 1";
-
-button.classList.add(
-"liked"
-);
-
-
-}else{
-
-const newCount =
-Number(
-oldData.like_count || 0
-)+1;
-
-
-const {
-error
-} =
-await supabaseClient
-.from("photo_likes")
-.update({
-like_count:newCount
-})
-.eq(
-"photo_name",
-photoName
-);
-
-
-if(error){
-
-const localCount =
-addLocalLike(
-photoName
-);
-
-button.textContent =
-"❤️ "+localCount;
-
-button.classList.add(
-"liked"
-);
-
-return;
-
-}
-
-
-button.textContent =
-"❤️ "+newCount;
-
-button.classList.add(
-"liked"
-);
-
-}
-
-
-}catch(error){
-
-console.error(error);
-
-const localCount =
-addLocalLike(
-photoName
-);
-
-button.textContent =
-"❤️ "+localCount;
-
-button.classList.add(
-"liked"
-);
-
-}finally{
-
-button.disabled=false;
-
-}
-
-}
-
+/* =========================================
+   DELETE PHOTO
+========================================= */
 
 async function deletePhoto(
-fullPath,
-card
+  fullPath,
+  card
 ){
 
-if(!requireAdmin()){
-return;
+  if(!requireAdmin()){
+    return;
+  }
+
+  const answer =
+    confirm(
+      "🗑️ এই ছবিটি Delete করবেন?"
+    );
+
+  if(!answer){
+    return;
+  }
+
+  const deleteButton =
+    card.querySelector(
+      ".photo-delete-button"
+    );
+
+  if(deleteButton){
+
+    deleteButton.disabled=true;
+
+    deleteButton.textContent =
+      "⏳ Delete হচ্ছে...";
+
+  }
+
+  const {
+    error
+  } =
+  await supabaseClient
+  .storage
+  .from("photos")
+  .remove([
+    fullPath
+  ]);
+
+  if(error){
+
+    alert(
+      "❌ ছবি Delete হয়নি: "+
+      error.message
+    );
+
+    if(deleteButton){
+
+      deleteButton.disabled=false;
+
+      deleteButton.textContent =
+        "🗑️ Delete";
+
+    }
+
+    return;
+
+  }
+
+  photoUrlCache.delete(
+    fullPath
+  );
+
+  photoLikeCache.delete(
+    fullPath
+  );
+
+  await supabaseClient
+  .from("photo_likes")
+  .delete()
+  .eq(
+    "photo_name",
+    fullPath
+  );
+
+  message.textContent =
+    "✅ ছবি Delete হয়েছে.";
+
+  closeViewer();
+
+  await loadPhotos();
+
 }
 
 
-const answer =
-confirm(
-"🗑️ এই ছবিটি Delete করবেন?"
-);
-
-if(!answer){
-return;
-}
-
-
-const deleteButton =
-card.querySelector(
-".photo-delete-button"
-);
-
-
-if(deleteButton){
-
-deleteButton.disabled=true;
-
-deleteButton.textContent =
-"⏳ Delete হচ্ছে...";
-
-}
-
-
-const {
-error
-} =
-await supabaseClient
-.storage
-.from("photos")
-.remove([
-fullPath
-]);
-
-
-if(error){
-
-alert(
-"❌ ছবি Delete হয়নি: "+
-error.message
-);
-
-if(deleteButton){
-
-deleteButton.disabled=false;
-
-deleteButton.textContent =
-"🗑️ Delete";
-
-}
-
-return;
-
-}
-
-
-await supabaseClient
-.from("photo_likes")
-.delete()
-.eq(
-"photo_name",
-fullPath
-);
-
-
-message.textContent =
-"✅ ছবি Delete হয়েছে.";
-
-closeViewer();
-
-await loadPhotos();
-
-}
-
+/* =========================================
+   VIEWER
+========================================= */
 
 async function openViewer(index){
 
-if(!isAdmin){
+  if(!isAdmin){
 
-const memberOK =
-await checkMemberStatus();
+    const memberOK =
+      await checkMemberStatus();
 
-if(!memberOK){
+    if(!memberOK){
 
-alert(
-"🔒 ছবি দেখতে আগে Join করুন."
-);
+      alert(
+        "🔒 ছবি দেখতে আগে Join করুন."
+      );
 
-return;
+      return;
 
-}
+    }
 
-}
+  }
 
+  if(!currentImages.length){
+    return;
+  }
 
-if(!currentImages.length){
-return;
-}
+  currentViewerIndex =
+    index;
 
+  viewer.style.display =
+    "flex";
 
-currentViewerIndex =
-index;
-
-
-viewer.style.display =
-"flex";
-
-
-await showViewerImage();
+  await showViewerImage();
 
 }
 
 
 function closeViewer(){
 
-viewer.style.display =
-"none";
+  viewer.style.display =
+    "none";
+
+  viewerImage.removeAttribute(
+    "src"
+  );
 
 }
 
 
 async function showViewerImage(){
 
-if(!isAdmin){
+  if(!isAdmin){
 
-const memberOK =
-await checkMemberStatus();
+    const memberOK =
+      await checkMemberStatus();
 
-if(!memberOK){
+    if(!memberOK){
 
-closeViewer();
+      closeViewer();
 
-return;
+      return;
 
-}
+    }
 
-}
+  }
 
+  const file =
+    currentImages[
+      currentViewerIndex
+    ];
 
-const file =
-currentImages[
-currentViewerIndex
-];
+  if(!file){
+    return;
+  }
 
+  const folderPath =
+    getStoragePath();
 
-if(!file){
-return;
-}
-
-
-const folderPath =
-getStoragePath();
-
-
-const fullPath =
-folderPath
-?
-folderPath+"/"+file.name
-:
-file.name;
+  const fullPath =
+    folderPath
+    ?
+    folderPath+"/"+file.name
+    :
+    file.name;
 
 
-const signedUrl =
-await getSignedUrl(
-fullPath
-);
+  /*
+     Gallery-তে আগেই signed URL তৈরি করা হয়েছে।
+     তাই Viewer আবার নতুন request করবে না।
+  */
 
+  let signedUrl =
+    photoUrlCache.get(
+      fullPath
+    );
 
-if(!signedUrl){
+  if(!signedUrl){
 
-viewerImage.removeAttribute(
-"src"
-);
+    signedUrl =
+      await getSignedUrl(
+        fullPath
+      );
 
-return;
+  }
 
-}
+  if(!signedUrl){
 
+    viewerImage.removeAttribute(
+      "src"
+    );
 
-viewerImage.src =
-signedUrl;
+    return;
 
+  }
 
-await loadViewerLike(
-fullPath
-);
+  viewerImage.src =
+    signedUrl;
+
+  viewerImage.alt =
+    "Picture "+
+    (currentViewerIndex+1);
+
+  await loadViewerLike(
+    fullPath
+  );
 
 }
 
 
 async function loadViewerLike(
-photoName
+  photoName
 ){
 
-const {
-data,
-error
-} =
-await supabaseClient
-.from("photo_likes")
-.select("like_count")
-.eq(
-"photo_name",
-photoName
-)
-.maybeSingle();
+  if(
+    photoLikeCache.has(
+      photoName
+    )
+  ){
 
+    viewerLike.textContent =
+      "❤️ "+
+      photoLikeCache.get(
+        photoName
+      );
 
-let count=0;
+    return;
 
+  }
 
-if(!error && data){
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+  .from("photo_likes")
+  .select(
+    "like_count"
+  )
+  .eq(
+    "photo_name",
+    photoName
+  )
+  .maybeSingle();
 
-count =
-Number(
-data.like_count || 0
-);
+  let count=0;
 
-}else{
+  if(!error && data){
 
-count =
-getLocalLike(
-photoName
-);
+    count =
+      Number(
+        data.like_count || 0
+      );
 
-}
+  }else{
 
+    count =
+      getLocalLike(
+        photoName
+      );
 
-viewerLike.textContent =
-"❤️ "+count;
+  }
+
+  photoLikeCache.set(
+    photoName,
+    count
+  );
+
+  viewerLike.textContent =
+    "❤️ "+count;
 
 }
 
 
 async function likeCurrentImage(){
 
-if(!isAdmin){
+  if(!isAdmin){
 
-const memberOK =
-await checkMemberStatus();
+    const memberOK =
+      await checkMemberStatus();
 
-if(!memberOK){
+    if(!memberOK){
 
-alert(
-"🔒 Like দিতে আগে Join করুন."
-);
+      alert(
+        "🔒 Like দিতে আগে Join করুন."
+      );
 
-return;
+      return;
 
-}
+    }
 
-}
+  }
 
+  const file =
+    currentImages[
+      currentViewerIndex
+    ];
 
-const file =
-currentImages[
-currentViewerIndex
-];
+  if(!file){
+    return;
+  }
 
+  const folderPath =
+    getStoragePath();
 
-if(!file){
-return;
-}
+  const fullPath =
+    folderPath
+    ?
+    folderPath+"/"+file.name
+    :
+    file.name;
 
-
-const folderPath =
-getStoragePath();
-
-
-const fullPath =
-folderPath
-?
-folderPath+"/"+file.name
-:
-file.name;
-
-
-await addLike(
-fullPath,
-viewerLike
-);
+  await addLike(
+    fullPath,
+    viewerLike
+  );
 
 }
 
 
 function previousImage(){
 
-if(!currentImages.length){
-return;
-}
+  if(!currentImages.length){
+    return;
+  }
 
-currentViewerIndex--;
+  currentViewerIndex--;
 
-if(currentViewerIndex<0){
+  if(
+    currentViewerIndex<0
+  ){
 
-currentViewerIndex =
-currentImages.length-1;
+    currentViewerIndex =
+      currentImages.length-1;
 
-}
+  }
 
-showViewerImage();
+  showViewerImage();
 
 }
 
 
 function nextImage(){
 
-if(!currentImages.length){
-return;
+  if(!currentImages.length){
+    return;
+  }
+
+  currentViewerIndex++;
+
+  if(
+    currentViewerIndex >=
+    currentImages.length
+  ){
+
+    currentViewerIndex=0;
+
+  }
+
+  showViewerImage();
+
 }
 
-currentViewerIndex++;
 
-
-if(
-currentViewerIndex >=
-currentImages.length
-){
-
-currentViewerIndex=0;
-
-}
-
-showViewerImage();
-
-}
-
+/* =========================================
+   SWIPE
+========================================= */
 
 let touchStartX=0;
+
 let touchEndX=0;
 
-
 viewerImage.addEventListener(
-"touchstart",
-function(event){
+  "touchstart",
+  function(event){
 
-touchStartX =
-event.changedTouches[0].screenX;
+    touchStartX =
+      event.changedTouches[0]
+      .screenX;
 
-},
-{
-passive:true
-}
+  },
+  {
+    passive:true
+  }
 );
 
 
 viewerImage.addEventListener(
-"touchend",
-function(event){
+  "touchend",
+  function(event){
 
-touchEndX =
-event.changedTouches[0].screenX;
+    touchEndX =
+      event.changedTouches[0]
+      .screenX;
 
+    const difference =
+      touchEndX-touchStartX;
 
-const difference =
-touchEndX-touchStartX;
+    if(
+      Math.abs(difference)<50
+    ){
+      return;
+    }
 
+    if(difference>0){
 
-if(
-Math.abs(difference)<50
-){
-return;
-}
+      previousImage();
 
+    }else{
 
-if(difference>0){
+      nextImage();
 
-previousImage();
+    }
 
-}else{
-
-nextImage();
-
-}
-
-},
-{
-passive:true
-}
+  },
+  {
+    passive:true
+  }
 );
 
+
+/* =========================================
+   KEYBOARD VIEWER
+========================================= */
+
+document.addEventListener(
+  "keydown",
+  function(event){
+
+    if(
+      viewer.style.display!=="flex"
+    ){
+      return;
+    }
+
+    if(event.key==="ArrowLeft"){
+
+      previousImage();
+
+    }
+
+    if(event.key==="ArrowRight"){
+
+      nextImage();
+
+    }
+
+    if(event.key==="Escape"){
+
+      closeViewer();
+
+    }
+
+  }
+);
+
+
+/* =========================================
+   START APP
+========================================= */
 
 async function startApp(){
 
-updateJoinButton();
+  if(appStarted){
+    return;
+  }
 
-memberCount.textContent =
-"👥 Member: ...";
+  appStarted=true;
 
+  updateJoinButton();
 
-const sessionOK =
-await ensureAnonymousSession();
+  memberCount.textContent =
+    "👥 Member: ...";
 
+  const sessionOK =
+    await ensureAnonymousSession();
 
-if(!sessionOK){
+  if(!sessionOK){
 
-gallery.innerHTML =
-'<div class="empty">'+
-'❌ Member system চালু করা যায়নি।'+
-'</div>';
+    gallery.innerHTML =
+      '<div class="empty">'+
+      '❌ Member system চালু করা যায়নি।'+
+      '</div>';
 
-return;
+    return;
 
-}
+  }
 
+  isAdmin =
+    checkAdmin(
+      currentUser
+    );
 
-isAdmin =
-checkAdmin(
-currentUser
-);
+  updateAdminUI();
 
+  await checkMemberStatus();
 
-updateAdminUI();
+  const foldersLoaded =
+    await loadFolders();
 
+  await loadMemberCount();
 
-await checkMemberStatus();
+  if(foldersLoaded){
 
+    await loadPhotos();
 
-const foldersLoaded =
-await loadFolders();
-
-
-await loadMemberCount();
-
-
-if(foldersLoaded){
-
-await loadPhotos();
-
-}
+  }
 
 }
 
 
 startApp();
 
-</script></body>
+</script>
+
+</body>
 </html>
