@@ -1,9 +1,22 @@
-<!DOCTYPE html><html lang="bn">  <head>  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width,initial-scale=1.0">  
-<title>Picture Post</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><style>  
-*{box-sizing:border-box}  
-html,body{margin:0;padding:0;min-height:100%}  body{
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Picture Post</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+margin:0;
+padding:0;
+min-height:100%;
+}
+
+body{
 font-family:Arial,sans-serif;
 background:radial-gradient(circle at top,#29230f 0%,#111 38%,#070707 100%);
 color:#eee;
@@ -106,6 +119,18 @@ font-weight:bold;
 background:#18351f;
 color:#79dc91;
 border:1px solid #3e7d4d;
+}
+
+.join-button.pending{
+background:#332b13;
+color:#e7c85b;
+border:1px solid #75601f;
+}
+
+.join-button.rejected{
+background:#321515;
+color:#ef7777;
+border:1px solid #713535;
 }
 
 .container{
@@ -246,54 +271,135 @@ color:#ef7777;
 border:1px solid #713434;
 }
 
-.join-lock{
+.access-lock{
 text-align:center;
-padding:18px 8px;
+padding:25px 10px;
+margin:5px 0;
 border:1px solid #4d411d;
-border-radius:7px;
-background:linear-gradient(145deg,#181818,#101010);
-grid-column:1/-1;
+border-radius:9px;
+background:linear-gradient(145deg,#181818,#0e0e0e);
+box-shadow:0 2px 15px rgba(0,0,0,.4);
 }
 
-.join-lock-icon{
-font-size:25px;
-margin-bottom:5px;
+.access-lock-icon{
+font-size:35px;
+margin-bottom:7px;
 }
 
-.join-lock-title{
+.access-lock-title{
 color:#e1c45b;
-font-size:12px;
+font-size:15px;
 font-weight:bold;
-margin-bottom:4px;
+margin-bottom:6px;
 }
 
-.join-lock-text{
+.access-lock-text{
 color:#999;
 font-size:9px;
-line-height:14px;
-margin-bottom:8px;
+line-height:15px;
+margin-bottom:10px;
 }
 
-.join-lock-button{
+.access-lock-button{
 background:linear-gradient(135deg,#92701b,#d6b33e);
 color:#111;
 border:0;
 font-size:9px;
 font-weight:bold;
-padding:7px 13px;
+padding:7px 14px;
+margin:2px;
 }
 
-input[type=file]{
-width:auto;
-max-width:100%;
-display:block;
-margin:5px 0;
+.status-check-button{
+background:#171717;
+color:#d9bd55;
+border:1px solid #6d571b;
 font-size:9px;
-color:#aaa;
+padding:7px 14px;
+margin:2px;
+}
+
+#adminMemberRequestsBox{
+display:none;
+}
+
+.member-request{
 background:#111;
-border:1px solid #4b4328;
-border-radius:6px;
-padding:5px 7px;
+border:1px solid #3f361d;
+border-radius:7px;
+padding:7px;
+margin-bottom:5px;
+}
+
+.request-top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:5px;
+}
+
+.request-id{
+color:#e0c45a;
+font-size:9px;
+font-weight:bold;
+word-break:break-all;
+}
+
+.request-status{
+font-size:8px;
+padding:3px 5px;
+border-radius:4px;
+}
+
+.request-status.pending{
+color:#e7c85b;
+background:#332b13;
+}
+
+.request-status.approved{
+color:#79dc91;
+background:#18351f;
+}
+
+.request-status.rejected{
+color:#ef7777;
+background:#321515;
+}
+
+.request-date{
+color:#777;
+font-size:7px;
+margin-top:4px;
+}
+
+.request-actions{
+display:flex;
+gap:4px;
+margin-top:6px;
+}
+
+.request-actions button{
+flex:1;
+font-size:8px;
+padding:5px;
+}
+
+.accept-request{
+color:#79dc91;
+border-color:#3e7d4d;
+background:#152319;
+}
+
+.reject-request{
+color:#ef7777;
+border-color:#713535;
+background:#241313;
+}
+
+.pending-request{
+color:#e0c45a;
+border-color:#75601f;
+background:#211c0d;
 }
 
 #previewArea{
@@ -328,6 +434,19 @@ color:#f0cc58;
 padding:1px 3px;
 border-radius:3px;
 font-size:6px;
+}
+
+input[type=file]{
+width:auto;
+max-width:100%;
+display:block;
+margin:5px 0;
+font-size:9px;
+color:#aaa;
+background:#111;
+border:1px solid #4b4328;
+border-radius:6px;
+padding:5px 7px;
 }
 
 #uploadButton{
@@ -576,9 +695,7 @@ font-size:9px;
 
 @media(max-width:420px){
 
-.container{
-padding:4px;
-}
+.container{padding:4px}
 
 .box{
 padding:6px;
@@ -670,13 +787,9 @@ grid-template-columns:repeat(4,1fr);
 gap:2px;
 }
 
-.gallery{
-gap:3px;
-}
+.gallery{gap:3px}
 
-.photo-card img{
-height:130px;
-}
+.photo-card img{height:130px}
 
 .like-button,
 .photo-delete-button{
@@ -695,8 +808,8 @@ height:42px;
 font-size:18px;
 }
 
-.join-lock{
-padding:15px 6px;
+.access-lock{
+padding:20px 6px;
 }
 
 }
@@ -748,114 +861,317 @@ font-size:4.5px;
 }
 
 }
-</style></head><body><header><h1>📸 Picture Post</h1><p>ছবি শেয়ার করার সহজ জায়গা</p><div class="auth-area"><button  
-id="loginButton"  
-class="auth-button"  
+</style>
+</head>
+
+<body>
+
+<header>
+
+<h1>📸 Picture Post</h1>
+<p>ছবি শেয়ার করার সহজ জায়গা</p>
+
+<div class="auth-area">
+
+<button
+id="loginButton"
+class="auth-button"
 onclick="openLogin()">
 🔐 Admin Login
 </button>
 
-<button  
-id="logoutButton"  
-class="auth-button"  
-onclick="logoutAdmin()"  
+<button
+id="logoutButton"
+class="auth-button"
+onclick="logoutAdmin()"
 style="display:none;">
 🚪 Logout
 </button>
 
-</div><div  
-id="adminStatus"  
-class="admin-status">  
-👑 Admin Mode চালু  
-</div><div class="member-area"><div  
-id="memberCount"  
-class="member-count">  
-👥 Member: ...  
-</div><button  
-id="joinButton"  
-class="join-button"  
-onclick="joinWebsite()">  
-🤝 Join করুন  
-</button>  </div></header><div class="container"><div class="top-buttons"><button onclick="goHome()">  
-🏠 Home  
-</button><button onclick="goBack()">  
-⬅️ Back  
-</button></div><div class="box"><h2>📁 Picture Folder</h2><div id="currentFolder">  
-📁 Home  
-</div><div  
-id="adminFolderActions"  
-class="folder-actions"  
-style="display:none;"><button onclick="createFolder()">  
-➕ নতুন Folder  
-</button><button onclick="refreshFolders()">  
-🔄 Refresh  
-</button></div><div  
-id="publicRefreshArea"  
-class="folder-actions"><button onclick="refreshFolders()">  
-🔄 Refresh  
-</button></div><div  
-id="folders"  
-class="folders"><div class="empty">  
-⏳ Folder লোড হচ্ছে...  
-</div></div></div><div  
-id="adminUploadBox"  
-class="box"  
-style="display:none;"><h2>📤 ছবি পোস্ট করুন</h2><input  
-type="file"  
-id="photoInput"  
-accept="image/*"  
-multiple>  <div id="previewArea"></div><button id="uploadButton">  
-📤 ছবি পোস্ট করুন  
-</button><div id="message"></div></div><div class="box"><h2>🖼️ পোস্ট করা ছবি</h2><div  
-id="gallery"  
-class="gallery"><div class="empty">  
-ছবি লোড হচ্ছে...  
-</div></div></div></div><div id="loginModal"><div class="login-box"><h2>🔐 Admin Login</h2><input  
-type="email"  
-id="loginEmail"  
-placeholder="Admin Email"  
-autocomplete="off">  <input  
-type="password"  
-id="loginPassword"  
-placeholder="Password"  
+</div>
+
+<div
+id="adminStatus"
+class="admin-status">
+👑 Admin Mode চালু
+</div>
+
+<div class="member-area">
+
+<div
+id="memberCount"
+class="member-count">
+👥 Member: ...
+</div>
+
+<button
+id="joinButton"
+class="join-button"
+onclick="joinWebsite()">
+🤝 Join করুন
+</button>
+
+</div>
+
+</header>
+
+<div class="container">
+
+<!-- ACCESS LOCK -->
+
+<div
+id="accessLock"
+class="access-lock">
+
+<div class="access-lock-icon">🔒</div>
+
+<div
+id="accessLockTitle"
+class="access-lock-title">
+Website Access বন্ধ
+</div>
+
+<div
+id="accessLockText"
+class="access-lock-text">
+ছবি ও Folder দেখতে আগে Join Request পাঠাতে হবে।
+</div>
+
+<button
+id="accessLockButton"
+class="access-lock-button"
+onclick="joinWebsite()">
+🤝 Join Request পাঠান
+</button>
+
+<button
+id="statusCheckButton"
+class="status-check-button"
+onclick="refreshAccessStatus()">
+🔄 Status Check
+</button>
+
+</div>
+
+<!-- PROTECTED CONTENT -->
+
+<div id="protectedContent" style="display:none;">
+
+<div class="top-buttons">
+
+<button onclick="goHome()">
+🏠 Home
+</button>
+
+<button onclick="goBack()">
+⬅️ Back
+</button>
+
+</div>
+
+<!-- FOLDER -->
+
+<div class="box">
+
+<h2>📁 Picture Folder</h2>
+
+<div id="currentFolder">
+📁 Home
+</div>
+
+<div
+id="adminFolderActions"
+class="folder-actions"
+style="display:none;">
+
+<button onclick="createFolder()">
+➕ নতুন Folder
+</button>
+
+<button onclick="refreshFolders()">
+🔄 Refresh
+</button>
+
+</div>
+
+<div
+id="publicRefreshArea"
+class="folder-actions">
+
+<button onclick="refreshFolders()">
+🔄 Refresh
+</button>
+
+</div>
+
+<div
+id="folders"
+class="folders">
+
+<div class="empty">
+⏳ Folder লোড হচ্ছে...
+</div>
+
+</div>
+
+</div>
+
+<!-- ADMIN REQUESTS -->
+
+<div
+id="adminMemberRequestsBox"
+class="box">
+
+<h2>👥 Member Requests</h2>
+
+<div
+id="memberRequests">
+
+<div class="empty">
+⏳ Request লোড হচ্ছে...
+</div>
+
+</div>
+
+</div>
+
+<!-- ADMIN UPLOAD -->
+
+<div
+id="adminUploadBox"
+class="box"
+style="display:none;">
+
+<h2>📤 ছবি পোস্ট করুন</h2>
+
+<input
+type="file"
+id="photoInput"
+accept="image/*"
+multiple>
+
+<div id="previewArea"></div>
+
+<button id="uploadButton">
+📤 ছবি পোস্ট করুন
+</button>
+
+<div id="message"></div>
+
+</div>
+
+<!-- GALLERY -->
+
+<div class="box">
+
+<h2>🖼️ পোস্ট করা ছবি</h2>
+
+<div
+id="gallery"
+class="gallery">
+
+<div class="empty">
+ছবি লোড হচ্ছে...
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- LOGIN -->
+
+<div id="loginModal">
+
+<div class="login-box">
+
+<h2>🔐 Admin Login</h2>
+
+<input
+type="email"
+id="loginEmail"
+placeholder="Admin Email"
+autocomplete="off">
+
+<input
+type="password"
+id="loginPassword"
+placeholder="Password"
 autocomplete="current-password">
 
-<button  
-id="loginSubmit"  
-class="login-submit"  
+<button
+id="loginSubmit"
+class="login-submit"
 onclick="loginAdmin()">
 🔐 Login
 </button>
 
-<button  
-class="login-close"  
+<button
+class="login-close"
 onclick="closeLogin()">
 ✕ বন্ধ
 </button>
 
-<div id="loginMessage"></div></div></div><div id="viewer"><div class="viewer-top"><button onclick="closeViewer()">  
-✕ বন্ধ  
-</button><button onclick="goHome();closeViewer();">  
-🏠 Home  
-</button></div><div class="viewer-stage"><button  
-class="viewer-arrow viewer-prev"  
-onclick="previousImage()">  
-‹  
-</button>  <img  
-id="viewerImage"  
+<div id="loginMessage"></div>
+
+</div>
+
+</div>
+
+<!-- VIEWER -->
+
+<div id="viewer">
+
+<div class="viewer-top">
+
+<button onclick="closeViewer()">
+✕ বন্ধ
+</button>
+
+<button onclick="goHome();closeViewer();">
+🏠 Home
+</button>
+
+</div>
+
+<div class="viewer-stage">
+
+<button
+class="viewer-arrow viewer-prev"
+onclick="previousImage()">
+‹
+</button>
+
+<img
+id="viewerImage"
 alt="Picture">
 
-<button  
-class="viewer-arrow viewer-next"  
+<button
+class="viewer-arrow viewer-next"
 onclick="nextImage()">
 ›
 </button>
 
-</div><div class="viewer-bottom"><button  
-id="viewerLike"  
-onclick="likeCurrentImage()">  
-❤️ 0  
-</button>  </div></div><script>  const SUPABASE_URL =
+</div>
+
+<div class="viewer-bottom">
+
+<button
+id="viewerLike"
+onclick="likeCurrentImage()">
+❤️ 0
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
 "https://vhqiqbapbxwmvycxrsvc.supabase.co";
 
 const SUPABASE_KEY =
@@ -933,20 +1249,52 @@ document.getElementById("publicRefreshArea");
 const adminUploadBox =
 document.getElementById("adminUploadBox");
 
+const adminMemberRequestsBox =
+document.getElementById("adminMemberRequestsBox");
+
+const memberRequests =
+document.getElementById("memberRequests");
+
 const memberCount =
 document.getElementById("memberCount");
 
 const joinButton =
 document.getElementById("joinButton");
 
+const accessLock =
+document.getElementById("accessLock");
+
+const accessLockTitle =
+document.getElementById("accessLockTitle");
+
+const accessLockText =
+document.getElementById("accessLockText");
+
+const accessLockButton =
+document.getElementById("accessLockButton");
+
+const statusCheckButton =
+document.getElementById("statusCheckButton");
+
+const protectedContent =
+document.getElementById("protectedContent");
+
 let currentUser = null;
+
 let isAdmin = false;
+
 let isMember = false;
 
+let memberStatus = "none";
+
 let allFolders = [];
+
 let currentFolderId = null;
+
 let currentPath = [];
+
 let currentImages = [];
+
 let currentViewerIndex = 0;
 
 let photoLoadRequestId = 0;
@@ -957,6 +1305,11 @@ const FOLDER_STORAGE_KEY =
 const LOCAL_LIKE_KEY =
 "picture_post_local_likes";
 
+
+/* =========================
+ADMIN CHECK
+========================= */
+
 function checkAdmin(user){
 
 if(!user){
@@ -966,37 +1319,104 @@ return false;
 return String(
 user.email || ""
 ).toLowerCase().trim()
-
+===
 ADMIN_EMAIL.toLowerCase().trim();
 
 }
+
+
+/* =========================
+ACCESS UI
+========================= */
+
+function setProtectedAccess(allowed){
+
+if(allowed){
+
+protectedContent.style.display =
+"block";
+
+accessLock.style.display =
+"none";
+
+}else{
+
+protectedContent.style.display =
+"none";
+
+accessLock.style.display =
+"block";
+
+closeViewer();
+
+}
+
+}
+
+
+/* =========================
+ADMIN UI
+========================= */
 
 function updateAdminUI(){
 
 if(isAdmin){
 
-loginButton.style.display="none";
-logoutButton.style.display="inline-block";
-adminStatus.style.display="block";
-adminFolderActions.style.display="flex";
-publicRefreshArea.style.display="none";
-adminUploadBox.style.display="block";
+loginButton.style.display =
+"none";
+
+logoutButton.style.display =
+"inline-block";
+
+adminStatus.style.display =
+"block";
+
+adminFolderActions.style.display =
+"flex";
+
+publicRefreshArea.style.display =
+"none";
+
+adminUploadBox.style.display =
+"block";
+
+adminMemberRequestsBox.style.display =
+"block";
 
 }else{
 
-loginButton.style.display="inline-block";
-logoutButton.style.display="none";
-adminStatus.style.display="none";
-adminFolderActions.style.display="none";
-publicRefreshArea.style.display="flex";
-adminUploadBox.style.display="none";
+loginButton.style.display =
+"inline-block";
+
+logoutButton.style.display =
+"none";
+
+adminStatus.style.display =
+"none";
+
+adminFolderActions.style.display =
+"none";
+
+publicRefreshArea.style.display =
+"flex";
+
+adminUploadBox.style.display =
+"none";
+
+adminMemberRequestsBox.style.display =
+"none";
 
 }
 
 }
+
+
+/* =========================
+AUTH STATE
+========================= */
 
 supabaseClient.auth.onAuthStateChange(
-async function(event,session){
+function(event,session){
 
 currentUser =
 session ? session.user : null;
@@ -1006,20 +1426,13 @@ checkAdmin(currentUser);
 
 updateAdminUI();
 
-if(event === "SIGNED_IN"){
-
-await ensureMemberRecord();
-
-await checkMemberStatus();
-
-await loadFolders();
-
-await loadPhotos();
-
-}
-
 }
 );
+
+
+/* =========================
+ANONYMOUS SESSION
+========================= */
 
 async function ensureAnonymousSession(){
 
@@ -1066,9 +1479,10 @@ console.error(
 authError
 );
 
-message.textContent =
-"❌ Member system চালু করা যায়নি: "+
-authError.message;
+alert(
+"❌ Member system চালু করা যায়নি:\n"+
+authError.message
+);
 
 return false;
 
@@ -1084,10 +1498,35 @@ return true;
 
 }
 
-async function ensureMemberRecord(){
 
-if(!currentUser || isAdmin){
-return;
+/* =========================
+MEMBER STATUS
+========================= */
+
+async function checkMemberStatus(){
+
+if(isAdmin){
+
+isMember=true;
+memberStatus="approved";
+
+updateJoinButton();
+setProtectedAccess(true);
+
+return true;
+
+}
+
+if(!currentUser){
+
+isMember=false;
+memberStatus="none";
+
+updateJoinButton();
+setProtectedAccess(false);
+
+return false;
+
 }
 
 try{
@@ -1098,7 +1537,7 @@ error
 } =
 await supabaseClient
 .from("members")
-.select("id,user_id")
+.select("id,status")
 .eq(
 "user_id",
 currentUser.id
@@ -1108,7 +1547,739 @@ currentUser.id
 if(error){
 
 console.warn(
-"Member lookup:",
+"Member status:",
+error.message
+);
+
+isMember=false;
+memberStatus="none";
+
+}else if(!data){
+
+isMember=false;
+memberStatus="none";
+
+}else{
+
+memberStatus =
+data.status || "pending";
+
+isMember =
+memberStatus === "approved";
+
+}
+
+}catch(error){
+
+console.error(
+"Member status:",
+error
+);
+
+isMember=false;
+memberStatus="none";
+
+}
+
+updateJoinButton();
+
+updateAccessLock();
+
+setProtectedAccess(
+isAdmin || isMember
+);
+
+return isMember || isAdmin;
+
+}
+
+
+/* =========================
+JOIN BUTTON
+========================= */
+
+function updateJoinButton(){
+
+joinButton.classList.remove(
+"joined",
+"pending",
+"rejected"
+);
+
+if(isAdmin){
+
+joinButton.textContent =
+"👑 Admin";
+
+joinButton.classList.add(
+"joined"
+);
+
+joinButton.disabled=true;
+
+return;
+
+}
+
+if(memberStatus === "approved"){
+
+joinButton.textContent =
+"✅ Joined";
+
+joinButton.classList.add(
+"joined"
+);
+
+joinButton.disabled=true;
+
+return;
+
+}
+
+if(memberStatus === "pending"){
+
+joinButton.textContent =
+"⏳ Pending";
+
+joinButton.classList.add(
+"pending"
+);
+
+joinButton.disabled=true;
+
+return;
+
+}
+
+if(memberStatus === "rejected"){
+
+joinButton.textContent =
+"❌ Rejected";
+
+joinButton.classList.add(
+"rejected"
+);
+
+joinButton.disabled=true;
+
+return;
+
+}
+
+joinButton.textContent =
+"🤝 Join করুন";
+
+joinButton.disabled=false;
+
+}
+
+
+/* =========================
+ACCESS LOCK TEXT
+========================= */
+
+function updateAccessLock(){
+
+if(isAdmin || isMember){
+
+return;
+
+}
+
+if(memberStatus === "pending"){
+
+accessLockTitle.textContent =
+"⏳ Join Request Pending";
+
+accessLockText.textContent =
+"আপনার Join Request Admin-এর কাছে পাঠানো হয়েছে। Admin Accept না করা পর্যন্ত Website-এর ছবি ও Folder দেখা যাবে না।";
+
+accessLockButton.style.display =
+"none";
+
+statusCheckButton.style.display =
+"inline-block";
+
+return;
+
+}
+
+if(memberStatus === "rejected"){
+
+accessLockTitle.textContent =
+"❌ Join Request Rejected";
+
+accessLockText.textContent =
+"আপনার Join Request Admin Reject করেছেন। Website-এর ছবি ও Folder দেখার জন্য Admin-এর অনুমোদন প্রয়োজন।";
+
+accessLockButton.style.display =
+"none";
+
+statusCheckButton.style.display =
+"inline-block";
+
+return;
+
+}
+
+accessLockTitle.textContent =
+"🔒 Website Access বন্ধ";
+
+accessLockText.textContent =
+"ছবি ও Folder দেখতে আগে Join Request পাঠাতে হবে। Admin Accept করার পরেই Website-এর Content দেখা যাবে।";
+
+accessLockButton.style.display =
+"inline-block";
+
+statusCheckButton.style.display =
+"inline-block";
+
+}
+
+
+/* =========================
+JOIN WEBSITE
+========================= */
+
+async function joinWebsite(){
+
+if(isAdmin || isMember){
+return;
+}
+
+joinButton.disabled=true;
+
+joinButton.textContent =
+"⏳ Checking...";
+
+try{
+
+const sessionOK =
+await ensureAnonymousSession();
+
+if(!sessionOK){
+
+throw new Error(
+"Anonymous session তৈরি হয়নি।"
+);
+
+}
+
+const {
+data:existing,
+error:checkError
+} =
+await supabaseClient
+.from("members")
+.select("id,status")
+.eq(
+"user_id",
+currentUser.id
+)
+.maybeSingle();
+
+if(checkError){
+throw checkError;
+}
+
+
+/* Already pending */
+
+if(existing &&
+existing.status === "pending"){
+
+memberStatus="pending";
+isMember=false;
+
+updateJoinButton();
+updateAccessLock();
+setProtectedAccess(false);
+
+alert(
+"⏳ আপনার Join Request আগেই পাঠানো হয়েছে।\nAdmin Accept করার অপেক্ষায় থাকুন।"
+);
+
+return;
+
+}
+
+
+/* Already approved */
+
+if(existing &&
+existing.status === "approved"){
+
+memberStatus="approved";
+isMember=true;
+
+updateJoinButton();
+updateAccessLock();
+setProtectedAccess(true);
+
+await loadFolders();
+await loadPhotos();
+
+return;
+
+}
+
+
+/*
+Rejected request:
+নতুন request তৈরি না করে
+Admin-এর মাধ্যমে আবার approve করতে হবে।
+*/
+
+if(existing &&
+existing.status === "rejected"){
+
+memberStatus="rejected";
+isMember=false;
+
+updateJoinButton();
+updateAccessLock();
+setProtectedAccess(false);
+
+alert(
+"❌ আপনার আগের Request Reject করা হয়েছে।\nAdmin চাইলে Request-টি আবার Pending করতে পারবেন।"
+);
+
+return;
+
+}
+
+
+/* New request */
+
+const {
+error:insertError
+} =
+await supabaseClient
+.from("members")
+.insert({
+
+user_id:
+currentUser.id,
+
+member_key:
+currentUser.id,
+
+status:
+"pending"
+
+});
+
+if(insertError){
+throw insertError;
+}
+
+memberStatus="pending";
+isMember=false;
+
+updateJoinButton();
+updateAccessLock();
+setProtectedAccess(false);
+
+await loadMemberCount();
+
+alert(
+"✅ Join Request সফলভাবে পাঠানো হয়েছে!\n\n⏳ Admin Accept করার পর আপনি Website দেখতে পারবেন।"
+);
+
+}catch(error){
+
+console.error(
+"Join error:",
+error
+);
+
+memberStatus="none";
+isMember=false;
+
+updateJoinButton();
+updateAccessLock();
+
+alert(
+"❌ Join Request পাঠানো যায়নি.\n"+
+error.message
+);
+
+}
+
+}
+
+
+/* =========================
+STATUS CHECK
+========================= */
+
+async function refreshAccessStatus(){
+
+statusCheckButton.disabled=true;
+
+statusCheckButton.textContent =
+"⏳ Checking...";
+
+const sessionOK =
+await ensureAnonymousSession();
+
+if(sessionOK){
+
+await checkMemberStatus();
+
+if(isAdmin || isMember){
+
+await loadFolders();
+await loadPhotos();
+
+}else{
+
+updateAccessLock();
+setProtectedAccess(false);
+
+}
+
+}
+
+statusCheckButton.disabled=false;
+
+statusCheckButton.textContent =
+"🔄 Status Check";
+
+}
+
+
+/* =========================
+MEMBER COUNT
+========================= */
+
+async function loadMemberCount(){
+
+memberCount.textContent =
+"👥 Member: ...";
+
+const {
+data,
+error
+} =
+await supabaseClient
+.rpc("get_member_count");
+
+if(error){
+
+console.warn(
+"Member count:",
+error.message
+);
+
+memberCount.textContent =
+"👥 Member";
+
+return;
+
+}
+
+memberCount.textContent =
+"👥 Member: "+
+Number(data || 0);
+
+}
+
+
+/* =========================
+ADMIN MEMBER REQUESTS
+========================= */
+
+async function loadMemberRequests(){
+
+if(!isAdmin){
+return;
+}
+
+memberRequests.innerHTML =
+'<div class="empty">⏳ Request লোড হচ্ছে...</div>';
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from("members")
+.select(
+"id,user_id,member_key,status,joined_at"
+)
+.not(
+"user_id",
+"is",
+null
+)
+.order(
+"id",
+{ascending:false}
+);
+
+if(error){
+
+console.error(
+"Member requests:",
+error
+);
+
+memberRequests.innerHTML =
+'<div class="empty">❌ Request লোড হয়নি।</div>';
+
+return;
+
+}
+
+if(!data || data.length===0){
+
+memberRequests.innerHTML =
+'<div class="empty">কোনো Member Request নেই।</div>';
+
+return;
+
+}
+
+memberRequests.innerHTML="";
+
+data.forEach(
+function(item){
+
+const div =
+document.createElement("div");
+
+div.className =
+"member-request";
+
+const shortId =
+String(
+item.user_id || ""
+).substring(0,8);
+
+let statusText =
+"⏳ Pending";
+
+if(item.status === "approved"){
+statusText="✅ Approved";
+}
+
+if(item.status === "rejected"){
+statusText="❌ Rejected";
+}
+
+const date =
+item.joined_at
+?
+new Date(
+item.joined_at
+).toLocaleString(
+"bn-BD"
+)
+:
+"Unknown";
+
+div.innerHTML =
+'<div class="request-top">'+
+'<div class="request-id">'+
+'👤 Guest ID: '+
+escapeHtml(shortId)+
+'</div>'+
+'<div class="request-status '+
+escapeHtml(item.status || "pending")+
+'">'+
+statusText+
+'</div>'+
+'</div>'+
+'<div class="request-date">'+
+'📅 Request: '+
+escapeHtml(date)+
+'</div>';
+
+const actions =
+document.createElement("div");
+
+actions.className =
+"request-actions";
+
+if(item.status === "pending"){
+
+const acceptButton =
+document.createElement("button");
+
+acceptButton.className =
+"accept-request";
+
+acceptButton.textContent =
+"✅ Accept";
+
+acceptButton.onclick =
+function(){
+
+setMemberStatus(
+item.id,
+"approved"
+);
+
+};
+
+const rejectButton =
+document.createElement("button");
+
+rejectButton.className =
+"reject-request";
+
+rejectButton.textContent =
+"❌ Reject";
+
+rejectButton.onclick =
+function(){
+
+setMemberStatus(
+item.id,
+"rejected"
+);
+
+};
+
+actions.appendChild(
+acceptButton
+);
+
+actions.appendChild(
+rejectButton
+);
+
+}
+
+if(item.status === "rejected"){
+
+const pendingButton =
+document.createElement("button");
+
+pendingButton.className =
+"pending-request";
+
+pendingButton.textContent =
+"↩️ আবার Pending";
+
+pendingButton.onclick =
+function(){
+
+setMemberStatus(
+item.id,
+"pending"
+);
+
+};
+
+actions.appendChild(
+pendingButton
+);
+
+}
+
+if(item.status === "approved"){
+
+const rejectButton =
+document.createElement("button");
+
+rejectButton.className =
+"reject-request";
+
+rejectButton.textContent =
+"❌ Reject";
+
+rejectButton.onclick =
+function(){
+
+setMemberStatus(
+item.id,
+"rejected"
+);
+
+};
+
+actions.appendChild(
+rejectButton
+);
+
+}
+
+if(actions.children.length){
+
+div.appendChild(actions);
+
+}
+
+memberRequests.appendChild(div);
+
+}
+);
+
+}
+
+
+/* =========================
+ADMIN ACCEPT / REJECT
+========================= */
+
+async function setMemberStatus(
+id,
+status
+){
+
+if(!isAdmin){
+
+alert(
+"🔒 শুধু Admin এই কাজ করতে পারবেন।"
+);
+
+return;
+
+}
+
+let confirmText =
+"";
+
+if(status === "approved"){
+
+confirmText =
+"এই Member Request Accept করবেন?";
+
+}else if(status === "rejected"){
+
+confirmText =
+"এই Member Request Reject করবেন?";
+
+}else{
+
+confirmText =
+"এই Request আবার Pending করবেন?";
+
+}
+
+if(!confirm(confirmText)){
+return;
+}
+
+const {
+error
+} =
+await supabaseClient
+.from("members")
+.update({
+status:status
+})
+.eq(
+"id",
+id
+);
+
+if(error){
+
+alert(
+"❌ Status পরিবর্তন হয়নি:\n"+
 error.message
 );
 
@@ -1116,25 +2287,34 @@ return;
 
 }
 
-if(!data){
-return;
+message.textContent =
+status === "approved"
+?
+"✅ Member Accept করা হয়েছে।"
+:
+status === "rejected"
+?
+"❌ Member Reject করা হয়েছে।"
+:
+"⏳ Request আবার Pending করা হয়েছে।";
+
+await loadMemberRequests();
+
+await loadMemberCount();
+
 }
 
-isMember=true;
 
-}catch(error){
-
-console.error(error);
-
-}
-
-}
+/* =========================
+LOGIN
+========================= */
 
 function openLogin(){
 
 loginModal.style.display="flex";
 
 loginMessage.textContent="";
+
 loginEmail.value="";
 loginPassword.value="";
 
@@ -1150,9 +2330,11 @@ loginEmail.focus();
 function closeLogin(){
 
 loginModal.style.display="none";
+
 loginMessage.textContent="";
 
 }
+
 
 async function loginAdmin(){
 
@@ -1212,7 +2394,7 @@ password:password
 if(error){
 
 console.error(
-"Admin login error:",
+"Admin login:",
 error
 );
 
@@ -1223,6 +2405,8 @@ error.message;
 loginSubmit.disabled=false;
 
 await ensureAnonymousSession();
+
+await checkMemberStatus();
 
 return;
 
@@ -1249,7 +2433,13 @@ return;
 
 }
 
+isMember=true;
+memberStatus="approved";
+
 updateAdminUI();
+updateJoinButton();
+
+setProtectedAccess(true);
 
 loginMessage.textContent =
 "✅ Admin Login সফল হয়েছে!";
@@ -1263,6 +2453,9 @@ message.textContent =
 "👑 Admin Mode চালু হয়েছে.";
 
 await loadFolders();
+
+await loadMemberRequests();
+
 await loadPhotos();
 
 },
@@ -1272,6 +2465,11 @@ await loadPhotos();
 loginSubmit.disabled=false;
 
 }
+
+
+/* =========================
+LOGOUT
+========================= */
 
 async function logoutAdmin(){
 
@@ -1289,21 +2487,26 @@ await supabaseClient.auth.signOut();
 currentUser=null;
 isAdmin=false;
 isMember=false;
+memberStatus="none";
 
 updateAdminUI();
+updateJoinButton();
+
+setProtectedAccess(false);
+updateAccessLock();
 
 await ensureAnonymousSession();
 
 await checkMemberStatus();
 
-message.textContent =
-"✅ Admin Logout হয়েছে.";
-
-await loadFolders();
-
-await loadPhotos();
+await loadMemberCount();
 
 }
+
+
+/* =========================
+REQUIRE ADMIN
+========================= */
 
 function requireAdmin(){
 
@@ -1321,256 +2524,10 @@ return true;
 
 }
 
-async function checkMemberStatus(){
 
-if(isAdmin){
-
-isMember=true;
-updateJoinButton();
-
-return true;
-
-}
-
-if(!currentUser){
-
-isMember=false;
-updateJoinButton();
-
-return false;
-
-}
-
-try{
-
-const {
-data,
-error
-} =
-await supabaseClient
-.from("members")
-.select("id")
-.eq(
-"user_id",
-currentUser.id
-)
-.maybeSingle();
-
-if(!error && data){
-
-isMember=true;
-
-}else{
-
-isMember=false;
-
-}
-
-}catch(error){
-
-console.error(
-"Member status:",
-error
-);
-
-isMember=false;
-
-}
-
-updateJoinButton();
-
-return isMember;
-
-}
-
-function updateJoinButton(){
-
-if(isMember || isAdmin){
-
-joinButton.textContent =
-isAdmin
-?
-"👑 Admin"
-:
-"✅ Joined";
-
-joinButton.classList.add("joined");
-joinButton.disabled=true;
-
-}else{
-
-joinButton.textContent =
-"🤝 Join করুন";
-
-joinButton.classList.remove("joined");
-joinButton.disabled=false;
-
-}
-
-}
-
-async function joinWebsite(){
-
-if(isAdmin){
-return;
-}
-
-if(isMember){
-return;
-}
-
-joinButton.disabled=true;
-
-joinButton.textContent =
-"⏳ Joining...";
-
-try{
-
-const sessionOK =
-await ensureAnonymousSession();
-
-if(!sessionOK){
-
-throw new Error(
-"Anonymous session তৈরি হয়নি."
-);
-
-}
-
-const {
-data:existing,
-error:checkError
-} =
-await supabaseClient
-.from("members")
-.select("id")
-.eq(
-"user_id",
-currentUser.id
-)
-.maybeSingle();
-
-if(checkError){
-throw checkError;
-}
-
-if(existing){
-
-isMember=true;
-
-}else{
-
-const {
-error:insertError
-} =
-await supabaseClient
-.from("members")
-.insert({
-
-user_id:
-currentUser.id,
-
-member_key:
-currentUser.id
-
-});
-
-if(insertError){
-throw insertError;
-}
-
-isMember=true;
-
-}
-
-updateJoinButton();
-
-message.textContent =
-"✅ আপনি সফলভাবে Member হয়েছেন!";
-
-await loadMemberCount();
-
-await loadFolders();
-
-await loadPhotos();
-
-}catch(error){
-
-console.error(
-"Join error:",
-error
-);
-
-isMember=false;
-
-updateJoinButton();
-
-alert(
-"❌ Join করা যায়নি.\n"+
-error.message
-);
-
-}
-
-}
-
-async function loadMemberCount(){
-
-memberCount.textContent =
-"👥 Member: ...";
-
-const {
-data,
-error
-} =
-await supabaseClient
-.rpc("get_member_count");
-
-if(error){
-
-console.warn(
-"Member count:",
-error.message
-);
-
-memberCount.textContent =
-"👥 Member";
-
-return;
-
-}
-
-memberCount.textContent =
-"👥 Member: "+
-Number(data || 0);
-
-}
-
-function showJoinLock(){
-
-gallery.innerHTML="";
-
-const lock =
-document.createElement("div");
-
-lock.className =
-"join-lock";
-
-lock.innerHTML =
-'<div class="join-lock-icon">🔒</div>'+
-'<div class="join-lock-title">'+
-'ছবি দেখতে Join করুন'+
-'</div>'+
-'<div class="join-lock-text">'+
-'এই ওয়েবসাইটের ছবি দেখতে আগে ফ্রি Join করতে হবে।'+
-'</div>'+
-'<button class="join-lock-button" onclick="joinWebsite()">'+
-'🤝 এখনই Join করুন'+
-'</button>';
-
-gallery.appendChild(lock);
-
-}
+/* =========================
+FOLDER STORAGE
+========================= */
 
 function saveCurrentFolder(){
 
@@ -1591,6 +2548,7 @@ FOLDER_STORAGE_KEY
 
 }
 
+
 function restoreCurrentFolder(){
 
 const saved =
@@ -1601,6 +2559,7 @@ FOLDER_STORAGE_KEY
 if(!saved){
 
 currentFolderId=null;
+
 return;
 
 }
@@ -1610,7 +2569,8 @@ Number(saved);
 
 const exists =
 allFolders.some(
-folder=>folder.id===id
+folder =>
+folder.id===id
 );
 
 if(exists){
@@ -1629,7 +2589,18 @@ FOLDER_STORAGE_KEY
 
 }
 
+
+/* =========================
+LOAD FOLDERS
+========================= */
+
 async function loadFolders(){
+
+if(!isAdmin && !isMember){
+
+return false;
+
+}
 
 folders.innerHTML =
 '<div class="empty">⏳ Folder লোড হচ্ছে...</div>';
@@ -1673,6 +2644,11 @@ return true;
 
 }
 
+
+/* =========================
+FOLDER PATH
+========================= */
+
 function getCurrentPath(){
 
 if(!currentFolderId){
@@ -1708,6 +2684,7 @@ return result;
 
 }
 
+
 function getFolderStoragePath(folderId){
 
 const parts=[];
@@ -1739,6 +2716,7 @@ return parts.join("/");
 
 }
 
+
 function getStoragePath(){
 
 if(!currentFolderId){
@@ -1750,6 +2728,11 @@ currentFolderId
 );
 
 }
+
+
+/* =========================
+RENDER FOLDERS
+========================= */
 
 function renderFolders(){
 
@@ -1882,10 +2865,18 @@ div
 
 }
 
+
+/* =========================
+OPEN / BACK / HOME
+========================= */
+
 function openFolder(id){
 
-currentFolderId =
-id;
+if(!isAdmin && !isMember){
+return;
+}
+
+currentFolderId=id;
 
 saveCurrentFolder();
 
@@ -1895,7 +2886,12 @@ loadPhotos();
 
 }
 
+
 function goHome(){
+
+if(!isAdmin && !isMember){
+return;
+}
 
 currentFolderId=null;
 
@@ -1907,7 +2903,12 @@ loadPhotos();
 
 }
 
+
 function goBack(){
+
+if(!isAdmin && !isMember){
+return;
+}
 
 if(!currentFolderId){
 return;
@@ -1934,6 +2935,11 @@ renderFolders();
 loadPhotos();
 
 }
+
+
+/* =========================
+CREATE FOLDER
+========================= */
 
 async function createFolder(){
 
@@ -2012,6 +3018,11 @@ await loadFolders();
 
 }
 
+
+/* =========================
+RENAME FOLDER
+========================= */
+
 async function renameFolder(folder){
 
 if(!requireAdmin()){
@@ -2089,9 +3100,14 @@ message.textContent =
 
 await loadFolders();
 
-loadPhotos();
+await loadPhotos();
 
 }
+
+
+/* =========================
+DESCENDANTS
+========================= */
 
 function getDescendantIds(parentId){
 
@@ -2121,6 +3137,11 @@ child.id
 return result;
 
 }
+
+
+/* =========================
+STORAGE LIST
+========================= */
 
 async function listStorageFiles(path){
 
@@ -2187,6 +3208,11 @@ return files;
 
 }
 
+
+/* =========================
+DELETE STORAGE TREE
+========================= */
+
 async function deleteStorageTree(path){
 
 if(!isAdmin){
@@ -2194,9 +3220,7 @@ return false;
 }
 
 const files =
-await listStorageFiles(
-path
-);
+await listStorageFiles(path);
 
 if(files===null){
 return false;
@@ -2228,6 +3252,11 @@ return false;
 return true;
 
 }
+
+
+/* =========================
+DELETE FOLDER
+========================= */
 
 async function deleteFolder(folder){
 
@@ -2319,13 +3348,27 @@ message.textContent =
 
 await loadFolders();
 
-loadPhotos();
+await loadPhotos();
 
 }
 
+
+/* =========================
+REFRESH FOLDERS
+========================= */
+
 async function refreshFolders(){
 
+if(!isAdmin){
+
+const memberOK =
 await checkMemberStatus();
+
+if(!memberOK){
+return;
+}
+
+}
 
 await loadFolders();
 
@@ -2334,6 +3377,11 @@ await loadPhotos();
 await loadMemberCount();
 
 }
+
+
+/* =========================
+ESCAPE HTML
+========================= */
 
 function escapeHtml(text){
 
@@ -2347,54 +3395,10 @@ return div.innerHTML;
 
 }
 
-function getFileExtension(file){
 
-const originalName =
-file.name || "";
-
-const dot =
-originalName.lastIndexOf(".");
-
-if(
-dot!==-1 &&
-dot<originalName.length-1
-){
-
-const ext =
-originalName
-.substring(dot+1)
-.toLowerCase()
-.replace(
-/[^a-z0-9]/g,
-""
-);
-
-if(ext){
-return ext;
-}
-
-}
-
-if(file.type==="image/png"){
-return "png";
-}
-
-if(file.type==="image/webp"){
-return "webp";
-}
-
-if(file.type==="image/gif"){
-return "gif";
-}
-
-return "jpg";
-
-}
-
-/* =====================================
-WATERMARK SYSTEM
-© Picture Post
-===================================== */
+/* =========================
+WATERMARK
+========================= */
 
 async function addWatermark(file){
 
@@ -2424,8 +3428,6 @@ img.naturalWidth;
 canvas.height =
 img.naturalHeight;
 
-/* Original picture */
-
 ctx.drawImage(
 img,
 0,
@@ -2433,8 +3435,6 @@ img,
 canvas.width,
 canvas.height
 );
-
-/* Watermark size */
 
 const baseSize =
 Math.min(
@@ -2489,8 +3489,6 @@ canvas.width/2;
 const centerY =
 canvas.height/2;
 
-/* Soft transparent background */
-
 ctx.fillStyle =
 "rgba(0,0,0,0.28)";
 
@@ -2500,8 +3498,6 @@ centerY-boxHeight/2,
 boxWidth,
 boxHeight
 );
-
-/* Gold watermark */
 
 ctx.fillStyle =
 "rgba(231,197,80,0.68)";
@@ -2548,7 +3544,7 @@ const watermarkedFile =
 new File(
 [blob],
 file.name.replace(
-/.[^/.]+$/,
+/\.[^/.]+$/,
 ""
 )+".jpg",
 {
@@ -2600,6 +3596,11 @@ reader.readAsDataURL(file);
 });
 
 }
+
+
+/* =========================
+PHOTO SELECT
+========================= */
 
 photoInput.addEventListener(
 "change",
@@ -2661,6 +3662,11 @@ files.length+
 
 }
 );
+
+
+/* =========================
+UPLOAD
+========================= */
 
 uploadButton.addEventListener(
 "click",
@@ -2837,6 +3843,11 @@ photoInput.disabled=false;
 }
 );
 
+
+/* =========================
+SIGNED URL
+========================= */
+
 async function getSignedUrl(path){
 
 const {
@@ -2866,6 +3877,11 @@ return data?.signedUrl || null;
 
 }
 
+
+/* =========================
+LOAD PHOTOS
+========================= */
+
 async function loadPhotos(){
 
 const requestId =
@@ -2884,7 +3900,7 @@ return;
 
 currentImages=[];
 
-showJoinLock();
+setProtectedAccess(false);
 
 return;
 
@@ -2946,10 +3962,6 @@ file.name &&
 file.metadata
 );
 
-if(requestId !== photoLoadRequestId){
-return;
-}
-
 currentImages =
 files;
 
@@ -3009,10 +4021,6 @@ index:i
 
 });
 
-}
-
-if(requestId !== photoLoadRequestId){
-return;
 }
 
 for(
@@ -3144,6 +4152,11 @@ gallery.appendChild(fragment);
 
 }
 
+
+/* =========================
+LOCAL LIKE
+========================= */
+
 function getLocalLikes(){
 
 try{
@@ -3162,6 +4175,7 @@ return {};
 
 }
 
+
 function saveLocalLikes(data){
 
 try{
@@ -3175,6 +4189,7 @@ JSON.stringify(data)
 
 }
 
+
 function getLocalLike(photoName){
 
 const likes =
@@ -3185,6 +4200,7 @@ likes[photoName] || 0
 );
 
 }
+
 
 function addLocalLike(photoName){
 
@@ -3201,6 +4217,11 @@ saveLocalLikes(likes);
 return likes[photoName];
 
 }
+
+
+/* =========================
+LIKE COUNT
+========================= */
 
 async function loadLikeCount(
 photoName,
@@ -3243,6 +4264,11 @@ button.textContent =
 
 }
 
+
+/* =========================
+ADD LIKE
+========================= */
+
 async function addLike(
 photoName,
 button
@@ -3256,7 +4282,7 @@ await checkMemberStatus();
 if(!memberOK){
 
 alert(
-"🔒 Like দিতে আগে Join করুন."
+"🔒 Like দিতে আগে Admin-এর অনুমোদন লাগবে."
 );
 
 return;
@@ -3412,6 +4438,11 @@ button.disabled=false;
 
 }
 
+
+/* =========================
+DELETE PHOTO
+========================= */
+
 async function deletePhoto(
 fullPath,
 card
@@ -3491,6 +4522,11 @@ await loadPhotos();
 
 }
 
+
+/* =========================
+VIEWER
+========================= */
+
 async function openViewer(index){
 
 if(!isAdmin){
@@ -3501,7 +4537,7 @@ await checkMemberStatus();
 if(!memberOK){
 
 alert(
-"🔒 ছবি দেখতে আগে Join করুন."
+"🔒 ছবি দেখতে আগে Admin-এর অনুমোদন লাগবে."
 );
 
 return;
@@ -3524,12 +4560,14 @@ await showViewerImage();
 
 }
 
+
 function closeViewer(){
 
 viewer.style.display =
 "none";
 
 }
+
 
 async function showViewerImage(){
 
@@ -3591,6 +4629,11 @@ fullPath
 
 }
 
+
+/* =========================
+VIEWER LIKE
+========================= */
+
 async function loadViewerLike(
 photoName
 ){
@@ -3631,6 +4674,7 @@ viewerLike.textContent =
 
 }
 
+
 async function likeCurrentImage(){
 
 if(!isAdmin){
@@ -3641,7 +4685,7 @@ await checkMemberStatus();
 if(!memberOK){
 
 alert(
-"🔒 Like দিতে আগে Join করুন."
+"🔒 Like দিতে আগে Admin-এর অনুমোদন লাগবে."
 );
 
 return;
@@ -3676,6 +4720,7 @@ viewerLike
 
 }
 
+
 function previousImage(){
 
 if(!currentImages.length){
@@ -3694,6 +4739,7 @@ currentImages.length-1;
 showViewerImage();
 
 }
+
 
 function nextImage(){
 
@@ -3716,7 +4762,13 @@ showViewerImage();
 
 }
 
+
+/* =========================
+SWIPE
+========================= */
+
 let touchStartX=0;
+
 let touchEndX=0;
 
 viewerImage.addEventListener(
@@ -3764,9 +4816,18 @@ passive:true
 }
 );
 
+
+/* =========================
+START APP
+========================= */
+
 async function startApp(){
 
 updateJoinButton();
+
+updateAccessLock();
+
+setProtectedAccess(false);
 
 memberCount.textContent =
 "👥 Member: ...";
@@ -3776,39 +4837,78 @@ await ensureAnonymousSession();
 
 if(!sessionOK){
 
-gallery.innerHTML =
-'<div class="empty">'+
-'❌ Member system চালু করা যায়নি।'+
-'</div>';
+accessLockTitle.textContent =
+"❌ Member System Error";
+
+accessLockText.textContent =
+"Member system চালু করা যায়নি।";
+
+accessLockButton.style.display =
+"none";
+
+statusCheckButton.style.display =
+"none";
 
 return;
 
 }
 
 isAdmin =
-checkAdmin(
-currentUser
-);
+checkAdmin(currentUser);
 
 updateAdminUI();
 
-await checkMemberStatus();
+if(isAdmin){
 
-const foldersLoaded =
+isMember=true;
+memberStatus="approved";
+
+updateJoinButton();
+
+setProtectedAccess(true);
+
 await loadFolders();
+
+await loadMemberRequests();
 
 await loadMemberCount();
 
-if(foldersLoaded){
+await loadPhotos();
+
+return;
+
+}
+
+await checkMemberStatus();
+
+await loadMemberCount();
+
+if(isMember){
+
+setProtectedAccess(true);
+
+await loadFolders();
 
 await loadPhotos();
 
+}else{
+
+setProtectedAccess(false);
+
+updateAccessLock();
+
 }
 
 }
+
+
+/* =========================
+START
+========================= */
 
 startApp();
 
-</script></body>
+</script>
 
+</body>
 </html>
